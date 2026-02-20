@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { Canvas } from "@react-three/fiber"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { Environment, OrbitControls, PerspectiveCamera, Html, Float, Text, RoundedBox } from "@react-three/drei"
 import { useState, useRef, useEffect } from "react"
 import type * as THREE from "three"
@@ -27,6 +27,14 @@ import {
   Layout,
   Database,
   Terminal,
+  X,
+  FileText,
+  Award,
+  Folder,
+  Gamepad2,
+  Rocket,
+  Zap,
+  Trophy,
 } from "lucide-react"
 
 const themeColors = {
@@ -234,12 +242,6 @@ function RealisticFlowerPot({ position }: { position: [number, number, number] }
         <meshStandardMaterial color="#9a3412" roughness={0.8} />
       </mesh>
 
-      {/* Pot bottom ring */}
-      <mesh position={[0, 0.02, 0]} castShadow>
-        <torusGeometry args={[0.08, 0.01, 16, 32]} />
-        <meshStandardMaterial color="#7c2d12" roughness={0.9} />
-      </mesh>
-
       {/* Soil surface */}
       <mesh position={[0, 0.22, 0]}>
         <cylinderGeometry args={[0.1, 0.1, 0.04, 16]} />
@@ -330,82 +332,126 @@ function RealisticFlowerPot({ position }: { position: [number, number, number] }
   )
 }
 
-function Bookshelf({ position, isDark = true }: { position: [number, number, number]; isDark?: boolean }) {
-  const bookColors = ["#ef4444", "#3b82f6", "#22c55e", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"]
+function RGBSpeaker({ position, isDark = true }: { position: [number, number, number]; isDark?: boolean }) {
+  const speaker1Ref = useRef<THREE.Mesh>(null)
+  const speaker2Ref = useRef<THREE.Mesh>(null)
+  const speaker3Ref = useRef<THREE.Mesh>(null)
+
+  // Анимация переливания для динамиков
+  useFrame((state) => {
+    const time = state.clock.elapsedTime
+    
+    // Верхний динамик
+    if (speaker1Ref.current?.material) {
+      const material = speaker1Ref.current.material as any
+      const hue1 = (Math.sin(time * 0.8) * 0.5 + 0.5) * 60 + 280 // Розовый-фиолетовый
+      material.emissive.setHSL(hue1 / 360, 0.9, 0.5)
+      material.emissiveIntensity = 2 + Math.sin(time * 2) * 1
+    }
+    
+    // Средний динамик
+    if (speaker2Ref.current?.material) {
+      const material = speaker2Ref.current.material as any
+      const hue2 = (Math.sin(time * 0.9 + 2) * 0.5 + 0.5) * 80 + 180 // Синий-бирюзовый
+      material.emissive.setHSL(hue2 / 360, 0.9, 0.5)
+      material.emissiveIntensity = 2 + Math.sin(time * 2.2 + 1) * 1
+    }
+    
+    // Нижний динамик
+    if (speaker3Ref.current?.material) {
+      const material = speaker3Ref.current.material as any
+      const hue3 = (Math.sin(time * 1.0 + 4) * 0.5 + 0.5) * 60 + 0 // Красный-оранжевый
+      material.emissive.setHSL(hue3 / 360, 0.9, 0.5)
+      material.emissiveIntensity = 2 + Math.sin(time * 2.4 + 2) * 1
+    }
+  })
 
   return (
     <group position={position}>
-      {/* Shelf frame */}
-      <RoundedBox args={[1.5, 2.2, 0.35]} radius={0.02}>
-        <meshStandardMaterial color={isDark ? "#1a1a24" : "#94a3b8"} roughness={0.6} />
+      {/* Черный корпус колонки */}
+      <RoundedBox args={[0.6, 2.2, 0.35]} radius={0.05}>
+        <meshStandardMaterial color="#0a0a0f" roughness={0.2} metalness={0.4} />
       </RoundedBox>
 
-      {/* Shelves */}
-      {[-0.7, -0.1, 0.5].map((y, i) => (
-        <mesh key={i} position={[0, y, 0]}>
-          <boxGeometry args={[1.4, 0.04, 0.32]} />
-          <meshStandardMaterial color={isDark ? "#2d2d3a" : "#cbd5e1"} roughness={0.5} />
-        </mesh>
-      ))}
+      {/* Верхний динамик - розовый */}
+      <mesh ref={speaker1Ref} position={[0, 0.7, 0.18]}>
+        <circleGeometry args={[0.22, 32]} />
+        <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={2} />
+      </mesh>
+      <mesh position={[0, 0.7, 0.175]}>
+        <torusGeometry args={[0.22, 0.02, 16, 32]} />
+        <meshStandardMaterial color="#0a0a0f" roughness={0.3} />
+      </mesh>
 
-      {/* Books on shelves */}
-      {[-0.7, -0.1, 0.5].map((shelfY, shelfIndex) => (
-        <group key={shelfIndex}>
-          {[...Array(5)].map((_, bookIndex) => (
-            <mesh key={bookIndex} position={[-0.5 + bookIndex * 0.25, shelfY + 0.22, 0]} castShadow>
-              <boxGeometry args={[0.08, 0.35 - Math.random() * 0.1, 0.22]} />
-              <meshStandardMaterial
-                color={bookColors[(shelfIndex * 5 + bookIndex) % bookColors.length]}
-                roughness={0.7}
-              />
-            </mesh>
-          ))}
-        </group>
-      ))}
+      {/* Средний динамик - синий */}
+      <mesh ref={speaker2Ref} position={[0, 0, 0.18]}>
+        <circleGeometry args={[0.25, 32]} />
+        <meshStandardMaterial color="#818cf8" emissive="#818cf8" emissiveIntensity={2} />
+      </mesh>
+      <mesh position={[0, 0, 0.175]}>
+        <torusGeometry args={[0.25, 0.02, 16, 32]} />
+        <meshStandardMaterial color="#0a0a0f" roughness={0.3} />
+      </mesh>
+
+      {/* Нижний динамик - оранжевый */}
+      <mesh ref={speaker3Ref} position={[0, -0.7, 0.18]}>
+        <circleGeometry args={[0.22, 32]} />
+        <meshStandardMaterial color="#fb923c" emissive="#fb923c" emissiveIntensity={2} />
+      </mesh>
+      <mesh position={[0, -0.7, 0.175]}>
+        <torusGeometry args={[0.22, 0.02, 16, 32]} />
+        <meshStandardMaterial color="#0a0a0f" roughness={0.3} />
+      </mesh>
+
+      {/* RGB полоса сбоку */}
+      <mesh position={[-0.31, 0, 0]}>
+        <boxGeometry args={[0.02, 2.1, 0.3]} />
+        <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={1.5} />
+      </mesh>
     </group>
   )
 }
 
 function WallClock({ position, isDark = true }: { position: [number, number, number]; isDark?: boolean }) {
   return (
-    <group position={position}>
+    <group position={position} rotation={[Math.PI / 2, 0, 0]}>
       {/* Clock face */}
       <mesh castShadow>
         <cylinderGeometry args={[0.4, 0.4, 0.05, 16]} />
         <meshStandardMaterial color={isDark ? "#1a1a24" : "#f8fafc"} roughness={0.3} />
       </mesh>
 
-      {/* Clock rim */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
+      {/* Clock rim - removed, было неправильно повернуто */}
+      {/* <mesh rotation={[0, 0, 0]}>
         <torusGeometry args={[0.4, 0.03, 16, 48]} />
         <meshStandardMaterial color="#14b8a6" metalness={0.8} roughness={0.2} />
-      </mesh>
+      </mesh> */}
 
       {/* Hour markers */}
       {[...Array(12)].map((_, i) => (
         <mesh
           key={i}
-          position={[Math.sin((i * Math.PI * 2) / 12) * 0.32, Math.cos((i * Math.PI * 2) / 12) * 0.32, 0.03]}
+          position={[Math.sin((i * Math.PI * 2) / 12) * 0.32, 0.03, Math.cos((i * Math.PI * 2) / 12) * 0.32]}
         >
-          <boxGeometry args={[0.02, 0.06, 0.01]} />
+          <boxGeometry args={[0.02, 0.01, 0.06]} />
           <meshStandardMaterial color={isDark ? "#fff" : "#1e293b"} />
         </mesh>
       ))}
 
       {/* Hour hand */}
-      <mesh position={[0.08, 0.08, 0.04]} rotation={[0, 0, -0.8]}>
-        <boxGeometry args={[0.02, 0.18, 0.01]} />
+      <mesh position={[0.08, 0.04, 0.08]} rotation={[-0.8, 0, 0]}>
+        <boxGeometry args={[0.02, 0.01, 0.18]} />
         <meshStandardMaterial color="#f472b6" />
       </mesh>
 
       {/* Minute hand */}
-      <mesh position={[0, 0.12, 0.045]} rotation={[0, 0, 0.2]}>
-        <boxGeometry args={[0.015, 0.26, 0.01]} />
+      <mesh position={[0, 0.045, 0.12]} rotation={[0.2, 0, 0]}>
+        <boxGeometry args={[0.015, 0.01, 0.26]} />
         <meshStandardMaterial color="#818cf8" />
       </mesh>
 
       {/* Center dot */}
-      <mesh position={[0, 0, 0.05]}>
+      <mesh position={[0, 0.05, 0]}>
         <sphereGeometry args={[0.025, 16, 16]} />
         <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={1} />
       </mesh>
@@ -446,10 +492,10 @@ function FloorLamp({ position, isDark = true }: { position: [number, number, num
         />
       </mesh>
 
-      {/* Actual light */}
+      {/* Actual light - уменьшенная интенсивность для более тусклого отражения */}
       <pointLight 
         position={[0, 2.1, 0]} 
-        intensity={hovered ? (isDark ? 25 : 18) : (isDark ? 12 : 8)} 
+        intensity={hovered ? (isDark ? 15 : 10) : (isDark ? 6 : 4)} 
         color="#fef3c7" 
         distance={hovered ? 8 : 5} 
       />
@@ -665,13 +711,39 @@ function UltrawideMonitor({
   rotation = [0, 0, 0],
   showSkills = false,
   isDark = true,
+  onClick,
+  activeGame,
+  setActiveGame,
+  activeCategory,
+  setActiveCategory,
+  showWelcome,
+  setShowWelcome,
+  setHoveredSkillIndex,
 }: {
   position: [number, number, number]
   rotation?: [number, number, number]
   showSkills?: boolean
   isDark?: boolean
+  onClick?: () => void
+  activeGame?: string | null
+  setActiveGame?: (game: string | null) => void
+  activeCategory?: string | null
+  setActiveCategory?: (category: string | null) => void
+  showWelcome?: boolean
+  setShowWelcome?: (show: boolean) => void
+  setHoveredSkillIndex?: (index: number | null) => void
 }) {
   const { skills } = portfolioData
+  const [hovered, setHovered] = useState(false)
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null)
+
+  const handleIconClick = (iconName: string) => {
+    if (iconName === "Game" || iconName === "Fun") {
+      setActiveCategory?.(iconName)
+    } else {
+      console.log(`Icon clicked: ${iconName}`)
+    }
+  }
 
   const skillIcons: Record<string, React.ReactNode> = {
     "Backend & ERP": <Server className="w-6 h-6" />,
@@ -690,40 +762,41 @@ function UltrawideMonitor({
         <meshStandardMaterial color={isDark ? "#0a0a0f" : "#d1d5db"} roughness={0.2} metalness={0.5} />
       </mesh>
 
-      {/* Screen */}
-      <mesh position={[0, 0, 0.06]}>
+      {/* Screen - clickable */}
+      <mesh 
+        position={[0, 0, 0.08]}
+        onClick={onClick}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        style={{ cursor: onClick ? 'pointer' : 'default' }}
+      >
         <planeGeometry args={[2.85, 1.15]} />
         <meshStandardMaterial
           color={isDark ? "#0f172a" : "#f8fafc"}
-          emissive={isDark ? "#14b8a6" : "#0ea5e9"}
-          emissiveIntensity={isDark ? 0.08 : 0.02}
+          emissive={isDark ? (hovered ? "#14b8a6" : "#14b8a6") : "#0ea5e9"}
+          emissiveIntensity={isDark ? (hovered ? 0.15 : 0.08) : 0.02}
+          transparent={false}
+          opacity={1}
+          side={0}
         />
       </mesh>
 
       {/* RGB strip on bottom */}
-      <mesh position={[0, -0.6, 0.06]}>
+      <mesh position={[0, -0.6, 0.08]}>
         <boxGeometry args={[2.9, 0.04, 0.02]} />
         <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={2} />
       </mesh>
 
-      {/* Monitor stand - modern V shape */}
-      <mesh position={[0, -0.85, 0.3]} castShadow>
-        <boxGeometry args={[0.1, 0.4, 0.1]} />
-        <meshStandardMaterial color={isDark ? "#1a1a24" : "#9ca3af"} metalness={0.7} roughness={0.2} />
-      </mesh>
-      <mesh position={[0, -1.05, 0.4]} rotation={[-0.3, 0, 0]} castShadow>
-        <boxGeometry args={[1.2, 0.04, 0.6]} />
-        <meshStandardMaterial color={isDark ? "#1a1a24" : "#9ca3af"} metalness={0.7} roughness={0.2} />
-      </mesh>
-
       {/* Content on screen - improved visibility */}
-      <Html transform position={[0, 0, 0.1]} scale={0.18} center>
+      <Html transform position={[0, 0, 0.075]} scale={0.18} center>
         {showSkills ? (
           <div
             className="w-[700px] p-5 rounded-xl shadow-2xl"
+            onClick={onClick}
             style={{
-              backgroundColor: isDark ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)",
+              backgroundColor: isDark ? "#0f172a" : "#ffffff",
               border: `2px solid ${isDark ? "#14b8a6" : "#0d9488"}`,
+              cursor: onClick ? 'pointer' : 'default',
             }}
           >
             <h3
@@ -741,6 +814,8 @@ function UltrawideMonitor({
                     backgroundColor: `${skillColors[i]}10`,
                     borderColor: skillColors[i],
                   }}
+                  onMouseEnter={() => setHoveredSkillIndex?.(i)}
+                  onMouseLeave={() => setHoveredSkillIndex?.(null)}
                 >
                   <div className="flex items-center gap-3 mb-3" style={{ color: skillColors[i] }}>
                     {skillIcons[category.title] || <Code className="w-6 h-6" />}
@@ -765,14 +840,30 @@ function UltrawideMonitor({
               ))}
             </div>
           </div>
-        ) : (
+        ) : (showWelcome ?? true) ? (
           <div
-            className="w-[700px] p-5 rounded-xl shadow-2xl"
+            className="w-[700px] p-5 rounded-xl shadow-2xl relative"
             style={{
-              backgroundColor: isDark ? "rgba(15, 23, 42, 0.98)" : "rgba(255, 255, 255, 0.98)",
+              backgroundColor: isDark ? "#0f172a" : "#ffffff",
               border: `2px solid ${isDark ? "#14b8a6" : "#0d9488"}`,
             }}
           >
+            {/* Close button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowWelcome?.(false)
+              }}
+              className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full transition-all hover:scale-110"
+              style={{
+                backgroundColor: isDark ? "rgba(239, 68, 68, 0.2)" : "rgba(239, 68, 68, 0.1)",
+                border: "1px solid #ef4444",
+                color: "#ef4444",
+              }}
+            >
+              <X className="w-4 h-4" />
+            </button>
+
             <div className="flex items-center justify-center gap-4 mb-3">
               <Terminal className="w-8 h-8" style={{ color: "#14b8a6" }} />
               <span
@@ -785,7 +876,7 @@ function UltrawideMonitor({
             <p className="font-mono text-base" style={{ color: isDark ? "#94a3b8" : "#475569" }}>
               {">"} Ready to build amazing things...
             </p>
-            <div className="mt-3 flex gap-2 justify-center">
+            <div className="mt-3 flex gap-2 justify-center mb-6">
               {["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"].map((color, i) => (
                 <div
                   key={i}
@@ -794,8 +885,51 @@ function UltrawideMonitor({
                 />
               ))}
             </div>
+            
+            {/* Desktop Icons */}
+            <div className="flex justify-center gap-6 mt-4">
+              {[
+                { name: "Game", icon: FolderOpen, color: "#f472b6" },
+                { name: "Fun", icon: Zap, color: "#fb923c" },
+                { name: "Resume", icon: FileText, color: "#818cf8" },
+                { name: "Awards", icon: Award, color: "#2dd4bf" },
+              ].map((item) => {
+                const Icon = item.icon
+                const isHovered = hoveredIcon === item.name
+                
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => handleIconClick(item.name)}
+                    onMouseEnter={() => setHoveredIcon(item.name)}
+                    onMouseLeave={() => setHoveredIcon(null)}
+                    className="flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all"
+                    style={{
+                      backgroundColor: isHovered ? `${item.color}15` : 'transparent',
+                      transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                    }}
+                  >
+                    <Icon 
+                      className="w-7 h-7" 
+                      style={{ 
+                        color: item.color,
+                        filter: isHovered ? `drop-shadow(0 0 4px ${item.color})` : 'none'
+                      }} 
+                    />
+                    <span 
+                      className="text-xs font-medium"
+                      style={{ 
+                        color: isDark ? '#e2e8f0' : '#1f2937',
+                      }}
+                    >
+                      {item.name}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
-        )}
+        ) : null}
       </Html>
     </group>
   )
@@ -817,7 +951,7 @@ function Keyboard({ position }: { position: [number, number, number] }) {
   )
 }
 
-function RGBKeyboard({ position }: { position: [number, number, number] }) {
+function RGBKeyboard({ position, hoveredSkillIndex }: { position: [number, number, number]; hoveredSkillIndex: number | null }) {
   return (
     <group position={position}>
       <RoundedBox args={[1.2, 0.04, 0.45]} radius={0.01} castShadow>
@@ -831,7 +965,7 @@ function RGBKeyboard({ position }: { position: [number, number, number] }) {
           <meshStandardMaterial
             color={["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"][i]}
             emissive={["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"][i]}
-            emissiveIntensity={0.8}
+            emissiveIntensity={hoveredSkillIndex === i ? 4 : 0.8}
           />
         </mesh>
       ))}
@@ -855,23 +989,90 @@ function Mouse({ position }: { position: [number, number, number] }) {
   )
 }
 
-function RGBMouse({ position }: { position: [number, number, number] }) {
+function RGBMouse({ 
+  position, 
+  showWelcome, 
+  onClick 
+}: { 
+  position: [number, number, number]
+  showWelcome: boolean
+  onClick: () => void
+}) {
+  const [hovered, setHovered] = useState(false)
+  const scrollWheelRef = useRef<THREE.Mesh>(null)
+  const ringRef = useRef<THREE.Mesh>(null)
+
+  // Animation for blinking when Welcome is closed
+  useFrame((state) => {
+    if (!showWelcome) {
+      const pulsate = Math.sin(state.clock.elapsedTime * 3) * 0.5 + 0.5
+      
+      // Розовое колесико - очень яркое свечение с белым
+      if (scrollWheelRef.current?.material) {
+        const material = scrollWheelRef.current.material as any
+        material.emissiveIntensity = 3 + pulsate * 5 // Очень яркое
+        // Добавляем белого для эффекта лампочки
+        material.emissive.setRGB(
+          1.0, // R - максимум
+          0.6 + pulsate * 0.3, // G - добавляем белого
+          0.8 + pulsate * 0.2  // B - добавляем белого
+        )
+      }
+      
+      // Бирюзовое кольцо - умеренное свечение
+      if (ringRef.current?.material) {
+        const material = ringRef.current.material as any
+        material.emissiveIntensity = 2 + pulsate * 1.5
+      }
+    } else {
+      // Возвращаем нормальные значения когда Welcome открыт
+      if (scrollWheelRef.current?.material) {
+        const material = scrollWheelRef.current.material as any
+        material.emissiveIntensity = 1
+        material.emissive.setRGB(0.96, 0.45, 0.71) // #f472b6
+      }
+      if (ringRef.current?.material) {
+        const material = ringRef.current.material as any
+        material.emissiveIntensity = 2
+      }
+    }
+  })
+
   return (
-    <group position={position}>
+    <group 
+      position={position}
+      onClick={onClick}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+      style={{ cursor: hovered ? 'pointer' : 'default' } as any}
+    >
       <RoundedBox args={[0.15, 0.04, 0.28]} radius={0.02} castShadow>
-        <meshStandardMaterial color="#0a0a0f" roughness={0.3} />
+        <meshStandardMaterial 
+          color="#0a0a0f" 
+          roughness={0.3}
+        />
       </RoundedBox>
 
-      <mesh position={[0, 0.01, 0]} rotation={[Math.PI / 2, 0, 0]}>
+      <mesh ref={ringRef} position={[0, 0.01, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[0.08, 0.01, 8, 24]} />
         <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={2} />
       </mesh>
 
-      {/* Scroll wheel - fixed rotation */}
-      <mesh position={[0, 0.03, 0.05]} rotation={[Math.PI / 2, 0, 0]}>
+      {/* Scroll wheel - bright pink lamp effect when blinking */}
+      <mesh ref={scrollWheelRef} position={[0, 0.05, 0.02]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.015, 0.015, 0.04, 12]} />
         <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={1} />
       </mesh>
+      
+      {/* Добавляем точечный свет от колесика когда мерцает */}
+      {!showWelcome && (
+        <pointLight 
+          position={[0, 0.05, 0.02]} 
+          color="#ff88cc" 
+          intensity={1.5} 
+          distance={0.5} 
+        />
+      )}
     </group>
   )
 }
@@ -908,6 +1109,55 @@ function PCTower({ position }: { position: [number, number, number] }) {
 }
 
 function ModernPCTower({ position }: { position: [number, number, number] }) {
+  const fan1Ref = useRef<THREE.Mesh>(null)
+  const fan2Ref = useRef<THREE.Mesh>(null)
+  const fan3Ref = useRef<THREE.Mesh>(null)
+  const powerButtonRef = useRef<THREE.Mesh>(null)
+  const rgbStripRef = useRef<THREE.Mesh>(null)
+
+  // Анимация переливания цветов
+  useFrame((state) => {
+    const time = state.clock.elapsedTime
+    
+    // Вентилятор 1 - розовый -> фиолетовый -> синий
+    if (fan1Ref.current?.material) {
+      const material = fan1Ref.current.material as any
+      const hue1 = (Math.sin(time * 0.5) * 0.5 + 0.5) * 60 + 300 // 300-360 (розовый-красный)
+      material.emissive.setHSL(hue1 / 360, 0.8, 0.6)
+      material.emissiveIntensity = 3 + Math.sin(time * 2) * 1
+    }
+    
+    // Вентилятор 2 - синий -> фиолетовый -> бирюзовый
+    if (fan2Ref.current?.material) {
+      const material = fan2Ref.current.material as any
+      const hue2 = (Math.sin(time * 0.6 + 2) * 0.5 + 0.5) * 80 + 200 // 200-280 (синий-фиолетовый)
+      material.emissive.setHSL(hue2 / 360, 0.8, 0.6)
+      material.emissiveIntensity = 3 + Math.sin(time * 2.2 + 1) * 1
+    }
+    
+    // Вентилятор 3 - бирюзовый -> зеленый -> голубой
+    if (fan3Ref.current?.material) {
+      const material = fan3Ref.current.material as any
+      const hue3 = (Math.sin(time * 0.7 + 4) * 0.5 + 0.5) * 60 + 160 // 160-220 (бирюзовый-голубой)
+      material.emissive.setHSL(hue3 / 360, 0.8, 0.6)
+      material.emissiveIntensity = 3 + Math.sin(time * 2.4 + 2) * 1
+    }
+    
+    // Кнопка питания - пульсация бирюзовым
+    if (powerButtonRef.current?.material) {
+      const material = powerButtonRef.current.material as any
+      material.emissiveIntensity = 4 + Math.sin(time * 3) * 2
+    }
+    
+    // RGB полоса - радужное переливание
+    if (rgbStripRef.current?.material) {
+      const material = rgbStripRef.current.material as any
+      const hueStrip = ((time * 50) % 360)
+      material.emissive.setHSL(hueStrip / 360, 0.9, 0.6)
+      material.emissiveIntensity = 3 + Math.sin(time * 2.5) * 1.5
+    }
+  })
+
   return (
     <group position={position}>
       {/* Main case */}
@@ -915,43 +1165,48 @@ function ModernPCTower({ position }: { position: [number, number, number] }) {
         <meshStandardMaterial color="#0a0a0f" roughness={0.2} metalness={0.3} />
       </RoundedBox>
 
-      {/* Glass panel with tint */}
-      <mesh position={[0.26, 0, 0]}>
+      {/* Glass panel with tint - removed for cleaner look */}
+      {/* <mesh position={[0.26, 0, 0]}>
         <planeGeometry args={[1.1, 0.45]} />
         <meshStandardMaterial color="#14b8a6" transparent opacity={0.15} />
-      </mesh>
+      </mesh> */}
 
-      {/* RGB fans visible through glass - fixed torusGeometry */}
+      {/* RGB fans visible through glass - с анимацией переливания */}
       <Float speed={3} rotationIntensity={0} floatIntensity={0}>
-        <mesh position={[0.2, 0.35, 0.05]}>
+        <mesh ref={fan1Ref} position={[0.2, 0.35, 0.05]}>
           <torusGeometry args={[0.12, 0.02, 8, 24]} />
           <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={2} />
         </mesh>
       </Float>
       <Float speed={3.5} rotationIntensity={0} floatIntensity={0}>
-        <mesh position={[0.2, -0.1, 0.05]}>
+        <mesh ref={fan2Ref} position={[0.2, -0.1, 0.05]}>
           <torusGeometry args={[0.12, 0.02, 8, 24]} />
           <meshStandardMaterial color="#818cf8" emissive="#818cf8" emissiveIntensity={2} />
         </mesh>
       </Float>
       <Float speed={4} rotationIntensity={0} floatIntensity={0}>
-        <mesh position={[0.2, -0.55, 0.05]}>
+        <mesh ref={fan3Ref} position={[0.2, -0.55, 0.05]}>
           <torusGeometry args={[0.1, 0.02, 8, 24]} />
           <meshStandardMaterial color="#2dd4bf" emissive="#2dd4bf" emissiveIntensity={2} />
         </mesh>
       </Float>
 
-      {/* Front IO - Power button - fixed cylinderGeometry rotation */}
-      <mesh position={[0, 0.55, 0.28]} rotation={[Math.PI / 2, 0, 0]}>
+      {/* Front IO - Power button - яркая пульсация */}
+      <mesh ref={powerButtonRef} position={[0, 0.55, 0.28]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.03, 0.03, 0.02, 16]} />
         <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={3} />
       </mesh>
 
-      {/* Front RGB strip */}
-      <mesh position={[-0.22, 0, 0.28]}>
+      {/* Front RGB strip - радужное переливание */}
+      <mesh ref={rgbStripRef} position={[-0.22, 0, 0.28]}>
         <boxGeometry args={[0.03, 1, 0.02]} />
         <meshStandardMaterial color="#818cf8" emissive="#818cf8" emissiveIntensity={2} />
       </mesh>
+      
+      {/* Убираем точечные источники света - они слишком яркие снизу */}
+      {/* <pointLight position={[0.2, 0.35, 0.15]} color="#f472b6" intensity={0.5} distance={0.6} />
+      <pointLight position={[0.2, -0.1, 0.15]} color="#818cf8" intensity={0.5} distance={0.6} />
+      <pointLight position={[0.2, -0.55, 0.15]} color="#2dd4bf" intensity={0.5} distance={0.6} /> */}
     </group>
   )
 }
@@ -1035,26 +1290,29 @@ function ModernWallDisplay({ position, isDark = true }: { position: [number, num
         </Text>
       )}
 
-      {/* Specializations with colors - much larger and clearer */}
-      <Html transform position={[0, -1.4, 0.2]} scale={0.35} center>
-        <div className="flex flex-wrap gap-4 justify-center w-[800px]">
+      {/* Specializations with colors - professional design with icons */}
+      <Html transform position={[0, -1.4, 0.2]} scale={0.38} center>
+        <div className="flex flex-wrap gap-3 justify-center w-[900px]">
           {personal.specializations.map((spec, i) => {
             const specColors = ["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"]
+            const icons = ["📐", "📊", "🎮", "🤖"]
             return (
               <span
                 key={i}
-                className="px-6 py-3 rounded-full text-lg font-bold border-3 shadow-xl"
+                className="px-5 py-2.5 rounded-full text-base font-semibold border-2 shadow-xl flex items-center gap-2 transition-all hover:scale-105"
                 style={{
-                  backgroundColor: isDark ? `${specColors[i]}40` : `${specColors[i]}25`,
+                  backgroundColor: isDark ? `${specColors[i]}35` : `${specColors[i]}20`,
                   borderColor: specColors[i],
-                  borderWidth: "3px",
                   color: isDark ? "#fff" : "#1e293b",
                   textShadow: isDark
-                    ? `0 0 12px ${specColors[i]}, 0 2px 4px rgba(0,0,0,0.5)`
-                    : "0 1px 2px rgba(0,0,0,0.2)",
-                  boxShadow: `0 0 20px ${specColors[i]}50`,
+                    ? `0 0 10px ${specColors[i]}80, 0 1px 3px rgba(0,0,0,0.4)`
+                    : "0 1px 2px rgba(0,0,0,0.15)",
+                  boxShadow: isDark
+                    ? `0 0 16px ${specColors[i]}40, 0 4px 12px rgba(0,0,0,0.3)`
+                    : `0 2px 8px ${specColors[i]}30, 0 1px 3px rgba(0,0,0,0.1)`,
                 }}
               >
+                <span style={{ fontSize: "1.1em" }}>{icons[i]}</span>
                 {spec}
               </span>
             )
@@ -1100,12 +1358,46 @@ function Shelf({ position }: { position: [number, number, number] }) {
 }
 
 function FloatingDecor({ position, color }: { position: [number, number, number]; color: string }) {
+  const [hovered, setHovered] = useState(false)
+  const meshRef = useRef<THREE.Mesh>(null)
+
+  // Анимация мерцания при наведении
+  useFrame((state) => {
+    if (meshRef.current?.material && hovered) {
+      const pulsate = Math.sin(state.clock.elapsedTime * 4) * 0.5 + 0.5
+      const material = meshRef.current.material as any
+      material.emissiveIntensity = 2 + pulsate * 4
+    }
+  })
+
   return (
     <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-      <mesh position={position}>
+      <mesh 
+        ref={meshRef}
+        position={position}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        style={{ cursor: hovered ? 'pointer' : 'default' } as any}
+      >
         <octahedronGeometry args={[0.15]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
+        <meshStandardMaterial 
+          color={color} 
+          emissive={color} 
+          emissiveIntensity={hovered ? 3 : 1}
+          metalness={0.5}
+          roughness={0.2}
+        />
       </mesh>
+      
+      {/* Добавляем точечный свет при наведении */}
+      {hovered && (
+        <pointLight 
+          position={position} 
+          color={color} 
+          intensity={3} 
+          distance={2} 
+        />
+      )}
     </Float>
   )
 }
@@ -1128,7 +1420,19 @@ function CeilingLight({ position }: { position: [number, number, number] }) {
   )
 }
 
-function EntranceRoom({ position, isDark = true }: { position: [number, number, number]; isDark?: boolean }) {
+function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
+  position: [number, number, number]; 
+  isDark?: boolean; 
+  onZoomToDesk?: () => void;
+  activeGame: string | null;
+  setActiveGame: (game: string | null) => void;
+  activeCategory: string | null;
+  setActiveCategory: (category: string | null) => void;
+  showWelcome: boolean;
+  setShowWelcome: (show: boolean) => void;
+  hoveredSkillIndex: number | null;
+  setHoveredSkillIndex: (index: number | null) => void;
+}) {
   const { personal } = portfolioData
   const [showLinkedInModal, setShowLinkedInModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
@@ -1142,26 +1446,33 @@ function EntranceRoom({ position, isDark = true }: { position: [number, number, 
       <ModernDesk position={[0, -1.5, -3]} isDark={isDark} />
 
       {/* Dual ultrawide monitors - one showing skills */}
-      <UltrawideMonitor position={[-0.8, -0.2, -3.8]} rotation={[0, 0.15, 0]} showSkills={true} isDark={isDark} />
-      <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} />
+      <UltrawideMonitor 
+        position={[-0.8, -0.2, -3.8]} 
+        rotation={[0, 0.15, 0]} 
+        showSkills={true} 
+        isDark={isDark} 
+        onClick={onZoomToDesk}
+        setHoveredSkillIndex={setHoveredSkillIndex}
+      />
+      <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} />
 
-      <RealisticFlowerPot position={[-1.7, -1.35, -2.5]} />
+      <RealisticFlowerPot position={[-1.7, -1.46, -2.5]} />
 
       {/* RGB Keyboard and mouse */}
-      <RGBKeyboard position={[0, -1.42, -2.5]} />
-      <RGBMouse position={[0.85, -1.42, -2.5]} />
+      <RGBKeyboard position={[0, -1.42, -2.5]} hoveredSkillIndex={hoveredSkillIndex} />
+      <RGBMouse position={[0.85, -1.42, -2.5]} showWelcome={showWelcome} onClick={() => setShowWelcome(true)} />
 
       {/* Modern PC Tower */}
       <ModernPCTower position={[2.2, -2.35, -3.2]} />
 
-      {/* Modern gaming chair */}
-      <ModernGamingChair position={[0, -2.3, -0.8]} isDark={isDark} />
+      {/* Modern gaming chair - REMOVED */}
+      {/* <ModernGamingChair position={[0, -2.3, -0.8]} isDark={isDark} /> */}
 
-      <Bookshelf position={[-6.5, -1.8, -3]} isDark={isDark} />
+      <RGBSpeaker position={[-6.5, -1.8, -3]} isDark={isDark} />
 
       <FloorLamp position={[-5.5, -3, 1]} isDark={isDark} />
 
-      <AreaRug position={[0, -2.98, -1.5]} isDark={isDark} />
+      {/* <AreaRug position={[0, -2.98, -1.5]} isDark={isDark} /> */}
 
       <group position={[-6.9, 3, -1]} rotation={[0, Math.PI / 2, 0]}>
         <WallClock position={[0, 0, 0]} isDark={isDark} />
@@ -1432,8 +1743,8 @@ function EntranceRoom({ position, isDark = true }: { position: [number, number, 
         </group>
       )}
 
-      {/* Ambient colored lighting - reduced for performance */}
-      <pointLight position={[0, -2, -3]} intensity={isDark ? 20 : 10} color="#14b8a6" distance={8} />
+      {/* Ambient colored lighting - более масштабный и рассеянный */}
+      <pointLight position={[0, -2, -3]} intensity={isDark ? 6 : 4} color="#14b8a6" distance={18} decay={2} />
       <pointLight position={[0, 6, -3]} intensity={isDark ? 35 : 40} color="#ffffff" distance={10} />
     </ColorfulRoom>
   )
@@ -1642,46 +1953,93 @@ function ContactRoom({ position, isDark = true }: { position: [number, number, n
   )
 }
 
-function Scene({ currentRoom, isDark }: { currentRoom: number; isDark: boolean }) {
+function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
+  currentRoom: number; 
+  isDark: boolean; 
+  isZoomedToDesk: boolean; 
+  onZoomToDesk: () => void;
+  activeGame: string | null;
+  setActiveGame: (game: string | null) => void;
+  activeCategory: string | null;
+  setActiveCategory: (category: string | null) => void;
+  showWelcome: boolean;
+  setShowWelcome: (show: boolean) => void;
+  hoveredSkillIndex: number | null;
+  setHoveredSkillIndex: (index: number | null) => void;
+}) {
   const cameraRef = useRef<THREE.PerspectiveCamera>(null)
+  
+  // Позиция камеры для zoom - центр между двумя мониторами
+  const deskCameraPosition: [number, number, number] = [0, 0.3, 0.5]
+  const deskCameraTarget: [number, number, number] = [0, -0.3, -3.8]
+  
+  // Обычная позиция камеры
+  const normalCameraPosition = rooms[currentRoom].cameraPosition
+  const normalCameraTarget = [rooms[currentRoom].position[0], 1, 0] as [number, number, number]
 
   useEffect(() => {
     if (cameraRef.current) {
-      const targetX = rooms[currentRoom].position[0]
-      const animate = () => {
-        if (cameraRef.current) {
-          const currentX = cameraRef.current.position.x
-          const diff = targetX - currentX
-          if (Math.abs(diff) > 0.1) {
-            cameraRef.current.position.x += diff * 0.05
-            requestAnimationFrame(animate)
-          } else {
-            cameraRef.current.position.x = targetX
+      if (isZoomedToDesk) {
+        // Анимация приближения к столу
+        const animate = () => {
+          if (cameraRef.current) {
+            const targetPos = deskCameraPosition
+            const currentPos = cameraRef.current.position
+            
+            const diffX = targetPos[0] - currentPos.x
+            const diffY = targetPos[1] - currentPos.y
+            const diffZ = targetPos[2] - currentPos.z
+            
+            if (Math.abs(diffX) > 0.05 || Math.abs(diffY) > 0.05 || Math.abs(diffZ) > 0.05) {
+              cameraRef.current.position.x += diffX * 0.1
+              cameraRef.current.position.y += diffY * 0.1
+              cameraRef.current.position.z += diffZ * 0.1
+              requestAnimationFrame(animate)
+            } else {
+              cameraRef.current.position.set(...targetPos)
+            }
           }
         }
+        animate()
+      } else {
+        // Обычная анимация между комнатами
+        const targetX = rooms[currentRoom].position[0]
+        const animate = () => {
+          if (cameraRef.current) {
+            const currentX = cameraRef.current.position.x
+            const diff = targetX - currentX
+            if (Math.abs(diff) > 0.1) {
+              cameraRef.current.position.x += diff * 0.05
+              requestAnimationFrame(animate)
+            } else {
+              cameraRef.current.position.x = targetX
+            }
+          }
+        }
+        animate()
       }
-      animate()
     }
-  }, [currentRoom])
+  }, [currentRoom, isZoomedToDesk])
 
   return (
     <>
-      <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 2, 8]} fov={60} />
+      <PerspectiveCamera ref={cameraRef} makeDefault position={isZoomedToDesk ? deskCameraPosition : [0, 2, 8]} fov={60} />
       <OrbitControls
         enableZoom={true}
         enablePan={false}
-        minDistance={5}
-        maxDistance={12}
-        minPolarAngle={Math.PI / 4}
-        maxPolarAngle={Math.PI / 2}
-        target={[rooms[currentRoom].position[0], 1, 0]}
+        enabled={true}
+        minDistance={isZoomedToDesk ? 3.8 : 5}
+        maxDistance={isZoomedToDesk ? 4.5 : 12}
+        minPolarAngle={isZoomedToDesk ? Math.PI / 2.5 : Math.PI / 4}
+        maxPolarAngle={isZoomedToDesk ? Math.PI / 1.6 : Math.PI / 2}
+        target={isZoomedToDesk ? deskCameraTarget : normalCameraTarget}
       />
 
       <ambientLight intensity={isDark ? 0.4 : 0.6} />
       <directionalLight position={[10, 10, 5]} intensity={isDark ? 0.3 : 0.5} castShadow={false} />
 
       {/* Lazy load only nearby rooms for performance */}
-      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} />}
+      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} onZoomToDesk={onZoomToDesk} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />}
       {(currentRoom === 0 || currentRoom === 1) && <AboutRoom position={rooms[1].position} isDark={isDark} />}
       {(currentRoom === 1 || currentRoom === 2) && <SkillsRoom position={rooms[2].position} isDark={isDark} />}
       {(currentRoom === 2 || currentRoom === 3) && <ExperienceRoom position={rooms[3].position} isDark={isDark} />}
@@ -1697,6 +2055,23 @@ export function House3D() {
   const [currentRoom, setCurrentRoom] = useState(0)
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [isZoomedToDesk, setIsZoomedToDesk] = useState(false)
+  const [activeGame, setActiveGame] = useState<string | null>(null)
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [showWelcome, setShowWelcome] = useState(true)
+  const [hoveredSkillIndex, setHoveredSkillIndex] = useState<number | null>(null)
+  
+  const gamesData = {
+    "Game": [
+      { name: "Space Invaders", url: "https://freeinvaders.org/", description: "Classic arcade shooter", color: "#f472b6" },
+      { name: "Snake", url: "https://playsnake.org/", description: "Eat and grow longer", color: "#818cf8" },
+      { name: "Tetris", url: "https://tetris.com/play-tetris", description: "Stack the blocks", color: "#2dd4bf" },
+      { name: "Pong", url: "https://pong-2.com/", description: "Classic table tennis", color: "#fb923c" },
+    ],
+    "Fun": [
+      { name: "Mona Lisa", url: "/mona-lisa.html", description: "Interactive Mona Lisa art", color: "#f472b6", isLocal: true },
+    ]
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -1706,9 +2081,21 @@ export function House3D() {
 
   const goToPrev = () => setCurrentRoom((prev) => Math.max(0, prev - 1))
   const goToNext = () => setCurrentRoom((prev) => Math.min(rooms.length - 1, prev + 1))
+  
+  const handleZoomToDesk = () => {
+    setCurrentRoom(0) // Entrance room
+    setIsZoomedToDesk(true)
+  }
+  
+  const zoomOut = () => {
+    setIsZoomedToDesk(false)
+  }
+  
+  const isModalOpen = !!(activeCategory || activeGame)
 
   return (
     <div className="relative h-screen w-full">
+      {!isModalOpen && (
       <Canvas 
         shadows={false}
         className="bg-background"
@@ -1722,10 +2109,12 @@ export function House3D() {
           depth: true
         }}
       >
-        <Scene currentRoom={currentRoom} isDark={isDark} />
+        <Scene currentRoom={currentRoom} isDark={isDark} isZoomedToDesk={isZoomedToDesk} onZoomToDesk={handleZoomToDesk} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />
       </Canvas>
+      )}
 
       {/* UI Overlay */}
+      {!isModalOpen && (
       <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
           <div className="bg-background/80 backdrop-blur-sm rounded-lg px-4 py-2 border border-border">
@@ -1734,8 +2123,23 @@ export function House3D() {
         </div>
         <ThemeToggle />
       </div>
+      )}
+
+      {/* Zoom Out Button */}
+      {!isModalOpen && isZoomedToDesk && (
+        <div className="absolute top-20 left-4 z-10">
+          <button
+            onClick={zoomOut}
+            className="bg-primary hover:bg-primary/90 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary/50 transition-all hover:scale-105 flex items-center gap-2"
+          >
+            <ChevronLeft className="w-5 h-5 text-primary-foreground" />
+            <span className="text-primary-foreground font-semibold">Back</span>
+          </button>
+        </div>
+      )}
 
       {/* Room Navigation */}
+      {!isModalOpen && !isZoomedToDesk && (
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-2 border border-border flex items-center gap-2">
           <button
@@ -1775,13 +2179,118 @@ export function House3D() {
           </button>
         </div>
       </div>
+      )}
 
       {/* Instructions */}
+      {!isModalOpen && !isZoomedToDesk && (
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10">
         <p className="text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full">
           Drag to look around • Scroll to zoom • Click rooms to navigate
         </p>
       </div>
+      )}
+
+      {/* Fullscreen Game/Category Modal */}
+      {(activeCategory || activeGame) && (
+        <div 
+          className="fixed inset-0 z-50 bg-background flex items-center justify-center"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+          }}
+        >
+          {activeCategory && !activeGame ? (
+            <div className="relative w-full h-full flex flex-col">
+              {/* Category Header */}
+              <div className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur-sm">
+                <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
+                  <FolderOpen className="w-8 h-8" />
+                  {activeCategory}
+                </h2>
+                <button
+                  onClick={() => setActiveCategory(null)}
+                  className="p-2 rounded-lg hover:bg-destructive/20 transition-colors group"
+                >
+                  <X className="w-6 h-6 text-muted-foreground group-hover:text-destructive" />
+                </button>
+              </div>
+
+              {/* Games Grid */}
+              <div className="flex-1 p-8 overflow-auto bg-muted/30">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                  {gamesData[activeCategory as keyof typeof gamesData]?.map((game) => (
+                    <button
+                      key={game.name}
+                      onClick={() => setActiveGame(game.url)}
+                      className="group relative p-6 rounded-xl border-2 border-border bg-card hover:border-primary transition-all hover:scale-105 hover:shadow-xl text-left"
+                    >
+                      <div className="flex flex-col gap-4">
+                        <div 
+                          className="w-16 h-16 rounded-xl flex items-center justify-center transition-all group-hover:scale-110"
+                          style={{ backgroundColor: `${game.color}20`, border: `2px solid ${game.color}` }}
+                        >
+                          <Gamepad2 className="w-8 h-8" style={{ color: game.color }} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                            {game.name}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {game.description}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-primary font-semibold">
+                          <span>Play Now</span>
+                          <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : activeGame ? (
+            <div className="relative w-full h-full flex flex-col bg-black">
+              {/* Game Header */}
+              <div className="flex items-center justify-between p-3 bg-background/95 backdrop-blur-sm border-b border-border">
+                <button
+                  onClick={() => {
+                    setActiveGame(null)
+                    if (!activeCategory) setActiveCategory(null)
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-muted transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  <span className="font-semibold">Back</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveGame(null)
+                    setActiveCategory(null)
+                  }}
+                  className="p-2 rounded-lg hover:bg-destructive/20 transition-colors group"
+                >
+                  <X className="w-6 h-6 text-muted-foreground group-hover:text-destructive" />
+                </button>
+              </div>
+
+              {/* Game iframe */}
+              <div className="flex-1 relative">
+                <iframe
+                  src={activeGame}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   )
 }
