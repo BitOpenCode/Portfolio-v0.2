@@ -5,7 +5,7 @@ import type React from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Environment, OrbitControls, PerspectiveCamera, Html, Float, Text, RoundedBox } from "@react-three/drei"
 import { useState, useRef, useEffect } from "react"
-import type * as THREE from "three"
+import * as THREE from "three"
 import portfolioData from "@/data/portfolio.json"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "next-themes"
@@ -227,6 +227,311 @@ function ColorfulRoom({
   )
 }
 
+// Particle Pyramid Hologram - rotating particle pyramid with glow
+function ParticlePyramid({ position }: { position: [number, number, number] }) {
+  const outerGroupRef = useRef<THREE.Group>(null)
+  const innerGroupRef = useRef<THREE.Group>(null)
+  const outerPointsRef = useRef<THREE.Points>(null)
+  const innerPointsRef = useRef<THREE.Points>(null)
+  
+  // Create particle positions for pyramid
+  const createPyramidParticles = (height: number, baseSize: number, count: number) => {
+    const positions = new Float32Array(count * 3)
+    const colors = new Float32Array(count * 3)
+    const sizes = new Float32Array(count)
+    
+    for (let i = 0; i < count; i++) {
+      const t = Math.random()
+      const u = Math.random()
+      
+      // Define pyramid vertices
+      const apex = { x: 0, y: height, z: 0 }
+      const base = [
+        { x: -baseSize, y: 0, z: -baseSize },
+        { x: baseSize, y: 0, z: -baseSize },
+        { x: baseSize, y: 0, z: baseSize },
+        { x: -baseSize, y: 0, z: baseSize }
+      ]
+      
+      // Random face
+      const face = Math.floor(Math.random() * 4)
+      const basePoint1 = base[face]
+      const basePoint2 = base[(face + 1) % 4]
+      
+      // Interpolate position on pyramid surface
+      const x = (1 - t) * ((1 - u) * basePoint1.x + u * basePoint2.x) + t * apex.x
+      const y = (1 - t) * 0 + t * height
+      const z = (1 - t) * ((1 - u) * basePoint1.z + u * basePoint2.z) + t * apex.z
+      
+      positions[i * 3] = x
+      positions[i * 3 + 1] = y
+      positions[i * 3 + 2] = z
+      
+      // Color gradient from cyan to purple
+      const colorPos = y / height
+      const cyan = { r: 0, g: 1, b: 1 }
+      const blue = { r: 0.25, g: 0.41, b: 0.88 }
+      const purple = { r: 0.58, g: 0, b: 0.83 }
+      
+      let color
+      if (colorPos < 0.5) {
+        const mix = colorPos * 2
+        color = {
+          r: cyan.r + (blue.r - cyan.r) * mix,
+          g: cyan.g + (blue.g - cyan.g) * mix,
+          b: cyan.b + (blue.b - cyan.b) * mix
+        }
+      } else {
+        const mix = (colorPos - 0.5) * 2
+        color = {
+          r: blue.r + (purple.r - blue.r) * mix,
+          g: blue.g + (purple.g - blue.g) * mix,
+          b: blue.b + (purple.b - blue.b) * mix
+        }
+      }
+      
+      colors[i * 3] = color.r
+      colors[i * 3 + 1] = color.g
+      colors[i * 3 + 2] = color.b
+      
+      // Random sizes with some larger "sparkle" particles
+      sizes[i] = Math.random() < 0.1 ? 0.015 : 0.008
+    }
+    
+    return { positions, colors, sizes }
+  }
+  
+  const outerParticles = createPyramidParticles(0.2, 0.12, 800)
+  const innerParticles = createPyramidParticles(0.12, 0.07, 500)
+  
+  useFrame((state) => {
+    const time = state.clock.elapsedTime
+    
+    // Rotate groups
+    if (outerGroupRef.current) {
+      outerGroupRef.current.rotation.y = time * 0.3
+    }
+    if (innerGroupRef.current) {
+      innerGroupRef.current.rotation.y = -time * 0.5
+    }
+    
+    // Sparkle effect - animate particle sizes
+    if (outerPointsRef.current) {
+      const sizes = outerPointsRef.current.geometry.attributes.size.array as Float32Array
+      for (let i = 0; i < sizes.length; i++) {
+        if (Math.random() < 0.02) { // 2% chance per frame
+          const pulse = Math.sin(time * 10 + i) * 0.5 + 0.5
+          sizes[i] = 0.008 + pulse * 0.02
+        }
+      }
+      outerPointsRef.current.geometry.attributes.size.needsUpdate = true
+    }
+    
+    if (innerPointsRef.current) {
+      const sizes = innerPointsRef.current.geometry.attributes.size.array as Float32Array
+      for (let i = 0; i < sizes.length; i++) {
+        if (Math.random() < 0.02) {
+          const pulse = Math.sin(time * 12 + i) * 0.5 + 0.5
+          sizes[i] = 0.006 + pulse * 0.015
+        }
+      }
+      innerPointsRef.current.geometry.attributes.size.needsUpdate = true
+    }
+  })
+
+  return (
+    <group position={position}>
+      {/* Base platform */}
+      <mesh position={[0, -0.04, 0]}>
+        <cylinderGeometry args={[0.08, 0.08, 0.02, 16]} />
+        <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
+      </mesh>
+
+      {/* Outer particle pyramid */}
+      <group ref={outerGroupRef} position={[0, 0, 0]}>
+        <points ref={outerPointsRef}>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={outerParticles.positions.length / 3}
+              array={outerParticles.positions}
+              itemSize={3}
+            />
+            <bufferAttribute
+              attach="attributes-color"
+              count={outerParticles.colors.length / 3}
+              array={outerParticles.colors}
+              itemSize={3}
+            />
+            <bufferAttribute
+              attach="attributes-size"
+              count={outerParticles.sizes.length}
+              array={outerParticles.sizes}
+              itemSize={1}
+            />
+          </bufferGeometry>
+          <pointsMaterial
+            size={0.008}
+            vertexColors
+            transparent
+            opacity={0.9}
+            blending={THREE.AdditiveBlending}
+            sizeAttenuation
+            depthWrite={false}
+          />
+        </points>
+      </group>
+
+      {/* Inner particle pyramid */}
+      <group ref={innerGroupRef} position={[0, 0.06, 0]}>
+        <points ref={innerPointsRef}>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={innerParticles.positions.length / 3}
+              array={innerParticles.positions}
+              itemSize={3}
+            />
+            <bufferAttribute
+              attach="attributes-color"
+              count={innerParticles.colors.length / 3}
+              array={innerParticles.colors}
+              itemSize={3}
+            />
+            <bufferAttribute
+              attach="attributes-size"
+              count={innerParticles.sizes.length}
+              array={innerParticles.sizes}
+              itemSize={1}
+            />
+          </bufferGeometry>
+          <pointsMaterial
+            size={0.006}
+            vertexColors
+            transparent
+            opacity={0.95}
+            blending={THREE.AdditiveBlending}
+            sizeAttenuation
+            depthWrite={false}
+          />
+        </points>
+      </group>
+
+      {/* Point light for glow effect */}
+      <pointLight position={[0, 0.12, 0]} intensity={1.2} color="#06b6d4" distance={0.4} />
+      <pointLight position={[0, 0.06, 0]} intensity={0.8} color="#9400d3" distance={0.3} />
+    </group>
+  )
+}
+
+// Mini Rocket - SpaceX Starship style
+function MiniRocket({ position, isDark }: { position: [number, number, number]; isDark?: boolean }) {
+  const engineRef1 = useRef<THREE.Mesh>(null)
+  const engineRef2 = useRef<THREE.Mesh>(null)
+  const engineRef3 = useRef<THREE.Mesh>(null)
+  
+  useFrame((state) => {
+    const pulsate = (Math.sin(state.clock.elapsedTime * 8) + 1) / 2
+    const intensity = 0.5 + pulsate * 1.5
+    
+    if (engineRef1.current) {
+      ;(engineRef1.current.material as THREE.MeshStandardMaterial).emissiveIntensity = intensity
+    }
+    if (engineRef2.current) {
+      ;(engineRef2.current.material as THREE.MeshStandardMaterial).emissiveIntensity = intensity
+    }
+    if (engineRef3.current) {
+      ;(engineRef3.current.material as THREE.MeshStandardMaterial).emissiveIntensity = intensity
+    }
+  })
+
+  return (
+    <group position={position}>
+      {/* Base platform */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.06, 0.06, 0.02, 16]} />
+        <meshStandardMaterial color="#1e293b" metalness={0.9} roughness={0.1} />
+      </mesh>
+
+      {/* Rocket body - main cylinder */}
+      <mesh position={[0, 0.18, 0]}>
+        <cylinderGeometry args={[0.025, 0.025, 0.28, 16]} />
+        <meshStandardMaterial 
+          color={isDark ? "#cbd5e1" : "#94a3b8"} 
+          metalness={0.9} 
+          roughness={0.2} 
+        />
+      </mesh>
+
+      {/* Rocket nose cone */}
+      <mesh position={[0, 0.34, 0]}>
+        <coneGeometry args={[0.025, 0.06, 16]} />
+        <meshStandardMaterial 
+          color={isDark ? "#e2e8f0" : "#cbd5e1"} 
+          metalness={0.95} 
+          roughness={0.1} 
+        />
+      </mesh>
+
+      {/* Fins (4 pieces) - larger and more visible */}
+      {[0, 1, 2, 3].map((i) => (
+        <mesh
+          key={`fin-${i}`}
+          position={[
+            Math.cos((i * Math.PI) / 2) * 0.04,
+            0.06,
+            Math.sin((i * Math.PI) / 2) * 0.04,
+          ]}
+          rotation={[0, (i * Math.PI) / 2, 0]}
+        >
+          <boxGeometry args={[0.008, 0.06, 0.055]} />
+          <meshStandardMaterial 
+            color="#334155" 
+            metalness={0.9} 
+            roughness={0.2}
+            emissive="#475569"
+            emissiveIntensity={0.2}
+          />
+        </mesh>
+      ))}
+
+      {/* Engine nozzles (3 pieces) */}
+      <mesh ref={engineRef1} position={[0, 0.03, 0]}>
+        <cylinderGeometry args={[0.012, 0.01, 0.02, 8]} />
+        <meshStandardMaterial 
+          color="#fb923c" 
+          emissive="#fb923c" 
+          emissiveIntensity={1}
+          metalness={0.5}
+        />
+      </mesh>
+      
+      <mesh ref={engineRef2} position={[0.015, 0.03, 0.01]}>
+        <cylinderGeometry args={[0.008, 0.006, 0.015, 8]} />
+        <meshStandardMaterial 
+          color="#fb923c" 
+          emissive="#fb923c" 
+          emissiveIntensity={1}
+          metalness={0.5}
+        />
+      </mesh>
+
+      <mesh ref={engineRef3} position={[-0.015, 0.03, -0.01]}>
+        <cylinderGeometry args={[0.008, 0.006, 0.015, 8]} />
+        <meshStandardMaterial 
+          color="#fb923c" 
+          emissive="#fb923c" 
+          emissiveIntensity={1}
+          metalness={0.5}
+        />
+      </mesh>
+
+      {/* Engine glow lights */}
+      <pointLight position={[0, 0.03, 0]} intensity={0.8} color="#fb923c" distance={0.3} />
+    </group>
+  )
+}
+
 function RealisticFlowerPot({ position }: { position: [number, number, number] }) {
   return (
     <group position={position}>
@@ -377,7 +682,7 @@ function RGBSpeaker({ position, isDark = true }: { position: [number, number, nu
       <mesh ref={speaker1Ref} position={[0, 0.7, 0.18]}>
         <circleGeometry args={[0.22, 32]} />
         <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={2} />
-      </mesh>
+        </mesh>
       <mesh position={[0, 0.7, 0.175]}>
         <torusGeometry args={[0.22, 0.02, 16, 32]} />
         <meshStandardMaterial color="#0a0a0f" roughness={0.3} />
@@ -387,7 +692,7 @@ function RGBSpeaker({ position, isDark = true }: { position: [number, number, nu
       <mesh ref={speaker2Ref} position={[0, 0, 0.18]}>
         <circleGeometry args={[0.25, 32]} />
         <meshStandardMaterial color="#818cf8" emissive="#818cf8" emissiveIntensity={2} />
-      </mesh>
+            </mesh>
       <mesh position={[0, 0, 0.175]}>
         <torusGeometry args={[0.25, 0.02, 16, 32]} />
         <meshStandardMaterial color="#0a0a0f" roughness={0.3} />
@@ -927,7 +1232,7 @@ function UltrawideMonitor({
                   </button>
                 )
               })}
-            </div>
+          </div>
           </div>
         ) : null}
       </Html>
@@ -1277,17 +1582,17 @@ function ModernWallDisplay({ position, isDark = true }: { position: [number, num
 
       {/* Tagline - larger */}
       {personal.tagline && (
-        <Text
+      <Text
           position={[0, -0.2, 0.1]}
           fontSize={0.26}
-          color={colors.textMuted}
-          anchorX="center"
-          anchorY="middle"
+        color={colors.textMuted}
+        anchorX="center"
+        anchorY="middle"
           maxWidth={9.5}
-          textAlign="center"
-        >
-          {personal.tagline}
-        </Text>
+        textAlign="center"
+      >
+        {personal.tagline}
+      </Text>
       )}
 
       {/* Specializations with colors - professional design without emojis */}
@@ -1454,7 +1759,12 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
       />
       <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} />
 
-      <RealisticFlowerPot position={[-1.7, -1.46, -2.5]} />
+      {/* Flower pot - saved for possible relocation */}
+      {/* <RealisticFlowerPot position={[-1.7, -1.46, -2.5]} /> */}
+      
+      {/* Tech-themed decorations on desk */}
+      <ParticlePyramid position={[-1.9, -1.42, -2.5]} />
+      <MiniRocket position={[-1.5, -1.42, -3.4]} isDark={isDark} />
 
       {/* RGB Keyboard and mouse */}
       <RGBKeyboard position={[0, -1.42, -2.5]} hoveredSkillIndex={hoveredSkillIndex} />
@@ -1637,11 +1947,11 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
                   >
                     No
                   </button>
-                </div>
               </div>
-            </Html>
-          </Float>
-        </group>
+            </div>
+          </Html>
+        </Float>
+      </group>
       )}
 
       {/* Email Modal - positioned in front of social panel */}
@@ -2032,8 +2342,8 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, 
     if (cameraRef.current) {
       if (isZoomedToDesk) {
         // Анимация приближения к столу
-        const animate = () => {
-          if (cameraRef.current) {
+      const animate = () => {
+        if (cameraRef.current) {
             const targetPos = deskCameraPosition
             const currentPos = cameraRef.current.position
             
@@ -2045,13 +2355,13 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, 
               cameraRef.current.position.x += diffX * 0.1
               cameraRef.current.position.y += diffY * 0.1
               cameraRef.current.position.z += diffZ * 0.1
-              requestAnimationFrame(animate)
-            } else {
+            requestAnimationFrame(animate)
+          } else {
               cameraRef.current.position.set(...targetPos)
-            }
           }
         }
-        animate()
+      }
+      animate()
       } else {
         // Обычная анимация между комнатами - полный сброс позиции камеры
         const targetPos = rooms[currentRoom].cameraPosition
