@@ -8,6 +8,9 @@ import { useState, useRef, useEffect } from "react"
 import * as THREE from "three"
 import portfolioData from "@/data/portfolio.json"
 import { SpookyIsland } from "./spooky-island"
+import { SkyCabinIsland } from "./sky-cabin-island"
+import { SingularityCrystal } from "./singularity-crystal"
+import { ContactCyberRoom } from "./contact-cyber-room"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "next-themes"
 import {
@@ -1647,7 +1650,7 @@ function ModernWallDisplay({ position, isDark = true, hideHtmlOverlays = false }
       )}
 
       {/* Specializations with colors - professional design without emojis */}
-      {!hideHtmlOverlays && <Html occlude transform position={[0, -1.4, 0.2]} scale={0.38} center>
+      {!hideHtmlOverlays && <Html transform position={[0, -1.4, 0.2]} scale={0.38} center>
         <div className="flex flex-wrap gap-3 justify-center w-[900px]">
           {personal.specializations.map((spec, i) => {
             const specColors = ["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"]
@@ -1711,7 +1714,7 @@ function Shelf({ position }: { position: [number, number, number] }) {
   )
 }
 
-function FloatingDecor({ position, color }: { position: [number, number, number]; color: string }) {
+function FloatingDecor({ position, color, onClick }: { position: [number, number, number]; color: string; onClick?: () => void }) {
   const [hovered, setHovered] = useState(false)
   const meshRef = useRef<THREE.Mesh>(null)
 
@@ -1731,7 +1734,8 @@ function FloatingDecor({ position, color }: { position: [number, number, number]
         position={position}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        style={{ cursor: hovered ? 'pointer' : 'default' } as any}
+        onClick={(e) => { e.stopPropagation(); onClick?.() }}
+        style={{ cursor: hovered && onClick ? 'pointer' : 'default' } as any}
       >
         <octahedronGeometry args={[0.15]} />
         <meshStandardMaterial 
@@ -1774,11 +1778,15 @@ function CeilingLight({ position }: { position: [number, number, number] }) {
   )
 }
 
-function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex, hideHtmlOverlays = false }: { 
+function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, onZoomToBlueIsland, onSingularityCrystalClick, onSingularityCrystalDoubleClick, isSingularityCrystalTransformed = false, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex, hideHtmlOverlays = false }: { 
   position: [number, number, number]; 
   isDark?: boolean; 
   onZoomToDesk?: () => void;
   onZoomToIsland?: () => void;
+  onZoomToBlueIsland?: () => void;
+  onSingularityCrystalClick?: (isDouble?: boolean) => void;
+  onSingularityCrystalDoubleClick?: () => void;
+  isSingularityCrystalTransformed?: boolean;
   activeGame: string | null;
   setActiveGame: (game: string | null) => void;
   activeCategory: string | null;
@@ -1846,8 +1854,16 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, a
 
       {/* Floating decorative elements */}
       <SpookyIsland position={[-5, 3, -4]} scale={0.003} onClick={onZoomToIsland} />
-      <FloatingDecor position={[5, 4, -3]} color="#818cf8" />
-      <FloatingDecor position={[-4, 5, -5]} color="#2dd4bf" />
+      <SkyCabinIsland position={[5, 4, -3]} scale={0.028} onClick={onZoomToBlueIsland} />
+      {isSingularityCrystalTransformed ? (
+        <SingularityCrystal
+          position={[-4, 5, -5]}
+          onClick={onSingularityCrystalClick}
+          onDoubleClick={onSingularityCrystalDoubleClick}
+        />
+      ) : (
+        <FloatingDecor position={[-4, 5, -5]} color="#2dd4bf" onClick={onSingularityCrystalClick} />
+      )}
       <FloatingDecor position={[4, 2, -5]} color="#fb923c" />
 
       {/* Social links panel on right wall - improved visibility */}
@@ -1865,7 +1881,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, a
             <boxGeometry args={[2.6, 0.06, 0.02]} />
             <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={2.5} />
           </mesh>
-          <Html occlude transform position={[0, 0, 0.15]} scale={0.35} center>
+          <Html transform position={[0, 0, 0.15]} scale={0.35} center>
             <div
               className="p-6 text-center w-[300px] rounded-xl"
               style={{
@@ -1950,7 +1966,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, a
               <meshStandardMaterial color="#818cf8" emissive="#818cf8" emissiveIntensity={3} />
             </mesh>
             
-            <Html occlude transform position={[0, 0, 0.18]} scale={0.32} center>
+            <Html transform position={[0, 0, 0.18]} scale={0.32} center>
               <div
                 className="p-8 text-center w-[400px] rounded-2xl"
                 style={{
@@ -2034,7 +2050,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, a
               <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={3} />
             </mesh>
             
-            <Html occlude transform position={[0, 0, 0.18]} scale={0.32} center>
+            <Html transform position={[0, 0, 0.18]} scale={0.32} center>
               <div
                 className="p-8 text-center w-[400px] rounded-2xl"
                 style={{
@@ -2318,63 +2334,25 @@ function ContactRoom({ position, isDark = true }: { position: [number, number, n
   const { contact, personal } = portfolioData
 
   return (
-    <Room position={position} color={isDark ? "#0f172a" : "#f1f5f9"} isDark={isDark}>
-      <FloatingFrame position={[0, 3, -5]} size={[8, 5]} isDark={isDark}>
-        <div className="p-6">
-          <h2 className="text-teal-400 text-3xl font-bold mb-3">{contact.heading}</h2>
-          <p className={`${isDark ? "text-gray-300" : "text-gray-700"} text-base mb-6`}>{contact.description}</p>
-
-          <div className="space-y-4">
-            <a
-              href={`mailto:${personal.email}`}
-              className="flex items-center justify-center gap-3 bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 py-3 px-4 rounded-lg transition-colors"
-            >
-              <Mail size={20} />
-              <span>{personal.email}</span>
-            </a>
-
-            <div className="flex justify-center gap-6">
-              <a
-                href={personal.github}
-                className={`${isDark ? "text-white hover:text-teal-400" : "text-slate-700 hover:text-teal-500"} transition-colors`}
-              >
-                <Github size={28} />
-              </a>
-              <a
-                href={personal.linkedin}
-                className={`${isDark ? "text-white hover:text-teal-400" : "text-slate-700 hover:text-teal-500"} transition-colors`}
-              >
-                <Linkedin size={28} />
-              </a>
-            </div>
-          </div>
-
-          <p className={`${isDark ? "text-gray-500" : "text-gray-600"} text-xs mt-6`}>{personal.copyright}</p>
-        </div>
-      </FloatingFrame>
-
-      {/* Floating decorative crystals */}
-      <FloatingDecor position={[-5, 4, -2]} color="#14b8a6" size={0.3} isDark={isDark} />
-      <FloatingDecor position={[5, 4, -2]} color="#06b6d4" size={0.3} isDark={isDark} />
-      <FloatingDecor position={[-3.5, 1.5, -1.5]} color="#22d3ee" size={0.25} isDark={isDark} />
-      <FloatingDecor position={[3.5, 1.5, -1.5]} color="#0891b2" size={0.25} isDark={isDark} />
-      <FloatingDecor position={[0, 5.5, -3]} color="#14b8a6" size={0.35} isDark={isDark} />
-
-      {/* Enhanced lighting */}
-      <pointLight position={[0, 5, 0]} intensity={isDark ? 30 : 40} color="#14b8a6" />
-      <pointLight position={[-5, 4, -2]} intensity={isDark ? 15 : 20} color="#14b8a6" distance={6} />
-      <pointLight position={[5, 4, -2]} intensity={isDark ? 15 : 20} color="#06b6d4" distance={6} />
+    <Room position={position} color={isDark ? "#090a14" : "#e2e8f0"} isDark={isDark}>
+      <ContactCyberRoom position={[0, 0, 0]} isDark={isDark} contact={contact} personal={personal} />
     </Room>
   )
 }
 
-function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, onZoomToDesk, onZoomToIsland, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
+function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, isZoomedToBlueIsland, isZoomedToSingularityCrystal, isSingularityCrystalTransformed, onZoomToDesk, onZoomToIsland, onZoomToBlueIsland, onSingularityCrystalClick, onSingularityCrystalDoubleClick, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
   currentRoom: number; 
   isDark: boolean; 
   isZoomedToDesk: boolean; 
   isZoomedToIsland: boolean;
+  isZoomedToBlueIsland: boolean;
+  isZoomedToSingularityCrystal: boolean;
+  isSingularityCrystalTransformed: boolean;
   onZoomToDesk: () => void;
   onZoomToIsland: () => void;
+  onZoomToBlueIsland: () => void;
+  onSingularityCrystalClick: (isDouble?: boolean) => void;
+  onSingularityCrystalDoubleClick: () => void;
   activeGame: string | null;
   setActiveGame: (game: string | null) => void;
   activeCategory: string | null;
@@ -2394,17 +2372,21 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, onZoomTo
   // Позиция камеры для zoom к острову — подлетаем близко к маленькому острову
   const islandCameraPosition: [number, number, number] = [-4.5, 3.2, -3.2]
   const islandCameraTarget: [number, number, number] = [-5, 3, -4]
+  const blueIslandCameraPosition: [number, number, number] = [4.6, 4.0, -2.2]
+  const blueIslandCameraTarget: [number, number, number] = [5, 4, -3]
+  const singularityCrystalCameraPosition: [number, number, number] = [-3.25, 5.55, -3.55]
+  const singularityCrystalCameraTarget: [number, number, number] = [-4, 5, -5]
   
   // Обычная позиция камеры
   const normalCameraPosition = rooms[currentRoom].cameraPosition
   const normalCameraTarget = [rooms[currentRoom].position[0], 1, 0] as [number, number, number]
 
-  const isZoomed = isZoomedToDesk || isZoomedToIsland
+  const isZoomed = isZoomedToDesk || isZoomedToIsland || isZoomedToBlueIsland || isZoomedToSingularityCrystal
 
   useEffect(() => {
     if (!cameraRef.current) return
 
-    const zoomTargetPos = isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : null
+    const zoomTargetPos = isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : isZoomedToBlueIsland ? blueIslandCameraPosition : isZoomedToSingularityCrystal ? singularityCrystalCameraPosition : null
 
     if (zoomTargetPos) {
       const animate = () => {
@@ -2451,28 +2433,28 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, onZoomTo
       }
       animate()
     }
-  }, [currentRoom, isZoomedToDesk, isZoomedToIsland])
+  }, [currentRoom, isZoomedToDesk, isZoomedToIsland, isZoomedToBlueIsland, isZoomedToSingularityCrystal])
 
   return (
     <>
-      <PerspectiveCamera ref={cameraRef} makeDefault position={isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : [0, 2, 8]} fov={60} />
+      <PerspectiveCamera ref={cameraRef} makeDefault position={isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : isZoomedToBlueIsland ? blueIslandCameraPosition : isZoomedToSingularityCrystal ? singularityCrystalCameraPosition : [0, 2, 8]} fov={60} />
       <OrbitControls
         ref={controlsRef}
         enableZoom={true}
         enablePan={false}
         enabled={true}
-        minDistance={isZoomedToDesk ? 3.8 : isZoomedToIsland ? 0.8 : 5}
-        maxDistance={isZoomedToDesk ? 4.5 : isZoomedToIsland ? 2.5 : 12}
-        minPolarAngle={isZoomedToDesk ? Math.PI / 2.5 : isZoomedToIsland ? Math.PI / 4 : Math.PI / 4}
-        maxPolarAngle={isZoomedToDesk ? Math.PI / 1.6 : isZoomedToIsland ? Math.PI / 1.5 : Math.PI / 2}
-        target={isZoomedToDesk ? deskCameraTarget : isZoomedToIsland ? islandCameraTarget : normalCameraTarget}
+        minDistance={isZoomedToDesk ? 3.8 : isZoomedToIsland ? 0.8 : isZoomedToBlueIsland ? 0.9 : isZoomedToSingularityCrystal ? 0.9 : 5}
+        maxDistance={isZoomedToDesk ? 4.5 : isZoomedToIsland ? 2.5 : isZoomedToBlueIsland ? 2.8 : isZoomedToSingularityCrystal ? 2.3 : 12}
+        minPolarAngle={isZoomedToDesk ? Math.PI / 2.5 : isZoomedToIsland ? Math.PI / 4 : isZoomedToBlueIsland ? Math.PI / 4 : isZoomedToSingularityCrystal ? Math.PI / 4 : Math.PI / 4}
+        maxPolarAngle={isZoomedToDesk ? Math.PI / 1.6 : isZoomedToIsland ? Math.PI / 1.5 : isZoomedToBlueIsland ? Math.PI / 1.45 : isZoomedToSingularityCrystal ? Math.PI / 1.4 : Math.PI / 2}
+        target={isZoomedToDesk ? deskCameraTarget : isZoomedToIsland ? islandCameraTarget : isZoomedToBlueIsland ? blueIslandCameraTarget : isZoomedToSingularityCrystal ? singularityCrystalCameraTarget : normalCameraTarget}
       />
 
       <ambientLight intensity={isDark ? 0.4 : 0.6} />
       <directionalLight position={[10, 10, 5]} intensity={isDark ? 0.3 : 0.5} castShadow={false} />
 
       {/* Lazy load only nearby rooms for performance */}
-      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} onZoomToDesk={onZoomToDesk} onZoomToIsland={onZoomToIsland} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} hideHtmlOverlays={isZoomedToIsland} />}
+      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} onZoomToDesk={onZoomToDesk} onZoomToIsland={onZoomToIsland} onZoomToBlueIsland={onZoomToBlueIsland} onSingularityCrystalClick={onSingularityCrystalClick} onSingularityCrystalDoubleClick={onSingularityCrystalDoubleClick} isSingularityCrystalTransformed={isSingularityCrystalTransformed} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} hideHtmlOverlays={isZoomedToIsland || isZoomedToBlueIsland || isZoomedToSingularityCrystal} />}
       {(currentRoom === 0 || currentRoom === 1) && <AboutRoom position={rooms[1].position} isDark={isDark} />}
       {(currentRoom === 1 || currentRoom === 2) && <SkillsRoom position={rooms[2].position} isDark={isDark} />}
       {(currentRoom === 2 || currentRoom === 3) && <ExperienceRoom position={rooms[3].position} isDark={isDark} />}
@@ -2490,10 +2472,14 @@ export function House3D() {
   const [mounted, setMounted] = useState(false)
   const [isZoomedToDesk, setIsZoomedToDesk] = useState(false)
   const [isZoomedToIsland, setIsZoomedToIsland] = useState(false)
+  const [isZoomedToBlueIsland, setIsZoomedToBlueIsland] = useState(false)
+  const [isZoomedToSingularityCrystal, setIsZoomedToSingularityCrystal] = useState(false)
+  const [isSingularityCrystalTransformed, setIsSingularityCrystalTransformed] = useState(false)
   const [activeGame, setActiveGame] = useState<string | null>(null)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [showWelcome, setShowWelcome] = useState(true)
   const [hoveredSkillIndex, setHoveredSkillIndex] = useState<number | null>(null)
+  const lastSingularityClickRef = useRef(0)
   
   const gamesData = {
     "Game": [
@@ -2527,12 +2513,56 @@ export function House3D() {
 
   const handleZoomToIsland = () => {
     setCurrentRoom(0)
+    setIsZoomedToBlueIsland(false)
+    setIsZoomedToSingularityCrystal(false)
     setIsZoomedToIsland(true)
+  }
+
+  const handleZoomToBlueIsland = () => {
+    setCurrentRoom(0)
+    setIsZoomedToIsland(false)
+    setIsZoomedToSingularityCrystal(false)
+    setIsZoomedToBlueIsland(true)
+  }
+
+  const handleSingularityCrystalClick = (isDouble = false) => {
+    setCurrentRoom(0)
+    if (!isZoomedToSingularityCrystal) {
+      setIsZoomedToDesk(false)
+      setIsZoomedToIsland(false)
+      setIsZoomedToBlueIsland(false)
+      setIsZoomedToSingularityCrystal(true)
+      return
+    }
+
+    if (!isSingularityCrystalTransformed) {
+      setIsSingularityCrystalTransformed(true)
+      lastSingularityClickRef.current = 0
+      return
+    }
+
+    const now = performance.now()
+    const rapidSecondClick = now - lastSingularityClickRef.current < 320
+    if (isDouble || rapidSecondClick) {
+      setIsSingularityCrystalTransformed(false)
+      lastSingularityClickRef.current = 0
+    } else {
+      lastSingularityClickRef.current = now
+    }
+  }
+
+  const handleSingularityCrystalDoubleClick = () => {
+    if (isSingularityCrystalTransformed) {
+      setIsSingularityCrystalTransformed(false)
+      lastSingularityClickRef.current = 0
+    }
   }
   
   const zoomOut = () => {
     setIsZoomedToDesk(false)
     setIsZoomedToIsland(false)
+    setIsZoomedToBlueIsland(false)
+    setIsZoomedToSingularityCrystal(false)
   }
   
   const isModalOpen = !!(activeCategory || activeGame)
@@ -2553,7 +2583,7 @@ export function House3D() {
           depth: true
         }}
       >
-        <Scene currentRoom={currentRoom} isDark={isDark} isZoomedToDesk={isZoomedToDesk} isZoomedToIsland={isZoomedToIsland} onZoomToDesk={handleZoomToDesk} onZoomToIsland={handleZoomToIsland} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />
+        <Scene currentRoom={currentRoom} isDark={isDark} isZoomedToDesk={isZoomedToDesk} isZoomedToIsland={isZoomedToIsland} isZoomedToBlueIsland={isZoomedToBlueIsland} isZoomedToSingularityCrystal={isZoomedToSingularityCrystal} isSingularityCrystalTransformed={isSingularityCrystalTransformed} onZoomToDesk={handleZoomToDesk} onZoomToIsland={handleZoomToIsland} onZoomToBlueIsland={handleZoomToBlueIsland} onSingularityCrystalClick={handleSingularityCrystalClick} onSingularityCrystalDoubleClick={handleSingularityCrystalDoubleClick} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />
       </Canvas>
       )}
 
@@ -2570,7 +2600,7 @@ export function House3D() {
       )}
 
       {/* Zoom Out Button */}
-      {!isModalOpen && (isZoomedToDesk || isZoomedToIsland) && (
+      {!isModalOpen && (isZoomedToDesk || isZoomedToIsland || isZoomedToBlueIsland || isZoomedToSingularityCrystal) && (
         <div className="absolute top-20 left-4 z-10">
           <button
             onClick={zoomOut}
@@ -2582,7 +2612,7 @@ export function House3D() {
       )}
 
       {/* Room Navigation */}
-      {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && (
+      {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && !isZoomedToBlueIsland && !isZoomedToSingularityCrystal && (
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-2 border border-border flex items-center gap-2">
           <button
@@ -2625,7 +2655,7 @@ export function House3D() {
       )}
 
       {/* Instructions */}
-      {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && (
+      {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && !isZoomedToBlueIsland && !isZoomedToSingularityCrystal && (
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10">
         <p className="text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full">
           Drag to look around • Scroll to zoom • Click rooms to navigate
