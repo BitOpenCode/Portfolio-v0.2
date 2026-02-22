@@ -7,6 +7,7 @@ import { Environment, OrbitControls, PerspectiveCamera, Html, Float, Text, Round
 import { useState, useRef, useEffect } from "react"
 import * as THREE from "three"
 import portfolioData from "@/data/portfolio.json"
+import { SpookyIsland } from "./spooky-island"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "next-themes"
 import {
@@ -777,16 +778,20 @@ function WallClock({ position, isDark = true }: { position: [number, number, num
       ))}
 
       {/* Hour hand */}
-      <mesh position={[0.08, 0.04, 0.08]} rotation={[-0.8, 0, 0]}>
-        <boxGeometry args={[0.02, 0.01, 0.18]} />
-        <meshStandardMaterial color="#f472b6" />
-      </mesh>
+      <group position={[0, 0.04, 0]} rotation={[-0.8, 0, 0]}>
+        <mesh position={[0, 0, 0.09]}>
+          <boxGeometry args={[0.02, 0.01, 0.18]} />
+          <meshStandardMaterial color="#f472b6" />
+        </mesh>
+      </group>
 
       {/* Minute hand */}
-      <mesh position={[0, 0.045, 0.12]} rotation={[0.2, 0, 0]}>
-        <boxGeometry args={[0.015, 0.01, 0.26]} />
-        <meshStandardMaterial color="#818cf8" />
-      </mesh>
+      <group position={[0, 0.045, 0]} rotation={[0.2, 0, 0]}>
+        <mesh position={[0, 0, 0.13]}>
+          <boxGeometry args={[0.015, 0.01, 0.26]} />
+          <meshStandardMaterial color="#818cf8" />
+        </mesh>
+      </group>
 
       {/* Center dot */}
       <mesh position={[0, 0.05, 0]}>
@@ -1058,6 +1063,7 @@ function UltrawideMonitor({
   setShowWelcome,
   hoveredSkillIndex,
   setHoveredSkillIndex,
+  hideHtmlOverlays = false,
 }: {
   position: [number, number, number]
   rotation?: [number, number, number]
@@ -1072,6 +1078,7 @@ function UltrawideMonitor({
   setShowWelcome?: (show: boolean) => void
   hoveredSkillIndex?: number | null
   setHoveredSkillIndex?: (index: number | null) => void
+  hideHtmlOverlays?: boolean
 }) {
   const { skills } = portfolioData
   const [hovered, setHovered] = useState(false)
@@ -1128,7 +1135,7 @@ function UltrawideMonitor({
       </mesh>
 
       {/* Content on screen - improved visibility */}
-      <Html transform position={[0, 0, 0.075]} scale={0.18} center>
+      {!hideHtmlOverlays && <Html transform position={[0, 0, 0.075]} scale={0.18} center>
         {showSkills ? (
           <div
             className="w-[700px] p-5 rounded-xl shadow-2xl"
@@ -1274,7 +1281,7 @@ function UltrawideMonitor({
           </div>
           </div>
         ) : null}
-      </Html>
+      </Html>}
     </group>
   )
 }
@@ -1560,7 +1567,7 @@ function ModernPCTower({ position }: { position: [number, number, number] }) {
   )
 }
 
-function ModernWallDisplay({ position, isDark = true }: { position: [number, number, number]; isDark?: boolean }) {
+function ModernWallDisplay({ position, isDark = true, hideHtmlOverlays = false }: { position: [number, number, number]; isDark?: boolean; hideHtmlOverlays?: boolean }) {
   const { personal } = portfolioData
   const colors = isDark ? themeColors.dark : themeColors.light
 
@@ -1640,7 +1647,7 @@ function ModernWallDisplay({ position, isDark = true }: { position: [number, num
       )}
 
       {/* Specializations with colors - professional design without emojis */}
-      <Html transform position={[0, -1.4, 0.2]} scale={0.38} center>
+      {!hideHtmlOverlays && <Html occlude transform position={[0, -1.4, 0.2]} scale={0.38} center>
         <div className="flex flex-wrap gap-3 justify-center w-[900px]">
           {personal.specializations.map((spec, i) => {
             const specColors = ["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"]
@@ -1665,7 +1672,7 @@ function ModernWallDisplay({ position, isDark = true }: { position: [number, num
             )
           })}
         </div>
-      </Html>
+      </Html>}
 
       {/* Corner decorations - larger */}
       {[
@@ -1767,10 +1774,11 @@ function CeilingLight({ position }: { position: [number, number, number] }) {
   )
 }
 
-function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
+function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex, hideHtmlOverlays = false }: { 
   position: [number, number, number]; 
   isDark?: boolean; 
   onZoomToDesk?: () => void;
+  onZoomToIsland?: () => void;
   activeGame: string | null;
   setActiveGame: (game: string | null) => void;
   activeCategory: string | null;
@@ -1779,6 +1787,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
   setShowWelcome: (show: boolean) => void;
   hoveredSkillIndex: number | null;
   setHoveredSkillIndex: (index: number | null) => void;
+  hideHtmlOverlays?: boolean;
 }) {
   const { personal } = portfolioData
   const [showLinkedInModal, setShowLinkedInModal] = useState(false)
@@ -1787,7 +1796,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
   return (
     <ColorfulRoom position={position} isDark={isDark}>
       {/* Wall Display - Main showcase */}
-      <ModernWallDisplay position={[0, 2.5, -6.8]} isDark={isDark} />
+      <ModernWallDisplay position={[0, 2.5, -6.8]} isDark={isDark} hideHtmlOverlays={hideHtmlOverlays} />
 
       {/* Modern desk setup */}
       <ModernDesk position={[0, -1.5, -3]} isDark={isDark} />
@@ -1801,8 +1810,9 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
         onClick={onZoomToDesk}
         hoveredSkillIndex={hoveredSkillIndex}
         setHoveredSkillIndex={setHoveredSkillIndex}
+        hideHtmlOverlays={hideHtmlOverlays}
       />
-      <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} />
+      <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hideHtmlOverlays={hideHtmlOverlays} />
 
       {/* Flower pot - saved for possible relocation */}
       {/* <RealisticFlowerPot position={[-1.7, -1.46, -2.5]} /> */}
@@ -1835,13 +1845,13 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
       <WallArt position={[6.9, 1.5, -5]} rotation={[0, -Math.PI / 2, 0]} isDark={isDark} />
 
       {/* Floating decorative elements */}
-      <FloatingDecor position={[-5, 3, -4]} color="#f472b6" />
+      <SpookyIsland position={[-5, 3, -4]} scale={0.003} onClick={onZoomToIsland} />
       <FloatingDecor position={[5, 4, -3]} color="#818cf8" />
       <FloatingDecor position={[-4, 5, -5]} color="#2dd4bf" />
       <FloatingDecor position={[4, 2, -5]} color="#fb923c" />
 
       {/* Social links panel on right wall - improved visibility */}
-      <group position={[6.7, -0.5, -1]} rotation={[0, -Math.PI / 2, 0]}>
+      {!hideHtmlOverlays && <group position={[6.7, -0.5, -1]} rotation={[0, -Math.PI / 2, 0]}>
         <Float speed={2} rotationIntensity={0.05} floatIntensity={0.2}>
           <RoundedBox args={[2.8, 2, 0.1]} radius={0.1}>
             <meshStandardMaterial color={isDark ? "#0a0a0f" : "#f1f5f9"} roughness={0.8} />
@@ -1855,7 +1865,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
             <boxGeometry args={[2.6, 0.06, 0.02]} />
             <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={2.5} />
           </mesh>
-          <Html transform position={[0, 0, 0.15]} scale={0.35} center>
+          <Html occlude transform position={[0, 0, 0.15]} scale={0.35} center>
             <div
               className="p-6 text-center w-[300px] rounded-xl"
               style={{
@@ -1913,10 +1923,10 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
             </div>
           </Html>
         </Float>
-      </group>
+      </group>}
 
       {/* LinkedIn Modal - positioned in front of social panel */}
-      {showLinkedInModal && (
+      {!hideHtmlOverlays && showLinkedInModal && (
         <group position={[6.2, -0.5, -1]} rotation={[0, -Math.PI / 2, 0]}>
           <Float speed={1.5} rotationIntensity={0.02} floatIntensity={0.1}>
             <RoundedBox args={[3.5, 2.8, 0.15]} radius={0.12}>
@@ -1940,7 +1950,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
               <meshStandardMaterial color="#818cf8" emissive="#818cf8" emissiveIntensity={3} />
             </mesh>
             
-            <Html transform position={[0, 0, 0.18]} scale={0.32} center>
+            <Html occlude transform position={[0, 0, 0.18]} scale={0.32} center>
               <div
                 className="p-8 text-center w-[400px] rounded-2xl"
                 style={{
@@ -2000,7 +2010,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
       )}
 
       {/* Email Modal - positioned in front of social panel */}
-      {showEmailModal && (
+      {!hideHtmlOverlays && showEmailModal && (
         <group position={[6.2, -0.5, -1]} rotation={[0, -Math.PI / 2, 0]}>
           <Float speed={1.5} rotationIntensity={0.02} floatIntensity={0.1}>
             <RoundedBox args={[3.5, 2.8, 0.15]} radius={0.12}>
@@ -2024,7 +2034,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
               <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={3} />
             </mesh>
             
-            <Html transform position={[0, 0, 0.18]} scale={0.32} center>
+            <Html occlude transform position={[0, 0, 0.18]} scale={0.32} center>
               <div
                 className="p-8 text-center w-[400px] rounded-2xl"
                 style={{
@@ -2358,11 +2368,13 @@ function ContactRoom({ position, isDark = true }: { position: [number, number, n
   )
 }
 
-function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
+function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, onZoomToDesk, onZoomToIsland, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
   currentRoom: number; 
   isDark: boolean; 
   isZoomedToDesk: boolean; 
+  isZoomedToIsland: boolean;
   onZoomToDesk: () => void;
+  onZoomToIsland: () => void;
   activeGame: string | null;
   setActiveGame: (game: string | null) => void;
   activeCategory: string | null;
@@ -2375,95 +2387,92 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, 
   const cameraRef = useRef<THREE.PerspectiveCamera>(null)
   const controlsRef = useRef<any>(null)
   
-  // Позиция камеры для zoom - центр между двумя мониторами
+  // Позиция камеры для zoom к столу
   const deskCameraPosition: [number, number, number] = [0, 0.3, 0.5]
   const deskCameraTarget: [number, number, number] = [0, -0.3, -3.8]
+
+  // Позиция камеры для zoom к острову — подлетаем близко к маленькому острову
+  const islandCameraPosition: [number, number, number] = [-4.5, 3.2, -3.2]
+  const islandCameraTarget: [number, number, number] = [-5, 3, -4]
   
   // Обычная позиция камеры
   const normalCameraPosition = rooms[currentRoom].cameraPosition
   const normalCameraTarget = [rooms[currentRoom].position[0], 1, 0] as [number, number, number]
 
+  const isZoomed = isZoomedToDesk || isZoomedToIsland
+
   useEffect(() => {
-    if (cameraRef.current) {
-      if (isZoomedToDesk) {
-        // Анимация приближения к столу
+    if (!cameraRef.current) return
+
+    const zoomTargetPos = isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : null
+
+    if (zoomTargetPos) {
       const animate = () => {
-        if (cameraRef.current) {
-            const targetPos = deskCameraPosition
-            const currentPos = cameraRef.current.position
-            
-            const diffX = targetPos[0] - currentPos.x
-            const diffY = targetPos[1] - currentPos.y
-            const diffZ = targetPos[2] - currentPos.z
-            
-            if (Math.abs(diffX) > 0.05 || Math.abs(diffY) > 0.05 || Math.abs(diffZ) > 0.05) {
-              cameraRef.current.position.x += diffX * 0.1
-              cameraRef.current.position.y += diffY * 0.1
-              cameraRef.current.position.z += diffZ * 0.1
-            requestAnimationFrame(animate)
-          } else {
-              cameraRef.current.position.set(...targetPos)
-          }
+        if (!cameraRef.current) return
+        const currentPos = cameraRef.current.position
+        const diffX = zoomTargetPos[0] - currentPos.x
+        const diffY = zoomTargetPos[1] - currentPos.y
+        const diffZ = zoomTargetPos[2] - currentPos.z
+
+        if (Math.abs(diffX) > 0.05 || Math.abs(diffY) > 0.05 || Math.abs(diffZ) > 0.05) {
+          cameraRef.current.position.x += diffX * 0.1
+          cameraRef.current.position.y += diffY * 0.1
+          cameraRef.current.position.z += diffZ * 0.1
+          requestAnimationFrame(animate)
+        } else {
+          cameraRef.current.position.set(...zoomTargetPos)
         }
       }
       animate()
-      } else {
-        // Обычная анимация между комнатами - полный сброс позиции камеры
-        const targetPos = rooms[currentRoom].cameraPosition
-        const targetLookAt = normalCameraTarget
-        const animate = () => {
-          if (cameraRef.current && controlsRef.current) {
-            const currentPos = cameraRef.current.position
-            const diffX = targetPos[0] - currentPos.x
-            const diffY = targetPos[1] - currentPos.y
-            const diffZ = targetPos[2] - currentPos.z
-            
-            const totalDiff = Math.abs(diffX) + Math.abs(diffY) + Math.abs(diffZ)
-            
-            if (totalDiff > 0.3) {
-              cameraRef.current.position.x += diffX * 0.08
-              cameraRef.current.position.y += diffY * 0.08
-              cameraRef.current.position.z += diffZ * 0.08
-              
-              // Плавно перемещаем target OrbitControls
-              const currentTarget = controlsRef.current.target
-              currentTarget.x += (targetLookAt[0] - currentTarget.x) * 0.08
-              currentTarget.y += (targetLookAt[1] - currentTarget.y) * 0.08
-              currentTarget.z += (targetLookAt[2] - currentTarget.z) * 0.08
-              
-              requestAnimationFrame(animate)
-            } else {
-              // Точная установка финальной позиции
-              cameraRef.current.position.set(targetPos[0], targetPos[1], targetPos[2])
-              controlsRef.current.target.set(targetLookAt[0], targetLookAt[1], targetLookAt[2])
-            }
-          }
+    } else {
+      const targetPos = rooms[currentRoom].cameraPosition
+      const targetLookAt = normalCameraTarget
+      const animate = () => {
+        if (!cameraRef.current || !controlsRef.current) return
+        const currentPos = cameraRef.current.position
+        const diffX = targetPos[0] - currentPos.x
+        const diffY = targetPos[1] - currentPos.y
+        const diffZ = targetPos[2] - currentPos.z
+        const totalDiff = Math.abs(diffX) + Math.abs(diffY) + Math.abs(diffZ)
+
+        if (totalDiff > 0.3) {
+          cameraRef.current.position.x += diffX * 0.08
+          cameraRef.current.position.y += diffY * 0.08
+          cameraRef.current.position.z += diffZ * 0.08
+          const currentTarget = controlsRef.current.target
+          currentTarget.x += (targetLookAt[0] - currentTarget.x) * 0.08
+          currentTarget.y += (targetLookAt[1] - currentTarget.y) * 0.08
+          currentTarget.z += (targetLookAt[2] - currentTarget.z) * 0.08
+          requestAnimationFrame(animate)
+        } else {
+          cameraRef.current.position.set(targetPos[0], targetPos[1], targetPos[2])
+          controlsRef.current.target.set(targetLookAt[0], targetLookAt[1], targetLookAt[2])
         }
-        animate()
       }
+      animate()
     }
-  }, [currentRoom, isZoomedToDesk])
+  }, [currentRoom, isZoomedToDesk, isZoomedToIsland])
 
   return (
     <>
-      <PerspectiveCamera ref={cameraRef} makeDefault position={isZoomedToDesk ? deskCameraPosition : [0, 2, 8]} fov={60} />
+      <PerspectiveCamera ref={cameraRef} makeDefault position={isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : [0, 2, 8]} fov={60} />
       <OrbitControls
         ref={controlsRef}
         enableZoom={true}
         enablePan={false}
         enabled={true}
-        minDistance={isZoomedToDesk ? 3.8 : 5}
-        maxDistance={isZoomedToDesk ? 4.5 : 12}
-        minPolarAngle={isZoomedToDesk ? Math.PI / 2.5 : Math.PI / 4}
-        maxPolarAngle={isZoomedToDesk ? Math.PI / 1.6 : Math.PI / 2}
-        target={isZoomedToDesk ? deskCameraTarget : normalCameraTarget}
+        minDistance={isZoomedToDesk ? 3.8 : isZoomedToIsland ? 0.8 : 5}
+        maxDistance={isZoomedToDesk ? 4.5 : isZoomedToIsland ? 2.5 : 12}
+        minPolarAngle={isZoomedToDesk ? Math.PI / 2.5 : isZoomedToIsland ? Math.PI / 4 : Math.PI / 4}
+        maxPolarAngle={isZoomedToDesk ? Math.PI / 1.6 : isZoomedToIsland ? Math.PI / 1.5 : Math.PI / 2}
+        target={isZoomedToDesk ? deskCameraTarget : isZoomedToIsland ? islandCameraTarget : normalCameraTarget}
       />
 
       <ambientLight intensity={isDark ? 0.4 : 0.6} />
       <directionalLight position={[10, 10, 5]} intensity={isDark ? 0.3 : 0.5} castShadow={false} />
 
       {/* Lazy load only nearby rooms for performance */}
-      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} onZoomToDesk={onZoomToDesk} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />}
+      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} onZoomToDesk={onZoomToDesk} onZoomToIsland={onZoomToIsland} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} hideHtmlOverlays={isZoomedToIsland} />}
       {(currentRoom === 0 || currentRoom === 1) && <AboutRoom position={rooms[1].position} isDark={isDark} />}
       {(currentRoom === 1 || currentRoom === 2) && <SkillsRoom position={rooms[2].position} isDark={isDark} />}
       {(currentRoom === 2 || currentRoom === 3) && <ExperienceRoom position={rooms[3].position} isDark={isDark} />}
@@ -2480,6 +2489,7 @@ export function House3D() {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [isZoomedToDesk, setIsZoomedToDesk] = useState(false)
+  const [isZoomedToIsland, setIsZoomedToIsland] = useState(false)
   const [activeGame, setActiveGame] = useState<string | null>(null)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [showWelcome, setShowWelcome] = useState(true)
@@ -2511,12 +2521,18 @@ export function House3D() {
   const goToNext = () => setCurrentRoom((prev) => Math.min(rooms.length - 1, prev + 1))
   
   const handleZoomToDesk = () => {
-    setCurrentRoom(0) // Entrance room
+    setCurrentRoom(0)
     setIsZoomedToDesk(true)
+  }
+
+  const handleZoomToIsland = () => {
+    setCurrentRoom(0)
+    setIsZoomedToIsland(true)
   }
   
   const zoomOut = () => {
     setIsZoomedToDesk(false)
+    setIsZoomedToIsland(false)
   }
   
   const isModalOpen = !!(activeCategory || activeGame)
@@ -2537,7 +2553,7 @@ export function House3D() {
           depth: true
         }}
       >
-        <Scene currentRoom={currentRoom} isDark={isDark} isZoomedToDesk={isZoomedToDesk} onZoomToDesk={handleZoomToDesk} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />
+        <Scene currentRoom={currentRoom} isDark={isDark} isZoomedToDesk={isZoomedToDesk} isZoomedToIsland={isZoomedToIsland} onZoomToDesk={handleZoomToDesk} onZoomToIsland={handleZoomToIsland} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />
       </Canvas>
       )}
 
@@ -2554,7 +2570,7 @@ export function House3D() {
       )}
 
       {/* Zoom Out Button */}
-      {!isModalOpen && isZoomedToDesk && (
+      {!isModalOpen && (isZoomedToDesk || isZoomedToIsland) && (
         <div className="absolute top-20 left-4 z-10">
           <button
             onClick={zoomOut}
@@ -2566,7 +2582,7 @@ export function House3D() {
       )}
 
       {/* Room Navigation */}
-      {!isModalOpen && !isZoomedToDesk && (
+      {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && (
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-2 border border-border flex items-center gap-2">
           <button
@@ -2609,7 +2625,7 @@ export function House3D() {
       )}
 
       {/* Instructions */}
-      {!isModalOpen && !isZoomedToDesk && (
+      {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && (
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10">
         <p className="text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full">
           Drag to look around • Scroll to zoom • Click rooms to navigate
