@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Adventure</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            touch-action: none;
+        }
+        #gameCanvas {
+            display: block;
+            background: radial-gradient(circle, #001f3f, #001030);
+        }
+        #score, #lives, #distance, #enemies {
+            position: absolute;
+            color: white;
+            font-size: 24px;
+            z-index: 10;
+        }
+        #score {
+            top: 20px;
+            left: 20px;
+        }
+        #enemies {
+            top: 50px;
+            left: 20px;
+        }
+        #lives {
+            top: 20px;
+            left: 300px;
+        }
+        #distance {
+            top: 20px;
+            left: 500px;
+        }
+        #menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: block;
+            z-index: 100;
+        }
+        #user-id-container {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 300px;
+            z-index: 1;
+            background: transparent;
+        }
+        #user-id {
+            width: 100%;
+            font-size: 1.2em;
+            padding: 10px;
+            border: 2px solid cyan;
+            border-radius: 10px;
+            background-color: rgba(32, 39, 49, 0.5);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+        #menu button {
+            padding: 10px 20px;
+            margin: 10px;
+            background: cyan;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #menu button:hover {
+            background: lightblue;
+        }
+        #shootButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 0, 0, 0.5);
+            border: 2px solid red;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            display: none;
+            z-index: 100;
+            touch-action: none;
+        }
+        @media (max-width: 768px) {
+            #shootButton {
+                display: block;
+            }
+            #score, #lives, #distance, #enemies {
+                font-size: 18px;
+            }
+            #lives {
+                left: 150px;
+            }
+            #distance {
+                left: 250px;
+            }
+            #enemies {
+                top: 40px;
+                left: 20px;
+            }
+        }
+        .hidden {
+            display: none !important;
+        }
+        .shop-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .shop-container {
+            background: #001f3f;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .shop-currency {
+            font-size: 24px;
+            margin: 20px 0;
+            color: #00ff00;
+        }
+        .ships-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .ship-item {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .ship-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+        .ship-info {
+            text-align: center;
+        }
+        .ship-info h3 {
+            margin: 0;
+            color: #00ff00;
+        }
+        .ship-info p {
+            margin: 5px 0;
+        }
+        .ship-item button {
+            background: #00ff00;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .ship-item button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .shop-container button {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .ship-item {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        .inventory-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .inventory-container {
+            background: #001f3f;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .inventory-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #00ff00;
+        }
+        .ships-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .ship-slot {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-height: 300px;
+            justify-content: center;
+        }
+        .ship-slot.locked {
+            opacity: 0.5;
+        }
+        .ship-slot img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+        }
+        .ship-info {
+            text-align: center;
+        }
+        .ship-info h3 {
+            margin: 0;
+            color: #00ff00;
+        }
+        .ship-info p {
+            margin: 5px 0;
+        }
+        .ship-slot button {
+            background: #00ff00;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .ship-slot button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .inventory-container button {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="score" class="hidden">Score: 0</div>
+    <div id="lives" class="hidden">Lives: 3</div>
+    <div id="distance" class="hidden">Distance: 0</div>
+    <div id="enemies" class="hidden">Enemies: 0</div>
+    <div id="menu">
+        <h1 id="menuTitle">Space Adventure</h1>
+        <div id="user-id-container">
+            <input type="text" id="user-id" placeholder="Enter your login" maxlength="20">
+        </div>
+        <button id="startButton">Start</button>
+        <button id="newGameButton" class="hidden">New Game</button>
+        <button id="statsButton">Statistics</button>
+        <button id="shopButton">Shop</button>
+        <button id="inventoryButton">Inventory</button>
+    </div>
+    <button id="shootButton" class="hidden">&#128293;</button>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const shootButton = document.getElementById('shootButton');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const shipImage = new Image();
+        const meteorImage = new Image();
+        const laserImage = new Image();
+        const bonusImage = new Image();
+        const goldBonusImage = new Image();
+        const enemyShipImage = new Image();
+        const explosionImage = new Image();
+        const healboxImage = new Image();
+        const redShipImage = new Image();
+        const elonShipImage = new Image();
+        
+        shipImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafkreicructrrwqrc35uwcw4gxsqmin7j36kr4e5526itxftviduoncbd4';
+        meteorImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafkreicz3tpzoa4ivu3vvqeimlxosdmujtnucsepcb6datpdo2dkx2v5mq';
+        laserImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafkreicsgjm2xzh7c5u65rcy6zaxbxbtzzotyruubabwqhfvxcf6prsiei';
+        bonusImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafkreifypgmjawffyw4ybii4vz3dpownbms5f35bidwujqvcabfknshima';
+        goldBonusImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafkreifdzru2ygtpjknpwozh6u4upkanntutsqhtbatw4c7gerk3u7pci4';
+        enemyShipImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafybeigkchachnmnilbuqxulg3avx3ewfmkfahijmy6mfj3fxam4fn2gwa';
+        explosionImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafkreiacnhvhf7tg7z32crgyf7n7uosynnpnijpxmyseo6uonft2viutsu';
+        healboxImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafybeig6hwmewuyvh7ln7rjjz22htfxheoesd24b45hr7yhsjwn7bclcwq';
+        redShipImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafybeifq65shmzu3wxbwyd4vg562v2hhsablkkxb4fwoith6ln5fii4msq';
+        elonShipImage.src = 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafybeieiiqvxctwaj3oilhog3dgs5a2pl6dwh543l5by3qm7idm2kceewq';
+
+        let gameRunning = false;
+        let score = 0;
+        let lives = 3;
+        let distance = 0;
+        let laserStartTime = 0;
+        let laserInterval = 150;
+        let laserTimer = 0;
+        let shopCurrency = 0;
+        let stats = [];
+        let speed = 3;
+        let touchX = null;
+        let touchY = null;
+        let enemies = [];
+        let explosions = [];
+        let lastEnemySpawnDistance = 0;
+        let enemyShootInterval = 500; 
+        let lastEnemyShootTime = 0;
+        let enemiesDestroyed = 0; 
+        let healboxes = [];
+        let lastHealboxSpawnDistance = 0;
+        let playerExplosion = null;
+        let isPlayerVisible = true; 
+
+        const gameState = {
+            userId: 'default',
+            score: 0,
+            lives: 3,
+            distance: 0,
+            shopCurrency: 0,
+            stats: [],
+            highScore: 0,
+            ownedShips: [], 
+            currentShip: 'default' 
+        };
+
+        const ships = {
+            default: {
+                image: shipImage,
+                lives: 3,
+                cost: 0
+            },
+            redShip: {
+                image: redShipImage,
+                lives: 5,
+                cost: 200
+            },
+            elonShip: {
+                image: elonShipImage,
+                lives: 7,
+                cost: 400
+            }
+        };
+
+        function saveGameState() {
+            Object.entries(gameState).forEach(([key, value]) => {
+                localStorage.setItem(`${gameState.userId}-${key}`, JSON.stringify(value));
+            });
+        }
+
+        function loadGameState(userId) {
+            gameState.userId = userId;
+            const keys = Object.keys(gameState);
+            
+            keys.forEach(key => {
+                const value = localStorage.getItem(`${userId}-${key}`);
+                if (value !== null) {
+                    gameState[key] = JSON.parse(value);
+                }
+            });
+
+            score = gameState.score;
+            lives = gameState.lives;
+            distance = gameState.distance;
+            shopCurrency = gameState.shopCurrency;
+            stats = gameState.stats;
+        }
+
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 100,
+            width: 60,
+            height: 60,
+            speed: 10,
+            dx: 0,
+            dy: 0
+        };
+
+        const obstacles = [];
+        const bonuses = [];
+        const stars = [];
+        const starCount = 100;
+        let lasers = [];
+        let laserShotsCount = 0;
+        const totalLaserShots = 100;
+        const laserShootInterval = 50;
+
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 2 + 1
+            });
+        }
+
+        function createObstacle() {
+            const size = Math.random() * 50 + 20;
+            obstacles.push({
+                x: Math.random() * (canvas.width - size),
+                y: -size,
+                width: size,
+                height: size,
+                speed,
+                rotation: Math.random() * Math.PI * 2
+            });
+        }
+
+        function createBonus(type = "regular") {
+            const size = type === "laser" ? 30 : 20;
+            bonuses.push({
+                x: Math.random() * (canvas.width - size),
+                y: -size,
+                width: size,
+                height: size,
+                speed: 3,
+                type
+            });
+        }
+
+        function createEnemy() {
+            const size = 50;
+            enemies.push({
+                x: Math.random() * (canvas.width - size),
+                y: -size,
+                width: size,
+                height: size,
+                speed: 2,
+                dx: (Math.random() - 0.5) * 2,
+                dy: 1,
+                lastShootTime: Date.now()
+            });
+        }
+
+        function createHealbox() {
+            const size = 30;
+            healboxes.push({
+                x: Math.random() * (canvas.width - size),
+                y: -size,
+                width: size,
+                height: size,
+                speed: 3
+            });
+        }
+
+        function drawStars() {
+            stars.forEach(star => {
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
+        }
+
+        function drawPlayer() {
+            if (!isPlayerVisible) return; 
+
+            if (playerExplosion) {
+                const currentTime = Date.now();
+                const elapsedTime = currentTime - playerExplosion.startTime;
+
+                if (elapsedTime > playerExplosion.duration) {
+                    playerExplosion = null;
+                    isPlayerVisible = false; 
+                    return;
+                }
+
+                if (currentTime - playerExplosion.lastBlinkTime > playerExplosion.blinkInterval) {
+                    playerExplosion.alpha = playerExplosion.alpha === 1 ? 0.3 : 1;
+                    playerExplosion.lastBlinkTime = currentTime;
+                }
+
+                ctx.globalAlpha = playerExplosion.alpha;
+                ctx.drawImage(explosionImage, playerExplosion.x, player.y, playerExplosion.width, playerExplosion.height);
+                ctx.globalAlpha = 1;
+            } else if (gameRunning) {
+                ctx.save();
+                ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
+
+                let shipWidth, shipHeight;
+                if (gameState.currentShip === 'default') {
+                    shipWidth = player.width;
+                    shipHeight = player.height;
+                } else if (gameState.currentShip === 'redShip') {
+                    shipWidth = player.width * 0.65;  
+                    shipHeight = player.height * 1.8; 
+                } else if (gameState.currentShip === 'elonShip') {
+                    shipWidth = player.width * 0.65; 
+                    shipHeight = player.height * 1.6; 
+                }
+                ctx.drawImage(ships[gameState.currentShip].image, -shipWidth / 2, -shipHeight / 2, shipWidth, shipHeight);
+                ctx.restore();
+            }
+        }
+
+        function drawObstacles() {
+            obstacles.forEach((obstacle, index) => {
+                ctx.save();
+                ctx.translate(obstacle.x + obstacle.width / 2, obstacle.y + obstacle.height / 2);
+                obstacle.rotation += 0.02;
+                ctx.rotate(obstacle.rotation);
+                ctx.drawImage(meteorImage, -obstacle.width / 2, -obstacle.height / 2, obstacle.width, obstacle.height);
+                ctx.restore();
+
+                obstacle.y += obstacle.speed;
+
+                if (obstacle.y > canvas.height) obstacles.splice(index, 1);
+
+                if (
+                    player.x < obstacle.x + obstacle.width &&
+                    player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height &&
+                    player.y + player.height > obstacle.y
+                ) {
+                    lives--;
+                    obstacles.splice(index, 1);
+                    if (lives <= 0) {
+                        lives = 0; 
+                        endGame();
+                    }
+                }
+            });
+        }
+
+        function shootLaser() {
+            const laser = {
+                x: player.x + player.width / 2 - 5,
+                y: player.y - 20,
+                width: 10,
+                height: 20,
+                speed: 10
+            };
+            lasers.push(laser);
+        }
+
+        function drawEnemies() {
+            enemies.forEach((enemy, index) => {
+                enemy.x += enemy.dx;
+                enemy.y += enemy.dy;
+
+                if (enemy.x < 0 || enemy.x + enemy.width > canvas.width) {
+                    enemy.dx = -enemy.dx;
+                }
+
+                if (enemy.y > canvas.height) {
+                    enemies.splice(index, 1);
+                    return;
+                }
+
+                ctx.drawImage(enemyShipImage, enemy.x, enemy.y, enemy.width, enemy.height);
+
+                const currentTime = Date.now();
+                if (currentTime - enemy.lastShootTime > enemyShootInterval) {
+                    shootEnemyLaser(enemy);
+                    enemy.lastShootTime = currentTime;
+                }
+            });
+        }
+
+        function shootEnemyLaser(enemy) {
+            const laser = {
+                x: enemy.x + enemy.width / 2 - 5,
+                y: enemy.y + enemy.height,
+                width: 10,
+                height: 20,
+                speed: 5,
+                isEnemy: true
+            };
+            lasers.push(laser);
+        }
+
+        function drawBonuses() {
+            bonuses.forEach((bonus, index) => {
+                const bonusImg = bonus.type === "laser" ? goldBonusImage : bonusImage;
+                ctx.drawImage(bonusImg, bonus.x, bonus.y, bonus.width, bonus.height);
+
+                bonus.y += bonus.speed;
+
+                if (bonus.y > canvas.height) bonuses.splice(index, 1);
+
+                if (
+                    player.x < bonus.x + bonus.width &&
+                    player.x + player.width > bonus.x &&
+                    player.y < bonus.y + bonus.height &&
+                    player.y + player.height > bonus.y
+                ) {
+                    if (bonus.type === "laser") {
+                        startLaserShots();
+                    } else {
+                        shopCurrency++;
+                        score += 10;
+                    }
+                    bonuses.splice(index, 1);
+                }
+            });
+        }
+
+        function startLaserShots() {
+            laserShotsCount = 0;
+            const laserShootIntervalId = setInterval(() => {
+                if (laserShotsCount < totalLaserShots) {
+                    shootLaser();
+                    laserShotsCount++;
+                } else {
+                    clearInterval(laserShootIntervalId);
+                }
+            }, laserShootInterval);
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            if (touch) {
+                const rect = canvas.getBoundingClientRect();
+                touchX = touch.clientX - rect.left;
+                touchY = touch.clientY - rect.top;
+                
+                const targetX = touchX - player.width / 2;
+                const targetY = touchY - player.height / 2;
+                
+                player.x += (targetX - player.x) * 0.2;
+                player.y += (targetY - player.y) * 0.2;
+            }
+        }
+
+        function handleTouchEnd() {
+            touchX = null;
+            touchY = null;
+        }
+
+        function movePlayer() {
+            if (!touchX) {
+                player.x += player.dx;
+                player.y += player.dy;
+            }
+
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+            if (player.y < 0) player.y = 0;
+            if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+        }
+
+        function showLoginScreen() {
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('menuTitle').innerText = 'Space Adventure';
+            document.getElementById('user-id-container').classList.remove('hidden');
+            document.getElementById('startButton').textContent = 'Start';
+            document.getElementById('startButton').classList.remove('hidden');
+            document.getElementById('startButton').onclick = startGame;
+            document.getElementById('newGameButton').classList.add('hidden');
+            document.getElementById('statsButton').classList.add('hidden');
+            document.getElementById('shopButton').classList.add('hidden');
+            document.getElementById('inventoryButton').classList.add('hidden');
+            document.getElementById('user-id').value = '';
+
+            document.getElementById('user-id').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    startGame();
+                }
+            });
+        }
+
+        const closeKeyboard = (e) => {
+            if (e.target !== document.getElementById('user-id')) {
+                document.getElementById('user-id').blur();
+            }
+        };
+        
+        document.addEventListener('touchstart', closeKeyboard);
+        document.addEventListener('touchend', closeKeyboard);
+        document.addEventListener('touchmove', closeKeyboard);
+        document.addEventListener('click', closeKeyboard);
+
+        function startGame() {
+            const userId = document.getElementById('user-id').value.trim();
+            if (!userId) {
+                alert('Please enter your login first!');
+                return;
+            }
+
+            loadGameState(userId);
+            
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('menuTitle').innerText = 'Welcome, ' + userId + '!';
+            document.getElementById('user-id-container').classList.add('hidden');
+            document.getElementById('startButton').textContent = 'Race';
+            document.getElementById('startButton').classList.remove('hidden');
+            document.getElementById('startButton').onclick = startGameplay;
+            document.getElementById('statsButton').classList.remove('hidden');
+            document.getElementById('shopButton').classList.remove('hidden');
+            document.getElementById('inventoryButton').classList.remove('hidden');
+        }
+
+        function startGameplay() {
+            gameRunning = true;
+            isPlayerVisible = true; 
+            score = 0;
+            lives = ships[gameState.currentShip].lives;
+            distance = 0;
+            obstacles.length = 0;
+            bonuses.length = 0;
+            lasers.length = 0;
+            enemies.length = 0;
+            explosions.length = 0;
+            healboxes.length = 0;
+            enemiesDestroyed = 0;
+            lastHealboxSpawnDistance = 0;
+            playerExplosion = null; 
+            
+            player.x = canvas.width / 2 - player.width / 2;
+            player.y = canvas.height - 100;
+            
+            document.getElementById('score').classList.remove('hidden');
+            document.getElementById('lives').classList.remove('hidden');
+            document.getElementById('distance').classList.remove('hidden');
+            document.getElementById('enemies').classList.remove('hidden');
+            document.getElementById('shootButton').classList.remove('hidden');
+            
+            createObstacle();
+            createBonus("laser");
+            document.getElementById('menu').style.display = 'none';
+            update();
+        }
+
+        function endGame() {
+            playerExplosion = {
+                x: player.x,
+                y: player.y,
+                width: player.width,
+                height: player.height,
+                alpha: 1,
+                blinkInterval: 100,
+                lastBlinkTime: Date.now(),
+                duration: 1000,
+                startTime: Date.now()
+            };
+            
+            shopCurrency += score;
+            
+            if (gameState.userId !== 'default') {
+                stats.push({ 
+                    score, 
+                    distance,
+                    enemiesDestroyed,
+                    date: new Date().toLocaleDateString()
+                });
+            }
+            
+            gameState.score = score;
+            gameState.lives = lives;
+            gameState.distance = distance;
+            gameState.shopCurrency = shopCurrency;
+            gameState.stats = stats;
+            gameState.highScore = Math.max(gameState.highScore, score);
+            
+            saveGameState();
+            
+            document.getElementById('score').classList.add('hidden');
+            document.getElementById('lives').classList.add('hidden');
+            document.getElementById('distance').classList.add('hidden');
+            document.getElementById('enemies').classList.add('hidden');
+            document.getElementById('shootButton').classList.add('hidden');
+            
+            setTimeout(() => {
+                gameRunning = false; 
+                document.getElementById('menu').style.display = 'block';
+                document.getElementById('menuTitle').innerText = 'Game Over';
+                document.getElementById('user-id-container').classList.add('hidden');
+                document.getElementById('startButton').classList.add('hidden');
+                document.getElementById('newGameButton').textContent = 'Restart';
+                document.getElementById('newGameButton').classList.remove('hidden');
+                document.getElementById('statsButton').classList.remove('hidden');
+                document.getElementById('shopButton').classList.remove('hidden');
+                document.getElementById('inventoryButton').classList.remove('hidden');
+            }, 1500); 
+        }
+
+        function update() {
+            if (!gameRunning && !playerExplosion) return; 
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawStars();
+            drawPlayer();
+            if (gameRunning) { 
+                drawObstacles();
+                drawBonuses();
+                drawEnemies();
+                drawExplosions();
+                drawHealboxes();
+                movePlayer();
+                handleLasers();
+
+                distance += 0.1;
+                document.getElementById('distance').innerText = `Distance: ${Math.floor(distance)}`;
+                document.getElementById('score').innerText = `Score: ${score}`;
+                document.getElementById('lives').innerText = `Lives: ${lives}`;
+                document.getElementById('enemies').innerText = `Enemies: ${enemiesDestroyed}`;
+
+                if (Math.floor(distance) > lastEnemySpawnDistance && Math.floor(distance) % 100 === 0) {
+                    createEnemy();
+                    lastEnemySpawnDistance = Math.floor(distance);
+                }
+
+                if (Math.floor(distance) > lastHealboxSpawnDistance && Math.floor(distance) % 150 === 0) {
+                    createHealbox();
+                    lastHealboxSpawnDistance = Math.floor(distance);
+                }
+
+                if (distance > 500 && distance <= 1000) {
+                    speed = 4;
+                } else if (distance > 1000) {
+                    speed = 5;
+                }
+
+                if (Math.random() < 0.05) {
+                    createObstacle();
+                }
+
+                if (Math.random() < 0.03) {
+                    createBonus("regular");
+                }
+
+                if (Math.random() < 0.001) {
+                    createBonus("laser");
+                }
+            }
+
+            if (gameRunning || playerExplosion) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        function drawExplosions() {
+            explosions.forEach((explosion, index) => {
+                const currentTime = Date.now();
+                const elapsedTime = currentTime - explosion.startTime;
+
+                if (elapsedTime > explosion.duration) {
+                    explosions.splice(index, 1);
+                    return;
+                }
+
+                if (currentTime - explosion.lastBlinkTime > explosion.blinkInterval) {
+                    explosion.alpha = explosion.alpha === 1 ? 0.3 : 1;
+                    explosion.lastBlinkTime = currentTime;
+                }
+
+                ctx.globalAlpha = explosion.alpha;
+                ctx.drawImage(explosionImage, explosion.x, explosion.y, explosion.width, explosion.height);
+                ctx.globalAlpha = 1;
+            });
+        }
+
+        function createExplosion(x, y, width, height) {
+            explosions.push({
+                x,
+                y,
+                width,
+                height,
+                alpha: 1,
+                blinkInterval: 100, 
+                lastBlinkTime: Date.now(),
+                duration: 1000, 
+                startTime: Date.now() 
+            });
+        }
+
+        function handleLasers() {
+            lasers.forEach((laser, index) => {
+                if (laser.isEnemy) {
+                    laser.y += laser.speed;
+                    if (laser.y > canvas.height) {
+                        lasers.splice(index, 1);
+                        return;
+                    }
+
+                    ctx.drawImage(laserImage, laser.x, laser.y, laser.width, laser.height);
+
+                    if (
+                        player.x < laser.x + laser.width &&
+                        player.x + player.width > laser.x &&
+                        player.y < laser.y + laser.height &&
+                        player.y + player.height > laser.y
+                    ) {
+                        lives--;
+                        lasers.splice(index, 1);
+                        if (lives <= 0) {
+                            lives = 0;
+                            endGame();
+                        }
+                    }
+                } else {
+                    laser.y -= laser.speed;
+                    if (laser.y < -laser.height) {
+                        lasers.splice(index, 1);
+                        return;
+                    }
+
+                    ctx.drawImage(laserImage, laser.x, laser.y, laser.width, laser.height);
+
+                    enemies.forEach((enemy, enemyIndex) => {
+                        if (
+                            laser.x < enemy.x + enemy.width &&
+                            laser.x + laser.width > enemy.x &&
+                            laser.y < enemy.y + enemy.height &&
+                            laser.y + laser.height > enemy.y
+                        ) {
+                            createExplosion(enemy.x, enemy.y, enemy.width, enemy.height);
+                            enemies.splice(enemyIndex, 1);
+                            lasers.splice(index, 1);
+                            score += 50;
+                            enemiesDestroyed++; 
+                        }
+                    });
+
+                    obstacles.forEach((obstacle, obstacleIndex) => {
+                        if (
+                            laser.x < obstacle.x + obstacle.width &&
+                            laser.x + laser.width > obstacle.x &&
+                            laser.y < obstacle.y + obstacle.height &&
+                            laser.y + laser.height > obstacle.y
+                        ) {
+                            obstacles.splice(obstacleIndex, 1);
+                            lasers.splice(index, 1);
+                        }
+                    });
+                }
+            });
+        }
+
+        function drawHealboxes() {
+            healboxes.forEach((healbox, index) => {
+                ctx.drawImage(healboxImage, healbox.x, healbox.y, healbox.width, healbox.height);
+
+                healbox.y += healbox.speed;
+
+                if (healbox.y > canvas.height) {
+                    healboxes.splice(index, 1);
+                    return;
+                }
+
+                if (
+                    player.x < healbox.x + healbox.width &&
+                    player.x + player.width > healbox.x &&
+                    player.y < healbox.y + healbox.height &&
+                    player.y + player.height > healbox.y
+                ) {
+                    lives++;
+                    healboxes.splice(index, 1);
+                }
+            });
+        }
+
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', handleTouchEnd);
+
+        shootButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (gameRunning) {
+                shootLaser();
+            }
+        });
+
+        document.getElementById('statsButton').addEventListener('click', () => {
+            const userId = document.getElementById('user-id').value.trim();
+            if (!userId) {
+                alert('Please enter your login first!');
+                return;
+            }
+            loadGameState(userId);
+            
+            if (stats.length === 0) {
+                alert('No statistics available for this user yet.');
+                return;
+            }
+
+            const topStats = stats
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);
+
+            const statsText = topStats
+                .map((s, index) => `${index + 1}. Score: ${s.score}, Distance: ${Math.floor(s.distance)}, Enemies: ${s.enemiesDestroyed}, Date: ${s.date}`)
+                .join('\n');
+            const highScoreText = `High Score: ${gameState.highScore}`;
+            alert(`${highScoreText}\n\nTop 10 Best Results:\n${statsText}`);
+        });
+
+        document.getElementById('shopButton').addEventListener('click', () => {
+            const userId = document.getElementById('user-id').value.trim();
+            if (!userId) {
+                alert('Please enter your login first!');
+                return;
+            }
+            loadGameState(userId);
+            showShop();
+        });
+
+        document.getElementById('newGameButton').addEventListener('click', () => {
+            if (document.getElementById('newGameButton').textContent === 'Restart') {
+                startGameplay();
+            } else {
+                showLoginScreen();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') player.dx = -player.speed;
+            if (e.key === 'ArrowRight') player.dx = player.speed;
+            if (e.key === 'ArrowUp') player.dy = -player.speed;
+            if (e.key === 'ArrowDown') player.dy = player.speed;
+            if (e.key === ' ') shootLaser();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') player.dx = 0;
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') player.dy = 0;
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            player.x = canvas.width / 2 - player.width / 2;
+            player.y = canvas.height - 100;
+        });
+
+        function showShop() {
+            const shopContent = `
+                <div class="shop-container">
+                    <h2>Space Shop</h2>
+                    <div class="shop-currency">Your Currency: ${shopCurrency}</div>
+                    <div class="ships-container">
+                        <div class="ship-item">
+                            <img src="${redShipImage.src}" alt="Red Ship">
+                            <div class="ship-info">
+                                <h3>Red Ship</h3>
+                                <p>Lives: 5</p>
+                                <p>Cost: 200</p>
+                                <button onclick="buyShip('redShip')" ${shopCurrency < 200 || gameState.ownedShips.includes('redShip') ? 'disabled' : ''}>${gameState.ownedShips.includes('redShip') ? 'Owned' : 'Buy'}</button>
+                            </div>
+                        </div>
+                        <div class="ship-item">
+                            <img src="${elonShipImage.src}" alt="Elon Ship">
+                            <div class="ship-info">
+                                <h3>Elon Ship</h3>
+                                <p>Lives: 7</p>
+                                <p>Cost: 400</p>
+                                <button onclick="buyShip('elonShip')" ${shopCurrency < 400 || gameState.ownedShips.includes('elonShip') ? 'disabled' : ''}>${gameState.ownedShips.includes('elonShip') ? 'Owned' : 'Buy'}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="closeShop()">Close</button>
+                </div>
+            `;
+
+            const shopModal = document.createElement('div');
+            shopModal.className = 'shop-modal';
+            shopModal.innerHTML = shopContent;
+            document.body.appendChild(shopModal);
+        }
+
+        function closeShop() {
+            const shopModal = document.querySelector('.shop-modal');
+            if (shopModal) {
+                shopModal.remove();
+            }
+        }
+
+        function buyShip(shipType) {
+            const ship = ships[shipType];
+            if (shopCurrency >= ship.cost && !gameState.ownedShips.includes(shipType)) {
+                shopCurrency -= ship.cost;
+                gameState.ownedShips.push(shipType);
+                gameState.currentShip = shipType;
+                gameState.shopCurrency = shopCurrency;
+                saveGameState();
+                
+                const shopModal = document.querySelector('.shop-modal');
+                if (shopModal) {
+                    shopModal.remove();
+                    showShop();
+                }
+                alert('Ship purchased successfully!');
+            }
+        }
+
+        function showInventory() {
+            const inventoryContent = `
+                <div class="inventory-container">
+                    <h2 class="inventory-title">Your Ships</h2>
+                    <div class="ships-slots">
+                        <div class="ship-slot">
+                            <img src="${shipImage.src}" alt="Default Ship">
+                            <div class="ship-info">
+                                <h3>Default Ship</h3>
+                                <p>Lives: 3</p>
+                                <button onclick="chooseShip('default')" ${gameState.currentShip === 'default' ? 'disabled' : ''}>Choose</button>
+                            </div>
+                        </div>
+                        <div class="ship-slot ${gameState.ownedShips.includes('redShip') ? '' : 'locked'}">
+                            ${gameState.ownedShips.includes('redShip') ? `
+                                <img src="${redShipImage.src}" alt="Red Ship">
+                                <div class="ship-info">
+                                    <h3>Red Ship</h3>
+                                    <p>Lives: 5</p>
+                                    <button onclick="chooseShip('redShip')" ${gameState.currentShip === 'redShip' ? 'disabled' : ''}>Choose</button>
+                                </div>
+                            ` : `
+                                <div class="ship-info">
+                                    <h3>Locked</h3>
+                                    <p>Purchase in Shop</p>
+                                </div>
+                            `}
+                        </div>
+                        <div class="ship-slot ${gameState.ownedShips.includes('elonShip') ? '' : 'locked'}">
+                            ${gameState.ownedShips.includes('elonShip') ? `
+                                <img src="${elonShipImage.src}" alt="Elon Ship">
+                                <div class="ship-info">
+                                    <h3>Elon Ship</h3>
+                                    <p>Lives: 7</p>
+                                    <button onclick="chooseShip('elonShip')" ${gameState.currentShip === 'elonShip' ? 'disabled' : ''}>Choose</button>
+                                </div>
+                            ` : `
+                                <div class="ship-info">
+                                    <h3>Locked</h3>
+                                    <p>Purchase in Shop</p>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                    <button onclick="closeInventory()">Close</button>
+                </div>
+            `;
+
+            const inventoryModal = document.createElement('div');
+            inventoryModal.className = 'inventory-modal';
+            inventoryModal.innerHTML = inventoryContent;
+            document.body.appendChild(inventoryModal);
+        }
+
+        function closeInventory() {
+            const inventoryModal = document.querySelector('.inventory-modal');
+            if (inventoryModal) {
+                inventoryModal.remove();
+            }
+        }
+
+        function chooseShip(shipType) {
+            gameState.currentShip = shipType;
+            saveGameState();
+            
+            const inventoryModal = document.querySelector('.inventory-modal');
+            if (inventoryModal) {
+                inventoryModal.remove();
+                showInventory();
+            }
+            alert('Ship selected successfully!');
+        }
+
+        document.getElementById('inventoryButton').addEventListener('click', () => {
+            const userId = document.getElementById('user-id').value.trim();
+            if (!userId) {
+                alert('Please enter your login first!');
+                return;
+            }
+            loadGameState(userId);
+            showInventory();
+        });
+
+        showLoginScreen();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Simple clicker game to pass the time.">
+    <meta property="og:title" content="Clicker Game">
+    <meta property="og:description" content="Bansai Game.">
+    <meta property="og:image" content="https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/Qmam1feNZMoQoFnKX8bCAxiMVqdmrng4UdNY5yBkn1Wxgm">
+    <meta property="og:url" content="URL_of_your_game">
+    <title>Bansai Game</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap">
+
+    <style>
+        :root {
+    --primary-color: #ac61e8;
+    --secondary-color: #8a3ab9;
+    --background-color: transparent;
+    --text-color: #ecf0f1;
+    --score-color: linear-gradient(to right, #90ef89, #d692dd, #726edd);
+    --score-bg-color: #3c3c3c;
+    --level-color: linear-gradient(to right, #90ef89, #d692dd, #726edd);
+    --level-bg-color: #3c3c3c;
+    --progress-height: 20px;
+    --progress-gradient: linear-gradient(to right, #90ef89, #d692dd, #726edd);
+    --progress-bg-color: #3c3c3c;
+    --clicker-bg-color: transparent;
+    --button-radius: 4px;
+    --button-padding: 8px 16px;
+    --button-font-size: 0.9em;
+    --button-bg: linear-gradient(to right, #3498db, #2ecc71);
+    --button-bg-hover: linear-gradient(to right, #2ecc71, #3498db);
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-image: url('https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/bafybeic5r2z3wgseuc6fe4sde2o2uxn5fcnt5lzaukeph32wayr3luzvhm');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--text-color);
+    padding: 20px;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+#clicker-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    z-index: 1;
+    background: transparent;
+}
+
+#clicker {
+    cursor: pointer;
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    transition: transform 0.3s ease;
+}
+
+#clicker:hover {
+    transform: scale(1.05);
+}
+
+.progress-container {
+    width: 300px;
+    height: var(--progress-height);
+    background-color: rgba(60, 60, 60, 0.5);
+    border-radius: 15px;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+}
+
+.progress-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--progress-gradient);
+    transition: width 0.3s ease-in-out;
+    min-width: 0;
+}
+
+.progress-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    z-index: 1;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+#score {
+    font-size: 3em;
+    margin: 20px 0;
+    background: linear-gradient(45deg, #00ff99, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(0, 255, 153, 0.8);
+    font-family: 'Orbitron', sans-serif;
+}
+
+.level {
+    font-size: 1.5em;
+    margin: 10px 0;
+    color: var(--level-color);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.progress-label {
+    font-size: 1.3em;
+    margin: 5px 0;
+    color: #ffffff;
+    text-shadow: 
+        0 0 3px #00ff99, 
+        0 0 6px #00ff99,
+        0 0 9px #ff00ff, 
+        0 0 12px #ff00ff;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.click-value {
+    position: absolute;
+    font-size: 1.5em;
+    animation: floatUp 1s forwards;
+    pointer-events: none;
+    color: #ffffff;
+    text-shadow: 
+        0 0 3px #00ff99, 
+        0 0 6px #00ff99,
+        0 0 9px #ff00ff, 
+        0 0 12px #ff00ff;
+    font-family: 'Orbitron', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#user-id-container {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    z-index: 1;
+    background: transparent;
+}
+
+#user-id {
+    width: 100%;
+    font-size: 1.2em;
+    padding: 10px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 10px;
+    background-color: rgba(32, 39, 49, 0.5);
+    color: var(--text-color);
+    backdrop-filter: blur(5px);
+}
+
+.button {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--button-font-size);
+    cursor: pointer;
+    border: none;
+    border-radius: var(--button-radius);
+    color: var(--text-color);
+    transition: all 0.3s;
+    margin: 5px 0;
+    background: var(--button-bg);
+    backdrop-filter: blur(5px);
+}
+
+.button:hover {
+    background: var(--button-bg-hover);
+    transform: translateY(-2px);
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#cooldown-message {
+    display: none;
+    font-size: 1.5em;
+    color: red;
+    text-align: center;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+#upgrade-info {
+    font-size: 1.3em;
+    margin: 10px 0;
+    color: var(--score-color);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
+}
+
+@keyframes pulse {
+    0% { text-shadow: 0 0 10px rgba(0, 255, 153, 0.8); }
+    50% { text-shadow: 0 0 20px rgba(0, 255, 153, 1); }
+    100% { text-shadow: 0 0 10px rgba(0, 255, 153, 0.8); }
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #00ff99, #ff00ff);
+    pointer-events: none;
+    z-index: 100;
+}
+
+@keyframes particle-animation {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+        box-shadow: 0 0 5px #ff00ff, 0 0 10px #00ffff; 
+    }
+}
+
+@media (max-width: 600px) {
+    #clicker {
+        width: 150px;
+        height: 150px;
+    }
+
+    .progress-container {
+        width: 250px;
+    }
+
+    #score {
+        font-size: 2.5em;
+    }
+}
+
+.led-lamp-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.led-lamp {
+    width: 180px;
+    height: 20px;
+    background: linear-gradient(135deg, rgba(52, 73, 94, 0.5), rgba(44, 62, 80, 0.5));
+    border-radius: 10px;
+    border: 4px solid rgba(189, 195, 199, 0.5);
+    box-shadow: 0 4px 8px rgba(111, 66, 193, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 10px;
+    box-shadow: 0 0 15px rgba(111, 66, 193, 0.8), 
+                0 0 30px rgba(111, 66, 193, 0.8), 
+                0 0 50px rgba(111, 66, 193, 0.8);
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+}
+
+@keyframes mercury-flicker {
+    0% {
+        background: radial-gradient(circle, rgba(172, 97, 232, 0.8), rgba(155, 89, 182, 0.8));
+        box-shadow: 0 0 8px rgba(189, 195, 199, 0.8), 0 0 15px rgba(189, 195, 199, 0.8), 0 0 25px rgba(189, 195, 199, 0.8);
+    }
+    50% {
+        background: radial-gradient(circle, rgba(155, 89, 182, 0.8), rgba(172, 97, 232, 0.8));
+        box-shadow: 0 0 12px rgba(189, 195, 199, 0.8), 0 0 20px rgba(189, 195, 199, 0.8), 0 0 30px rgba(189, 195, 199, 0.8);
+    }
+    100% {
+        background: radial-gradient(circle, rgba(172, 97, 232, 0.8), rgba(155, 89, 182, 0.8));
+        box-shadow: 0 0 8px rgba(189, 195, 199, 0.8), 0 0 15px rgba(189, 195, 199, 0.8), 0 0 25px rgba(189, 195, 199, 0.8);
+    }
+}
+
+
+.led-lamp-light.active {
+    width: 180px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(172, 97, 232, 0.8), rgba(155, 89, 182, 0.8));
+    animation: mercury-flicker 2s infinite;
+    box-shadow: 0 4px 8px rgba(111, 66, 193, 0.5);
+    transition: background 0.3s ease, transform 0.3s ease;
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    backdrop-filter: blur(5px);
+}
+
+.led-lamp-light.inactive {
+    width: 180px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(149, 165, 166, 0.8), rgba(127, 140, 141, 0.8));
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(127, 140, 141, 0.8), 0 0 10px rgba(127, 140, 141, 0.8), 0 0 15px rgba(127, 140, 141, 0.8);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: none;
+    backdrop-filter: blur(5px);
+}
+
+.led-lamp-info {
+    font-size: 12px;
+    color: var(--text-color);
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    position: absolute;
+    z-index: 1;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.inventory-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.flower-slots {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.flower-slot {
+    width: 80px;
+    height: 80px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.flower-count {
+    margin-top: 5px;
+    font-size: 0.9em;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.close-button:hover {
+    color: var(--primary-color);
+}
+
+.market-modal, .balance-modal {
+    position: relative;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.market-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.market-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 5px;
+}
+
+.sell-button {
+    padding: 5px 10px;
+    background: var(--button-bg);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.sell-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(3px);
+    z-index: 999;
+}
+
+.active-sales {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+}
+
+.active-sales h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+    color: var(--text-color);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.sale-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 4px;
+}
+
+.sale-item img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.sale-timer {
+    color: #90ef89;
+    font-family: 'Orbitron', sans-serif;
+    min-width: 60px;
+    text-align: right;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.no-active-sales {
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.7;
+    padding: 10px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+</style>
+</head>
+<body>
+    <div id="user-id-container">
+        <input type="text" id="user-id" placeholder="Your Nickname">
+        <button id="load-game" class="button">Login</button>
+    </div>
+
+    <div id="clicker-container" style="display: none;">
+        <div class="led-lamp-container">
+            <div class="led-lamp" id="led-lamp">
+                <div class="led-lamp-light inactive"></div>
+                <span class="led-lamp-info">LVL 0</span>
+            </div>
+        </div>
+
+        <img id="clicker" src="https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/Qmam1feNZMoQoFnKX8bCAxiMVqdmrng4UdNY5yBkn1Wxgm" alt="Clicker">
+        
+        <div id="score">Score: 0</div>
+        
+        <div class="progress-label">Progress</div>
+        <div class="progress-container" id="progress-container">
+            <div class="progress-text">0%</div>
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="progress-label">Water</div>
+        <div class="progress-container" id="click-progress-container">
+            <div class="progress-text">0/600</div>
+            <div class="progress-bar" id="click-progress-bar"></div>
+        </div>
+
+        <button id="inventory-button" class="button">Inventory</button>
+        
+        <div class="level" id="level">Level: 1</div>
+        <div id="cooldown-message">You don't have water. Wait for the supplies to be replenished and come back in 4 hours.</div>
+
+        <div class="button-container"></div>
+        <button id="share-button" class="button">Share Results</button>
+        <button id="upgrade-button" class="button">Increase Yield +1 (40 Score)</button>
+        <button id="upgrade-storage-button" class="button">Increase water storage +50 (500 score)</button>
+        <button id="upgrade-lamp-button" class="button">Upgrade the lamp (60 score)</button>
+        <div id="upgrade-info">Coins per watering: 1</div>
+        <button id="auto-clicker-button" class="button">Automatic watering +1 (30 score)</button>
+    </div>
+
+    <div id="inventory-modal" class="market-modal">
+        <button class="close-button" id="close-inventory">&times;</button>
+        <div class="flower-slots">
+            <div class="flower-slot">
+                <span class="flower-count">0</span>
+                <span>&#127808; </span> 
+            </div>
+            <div class="flower-slot">
+                <span class="flower-count">0</span>
+                <span>&#127804; </span> 
+            </div>
+            <div class="flower-slot">
+                <span class="flower-count">0</span>
+                <span>&#127800; </span> 
+            </div>
+        </div>
+        <button id="market-button" class="button">Market</button>
+        <button id="balance-button" class="button">Balance</button>
+    </div>
+    
+    <div id="market-modal" class="market-modal">
+        <h2>Market</h2>
+        <div class="active-sales">
+            <h3>Active sales</h3>
+            <div id="active-sales-container"></div>
+        </div>
+        <div class="market-items">
+            <div class="market-item">
+                <span>50 Score (2 min)</span>
+                <button class="sell-button" data-type="0">Sell</button>
+                <span>&#127808;</span> 
+            </div>
+            <div class="market-item">
+                <span>150 Score (5 min)</span>
+                <button class="sell-button" data-type="1">Sell</button>
+                <span>&#127804;</span> 
+            </div>
+            <div class="market-item">
+                <span>350 Score (10 min)</span>
+                <button class="sell-button" data-type="2">Sell</button>
+                <span>&#127800;</span> 
+            </div>
+        </div>
+        <button id="close-market" class="button">Close</button>
+    </div>
+    
+
+    <div id="balance-modal" class="market-modal">
+        <h2>Balance</h2>
+        <div class="balance-info">
+            <p>Current Balance: <span id="current-balance">0</span> Score</p>
+            <p>Total earned: <span id="total-earnings">0</span> Score</p>
+            <div class="flowers-sold">
+                <p>Flowers sold:</p>
+                <p>Type 1: <span id="flowers-sold-1">0</span>&#127808;</p>
+                <p>Type 2: <span id="flowers-sold-2">0</span>&#127804;</p>
+                <p>Type 3: <span id="flowers-sold-3">0</span>&#127800;</p>
+            </div>
+        </div>
+        <button id="collect-earnings" class="button">Collect profit</button>
+        <button id="close-balance" class="button">Close</button>
+    </div>
+
+    <div class="modal-backdrop"></div>
+</body>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Константы
+    const CLICKS_PER_LEVEL = 10000;
+    const MAX_LEVEL = 10;
+    const COOLDOWN_TIME = 4 * 60 * 60 * 1000; // 4 часа
+    const UPGRADE_COST = 40;
+    const UPGRADE_STORAGE_COST = 500;
+    const AUTO_CLICKER_COST = 30;
+    const AUTO_CLICKER_INTERVAL = 1000;
+    const AUTO_CLICKER_INCREMENT = 1;
+    const BONUS_DISPLAY_TIME = 3000;
+    const LAMP_COSTS = [60, 120, 200];
+    const FLOWER_SELL_TIMES = [120000, 300000, 600000]; // 2, 5, 10 минут
+    const FLOWER_REWARDS = [50, 150, 350];
+    const MAX_ACTIVE_SALES = 5; // New constant for maximum simultaneous sales
+
+    // Состояние игры
+    let gameState = {
+        userId: '',
+        score: 0,
+        level: 1,
+        maxLevelAchieved: 1,
+        clicksPerAction: 1,
+        maxClicks: 600,
+        clicksRemaining: 600,
+        lastClickTime: 0,
+        autoClickerActive: false,
+        autoClickerUnlocked: false,
+        totalClicks: 0,
+        lampLevel: 0,
+        flowers: [0, 0, 0],
+        pendingSales: [],
+        totalEarnings: 0,
+        currentEarnings: 0,
+        flowersSold: [0, 0, 0]
+    };
+
+    // DOM элементы
+    const elements = {
+        upgradeLampButton: document.getElementById('upgrade-lamp-button'),
+        closeInventory: document.getElementById('close-inventory'),
+        inventoryButton: document.getElementById('inventory-button'),
+        inventoryModal: document.getElementById('inventory-modal'),
+        clicker: document.getElementById('clicker'),
+        score: document.getElementById('score'),
+        progressBar: document.getElementById('progress-bar'),
+        progressText: document.querySelector('#progress-container .progress-text'),
+        clickProgressBar: document.getElementById('click-progress-bar'),
+        clickProgressText: document.querySelector('#click-progress-container .progress-text'),
+        level: document.getElementById('level'),
+        userIdInput: document.getElementById('user-id'),
+        loadGameButton: document.getElementById('load-game'),
+        clickerContainer: document.getElementById('clicker-container'),
+        userIdContainer: document.getElementById('user-id-container'),
+        cooldownMessage: document.getElementById('cooldown-message'),
+        upgradeButton: document.getElementById('upgrade-button'),
+        upgradeStorageButton: document.getElementById('upgrade-storage-button'),
+        upgradeInfo: document.getElementById('upgrade-info'),
+        autoClickerButton: document.getElementById('auto-clicker-button'),
+        shareButton: document.getElementById('share-button'),
+        ledLamp: document.getElementById('led-lamp'),
+        modalBackdrop: document.querySelector('.modal-backdrop'),
+        marketModal: document.getElementById('market-modal'),
+        balanceModal: document.getElementById('balance-modal'),
+        currentBalance: document.getElementById('current-balance'),
+        totalEarnings: document.getElementById('total-earnings'),
+        flowersSold: [
+            document.getElementById('flowers-sold-1'),
+            document.getElementById('flowers-sold-2'),
+            document.getElementById('flowers-sold-3')
+        ]
+    };
+    
+    elements.inventoryButton.addEventListener('click', () => {
+        elements.inventoryModal.style.display = 'block';
+        elements.modalBackdrop.style.display = 'block';
+        updateInventoryDisplay();
+    });
+    
+    elements.closeInventory.addEventListener('click', () => {
+        elements.inventoryModal.style.display = 'none';
+        elements.modalBackdrop.style.display = 'none';
+    });
+    
+    function updateActiveSales() {
+        const container = document.getElementById('active-sales-container');
+        if (!container) return;
+
+        if (gameState.pendingSales.length === 0) {
+            container.innerHTML = '<div class="no-active-sales">No Active Sales</div>';
+            return;
+        }
+
+        container.innerHTML = gameState.pendingSales.map(sale => {
+            const timeLeft = Math.max(0, sale.endTime - Date.now());
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Маппинг типов цветков к эмодзи
+            const flowerEmojis = ['&#127808;', '&#127804;', '&#127800;']; // 🌸, 🌷, 🌻
+            const flowerEmoji = flowerEmojis[sale.type];
+
+            return `
+                <div class="sale-item">
+                    <span>${flowerEmoji}</span>
+                    <span>Reward: ${sale.reward} Score</span>
+                    <span class="sale-timer" data-end-time="${sale.endTime}">
+                        ${timeString}
+                    </span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Функции обновления UI
+    function updateProgressBars() {
+        const progressPercent = (gameState.totalClicks % CLICKS_PER_LEVEL) / CLICKS_PER_LEVEL * 100;
+        elements.progressBar.style.width = `${progressPercent}%`;
+        elements.progressText.textContent = `${Math.round(progressPercent)}%`;
+        
+        const clickProgressPercent = (gameState.clicksRemaining / gameState.maxClicks) * 100;
+        elements.clickProgressBar.style.width = `${clickProgressPercent}%`;
+        elements.clickProgressText.textContent = `${gameState.clicksRemaining}/${gameState.maxClicks}`;
+    }
+    
+    function updateDisplay() {
+        elements.score.textContent = `Score: ${gameState.score}`;
+        elements.level.textContent = `Level: ${gameState.level}`;
+        elements.upgradeInfo.textContent = `Yield: ${gameState.clicksPerAction}`;
+        updateLampButton();
+        updateProgressBars();
+        updateAutoClickerButton();
+        checkCooldown();
+    }
+    
+    function updateLampButton() {
+        if (gameState.lampLevel >= 3) {
+            elements.upgradeLampButton.textContent = 'Maximum lamp level.';
+            elements.upgradeLampButton.disabled = true;
+        } else {
+            const cost = LAMP_COSTS[gameState.lampLevel];
+            elements.upgradeLampButton.textContent = `Upgrade the lamp (${cost} score)`;
+            elements.upgradeLampButton.disabled = gameState.score < cost;
+        }
+    }
+
+    function updateAutoClickerButton() {
+        if (!gameState.autoClickerUnlocked) {
+            elements.autoClickerButton.textContent = `Unlock automatic watering (${AUTO_CLICKER_COST} score)`;
+            elements.autoClickerButton.disabled = gameState.score < AUTO_CLICKER_COST;
+            elements.autoClickerButton.style.background = 'var(--progress-bg-color)';
+        } else {
+            elements.autoClickerButton.textContent = gameState.autoClickerActive ? 
+                'Turn OFF automatic watering' : 'Turn ON automatic watering';
+            elements.autoClickerButton.disabled = false;
+            elements.autoClickerButton.style.background = gameState.autoClickerActive ? 
+                'var(--secondary-color)' : 'var(--button-bg)';
+        }
+    }
+
+    function updateLampDisplay() {
+        const lampLight = elements.ledLamp.querySelector('.led-lamp-light');
+        const lampInfo = elements.ledLamp.querySelector('.led-lamp-info');
+        
+        lampLight.className = `led-lamp-light ${gameState.lampLevel > 0 ? 'active' : 'inactive'}`;
+        lampInfo.textContent = `LVL ${gameState.lampLevel}`;
+    }
+
+    function updateInventoryDisplay() {
+        const flowerCounts = document.querySelectorAll('.flower-count');
+        gameState.flowers.forEach((count, index) => {
+            flowerCounts[index].textContent = count;
+        });
+    }
+
+    function updateBalanceDisplay() {
+        elements.currentBalance.textContent = gameState.currentEarnings;
+        elements.totalEarnings.textContent = gameState.totalEarnings;
+        elements.flowersSold.forEach((element, index) => {
+            element.textContent = gameState.flowersSold[index];
+        });
+    }
+
+    function checkCooldown() {
+        const currentTime = Date.now();
+        if (gameState.clicksRemaining <= 0) {
+            elements.cooldownMessage.style.display = 'block';
+            elements.clicker.style.pointerEvents = 'none';
+            elements.clicker.style.opacity = '0.5';
+
+            const timeElapsed = currentTime - gameState.lastClickTime;
+            const timeRemaining = COOLDOWN_TIME - timeElapsed;
+
+            if (timeRemaining > 0) {
+                const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                elements.cooldownMessage.textContent = 
+                    `You don't have water. Wait until the supplies are replenished in ${hours}h ${minutes}m`;
+            } else {
+                resetWater();
+            }
+        } else {
+            elements.cooldownMessage.style.display = 'none';
+            elements.clicker.style.pointerEvents = 'auto';
+            elements.clicker.style.opacity = '1';
+        }
+    }
+
+    function resetWater() {
+        gameState.clicksRemaining = gameState.maxClicks;
+        gameState.lastClickTime = Date.now();
+        saveGameState();
+        elements.cooldownMessage.style.display = 'none';
+        elements.clicker.style.pointerEvents = 'auto';
+        elements.clicker.style.opacity = '1';
+    }
+
+    // Эффекты
+    function createParticles(event) {
+        for (let i = 0; i < 10; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            document.body.appendChild(particle);
+
+            const size = Math.random() * 5 + 5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            const offsetX = Math.random() * 30 - 15;
+            const offsetY = Math.random() * 30 - 15;
+            particle.style.left = `${event.clientX + offsetX}px`;
+            particle.style.top = `${event.clientY + offsetY}px`;
+
+            particle.animate([
+                { transform: 'scale(1)', opacity: 1 },
+                { transform: 'scale(0)', opacity: 0 }
+            ], {
+                duration: 500,
+                easing: 'ease-out'
+            }).onfinish = () => particle.remove();
+        }
+    }
+    
+    function showClickValue(event) {
+        const clickValue = document.createElement('div');
+        clickValue.className = 'click-value';
+        clickValue.textContent = `+${gameState.clicksPerAction}`;
+        elements.clickerContainer.appendChild(clickValue);
+
+        const rect = elements.clicker.getBoundingClientRect();
+        clickValue.style.left = `${event.clientX - rect.left - 20}px`;
+        clickValue.style.top = `${event.clientY - rect.top - 20}px`;
+
+        setTimeout(() => clickValue.remove(), 1000);
+    }
+
+    // Сохранение и загрузка
+    function saveGameState() {
+        Object.entries(gameState).forEach(([key, value]) => {
+            localStorage.setItem(`${gameState.userId}-${key}`, JSON.stringify(value));
+        });
+    }
+
+    function loadGameState(userId) {
+        gameState.userId = userId;
+        const keys = Object.keys(gameState);
+        
+        keys.forEach(key => {
+            const value = localStorage.getItem(`${userId}-${key}`);
+            if (value !== null) {
+                gameState[key] = JSON.parse(value);
+            }
+        });
+
+        if (gameState.autoClickerActive && gameState.autoClickerUnlocked) {
+            startAutoClicker();
+        }
+        updateLampDisplay();
+        
+        // Восстанавливаем активные продажи
+        gameState.pendingSales.forEach(sale => {
+            const remainingTime = sale.endTime - Date.now();
+            if (remainingTime > 0) {
+                setTimeout(() => completeSale(sale), remainingTime);
+            } else {
+                completeSale(sale);
+            }
+        });
+    }
+
+    // Функции для работы с продажами
+    function startSale(flowerType) {
+        if (gameState.flowers[flowerType] <= 0) {
+            alert('You dont have any flowers of this type!');
+            return;
+        }
+        
+        // Check if maximum sales limit is reached
+        if (gameState.pendingSales.length >= MAX_ACTIVE_SALES) {
+            alert('The limit for active sales has been reached (maximum 5 flowers)!');
+            return;
+        }
+
+        gameState.flowers[flowerType]--;
+        const saleTime = FLOWER_SELL_TIMES[flowerType];
+        const reward = FLOWER_REWARDS[flowerType];
+
+        const sale = {
+            type: flowerType,
+            endTime: Date.now() + saleTime,
+            reward: reward
+        };
+
+        gameState.pendingSales.push(sale);
+        updateInventoryDisplay();
+        updateActiveSales();
+        saveGameState();
+
+        setTimeout(() => {
+            completeSale(sale);
+        }, saleTime);
+    }
+
+    function completeSale(sale) {
+        const saleIndex = gameState.pendingSales.indexOf(sale);
+        if (saleIndex > -1) {
+            gameState.pendingSales.splice(saleIndex, 1);
+            gameState.currentEarnings += sale.reward;
+            gameState.totalEarnings += sale.reward;
+            gameState.flowersSold[sale.type]++;
+            updateBalanceDisplay();
+            updateActiveSales();
+            saveGameState();
+        }
+    }
+    
+    let timerInterval;
+    document.getElementById('market-button').addEventListener('click', () => {
+        elements.marketModal.style.display = 'block';
+        elements.modalBackdrop.style.display = 'block';
+        updateActiveSales();
+    
+        // Запускаем интервал обновления таймеров
+        timerInterval = setInterval(updateActiveSales, 1000);
+    });
+    
+    document.getElementById('close-market').addEventListener('click', () => {
+        elements.marketModal.style.display = 'none';
+        elements.modalBackdrop.style.display = 'none';
+        // Останавливаем интервал при закрытии окна
+        clearInterval(timerInterval);
+    });
+
+    function checkFlowerDrop() {
+        if (gameState.lampLevel === 0) return;
+
+        // Изменим вероятность выпадения цветов
+        const rand = Math.random() * 100;
+        let flowerType;
+
+        // Логика выпадения в зависимости от уровня лампы
+        if (gameState.lampLevel === 3) {
+            if (rand < 8) { // 8% шанс
+                if (rand < 3) flowerType = 0;      // 3% шанс на первый тип
+                else if (rand < 6) flowerType = 1; // 3% шанс на второй тип
+                else flowerType = 2;                // 2% шанс на третий тип
+            }
+        } else if (gameState.lampLevel === 2) {
+            if (rand < 6) { // 6% шанс
+                flowerType = rand < 3  ? 0 : 1;     // 3% первый тип, 3% второй тип
+            }
+        } else if (gameState.lampLevel === 1) {
+            if (rand < 4) { // 4% шанс
+                flowerType = 0;                     // Только первый тип
+            }
+        }
+
+        // Добавляем цветок и обновляем отображение
+        if (flowerType !== undefined) {
+            gameState.flowers[flowerType]++;
+            updateInventoryDisplay();
+            saveGameState();
+        
+            // Добавим уведомление о получении цветка
+            console.log(`You have received a flower of the type ${flowerType + 1}`);
+        }
+    }
+    
+        // Обработчики событий
+    function handleClick(event) {
+        if (!gameState.userId || gameState.clicksRemaining <= 0) return;
+
+        gameState.score += gameState.clicksPerAction;
+        gameState.clicksRemaining--;
+        gameState.lastClickTime = Date.now();
+        gameState.totalClicks++;
+        checkFlowerDrop();
+
+        const newLevel = Math.floor(gameState.totalClicks / CLICKS_PER_LEVEL) + 1;
+        if (newLevel !== gameState.level && newLevel <= MAX_LEVEL) {
+            gameState.level = newLevel;
+            gameState.maxLevelAchieved = Math.max(gameState.maxLevelAchieved, newLevel);
+            updateLevel(newLevel);
+        }
+        
+        saveGameState();
+        updateDisplay();
+        createParticles(event);
+        showClickValue(event);
+
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    }
+
+    function updateLevel(newLevel) {
+        const imageUrls = {
+            1: 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/Qmam1feNZMoQoFnKX8bCAxiMVqdmrng4UdNY5yBkn1Wxgm',
+            2: 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/QmQivKv5do6Qm6g2Boeovy9eWX1myiEi6FJU96XsybkbsB',
+            3: 'https://silver-perfect-barracuda-186.mypinata.cloud/ipfs/QmUtB9jSkk2ht2ByGbgPaWtsze6mMsLB2iVXGxFaaG2z7Z'
+        };
+
+        const imageUrl = imageUrls[newLevel] || imageUrls[1];
+        elements.clicker.src = imageUrl;
+
+        let metaTag = document.querySelector('meta[property="og:image"]');
+        if (metaTag) {
+            metaTag.setAttribute('content', imageUrl);
+        }
+    }
+
+    function startAutoClicker() {
+        if (!gameState.autoClickerActive) return;
+        
+        window.autoClickerIntervalId = setInterval(() => {
+            if (gameState.clicksRemaining > 0) {
+                gameState.score += gameState.clicksPerAction;
+                gameState.clicksRemaining--;
+                gameState.lastClickTime = Date.now();
+                gameState.totalClicks++;
+                
+                const newLevel = Math.floor(gameState.totalClicks / CLICKS_PER_LEVEL) + 1;
+                if (newLevel !== gameState.level && newLevel <= MAX_LEVEL) {
+                    gameState.level = newLevel;
+                    gameState.maxLevelAchieved = Math.max(gameState.maxLevelAchieved, newLevel);
+                    updateLevel(newLevel);
+                }
+                
+                saveGameState();
+                updateDisplay();
+            } else {
+                stopAutoClicker();
+            }
+        }, AUTO_CLICKER_INTERVAL);
+    }
+
+    function stopAutoClicker() {
+        clearInterval(window.autoClickerIntervalId);
+        gameState.autoClickerActive = false;
+        updateDisplay();
+    }
+
+    // Инициализация обработчиков событий
+    elements.clicker.addEventListener('click', handleClick);
+
+    elements.loadGameButton.addEventListener('click', () => {
+        const userId = elements.userIdInput.value.trim();
+        if (!userId) {
+            alert('Enter your nickname.');
+            return;
+        }
+
+        loadGameState(userId);
+        elements.userIdContainer.style.display = 'none';
+        elements.clickerContainer.style.display = 'flex';
+        updateDisplay();
+    });
+
+    elements.shareButton.addEventListener('click', () => {
+        const telegramMessage = `My level is ${gameState.level} @BansaiTONbot! Coins: ${gameState.score}.`;
+        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(telegramMessage)}`;
+        window.open(telegramUrl, '_blank');
+    });
+
+    elements.upgradeButton.addEventListener('click', () => {
+        if (gameState.score >= UPGRADE_COST) {
+            if (confirm(`Are you sure you want to increase the yield for ${UPGRADE_COST} points?`)) {
+                gameState.score -= UPGRADE_COST;
+                gameState.clicksPerAction += 1;
+                saveGameState();
+                updateDisplay();
+                alert('The yield has been improved.');
+            }
+        } else {
+            alert('Not enough points to improve the yield!');
+        }
+    });
+
+    elements.upgradeStorageButton.addEventListener('click', () => {
+        if (gameState.score >= UPGRADE_STORAGE_COST) {
+            if (confirm(`Are you sure you want to increase the water storage for ${UPGRADE_STORAGE_COST} points?`)) {
+                gameState.score -= UPGRADE_STORAGE_COST;
+                gameState.maxClicks += 50;
+                saveGameState();
+                updateDisplay();
+                alert('The water storage has been upgraded.');
+            }
+        } else {
+            alert('Not enough points to increase the water storage!');
+        }
+    });
+
+    elements.autoClickerButton.addEventListener('click', () => {
+        if (!gameState.autoClickerUnlocked) {
+            if (gameState.score >= AUTO_CLICKER_COST) {
+                if (confirm(`Are you sure you want to unlock automatic watering for ${AUTO_CLICKER_COST} points?`)) {
+                    gameState.score -= AUTO_CLICKER_COST;
+                    gameState.autoClickerUnlocked = true;
+                    saveGameState();
+                    updateDisplay();
+                    alert('Automatic watering unlocked! You can now turn it on.');
+                }
+            } else {
+                alert('Not enough points to unlock automatic watering!');
+            }
+        } else {
+            gameState.autoClickerActive = !gameState.autoClickerActive;
+            if (gameState.autoClickerActive) {
+                startAutoClicker();
+            } else {
+                stopAutoClicker();
+            }
+            updateDisplay();
+        }
+    });
+
+    elements.upgradeLampButton.addEventListener('click', () => {
+        if (gameState.lampLevel >= 3) {
+            alert('The lamp has reached its maximum level!');
+            return;
+        }
+
+        const cost = LAMP_COSTS[gameState.lampLevel];
+        if (gameState.score >= cost) {
+            if (confirm(`Do you want to buy the lamp upgrade for ${cost} Score?`)) {
+                gameState.score -= cost;
+                gameState.lampLevel++;
+                updateLampDisplay();
+                updateDisplay();
+                saveGameState();
+            
+                    // Добавьте сообщение о новых возможностях
+                let message = '';
+                switch(gameState.lampLevel) {
+                    case 1:
+                        message = 'You will now receive flowers of the 1 type!';
+                        break;
+                    case 2:
+                        message = 'You will now receive flowers of the first and second types!';
+                        break;
+                    case 3:
+                        message = 'You will now receive all types of flowers!';
+                        break;
+                }
+                alert(message);
+            } else {
+                alert('Not enough Score!');
+            }
+        }
+    });
+
+    // Обработчики модальных окон
+    document.getElementById('market-button').addEventListener('click', () => {
+        elements.marketModal.style.display = 'block';
+        elements.modalBackdrop.style.display = 'block';
+    });
+
+    document.getElementById('balance-button').addEventListener('click', () => {
+        elements.balanceModal.style.display = 'block';
+        elements.modalBackdrop.style.display = 'block';
+        updateBalanceDisplay();
+    });
+
+    document.getElementById('collect-earnings').addEventListener('click', () => {
+        if (gameState.currentEarnings > 0) {
+            gameState.score += gameState.currentEarnings;
+            gameState.currentEarnings = 0;
+            updateBalanceDisplay();
+            updateDisplay();
+            saveGameState();
+            alert('Profit successfully collected!');
+        } else {
+            alert('There is no available profit to collect!');
+        }
+    });
+
+    document.querySelectorAll('.sell-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const flowerType = parseInt(button.dataset.type);
+            startSale(flowerType);
+        });
+    });
+
+    document.getElementById('close-market').addEventListener('click', () => {
+        elements.marketModal.style.display = 'none';
+        elements.modalBackdrop.style.display = 'none';
+    });
+
+    document.getElementById('close-balance').addEventListener('click', () => {
+        elements.balanceModal.style.display = 'none';
+        elements.modalBackdrop.style.display = 'none';
+    });
+
+    // Проверка кулдауна каждую минуту
+    setInterval(checkCooldown, 60000);
+});
+</script>
+</html>

@@ -59,12 +59,12 @@ const themeColors = {
 }
 
 const rooms = [
-  { id: "entrance", name: "Entrance", icon: Home, position: [0, 0, 0] as [number, number, number] },
-  { id: "about", name: "About", icon: User, position: [15, 0, 0] as [number, number, number] },
-  { id: "skills", name: "Skills", icon: Code, position: [30, 0, 0] as [number, number, number] },
-  { id: "experience", name: "Experience", icon: Briefcase, position: [45, 0, 0] as [number, number, number] },
-  { id: "projects", name: "Projects", icon: FolderOpen, position: [60, 0, 0] as [number, number, number] },
-  { id: "contact", name: "Contact", icon: MessageSquare, position: [75, 0, 0] as [number, number, number] },
+  { id: "entrance", name: "Entrance", icon: Home, position: [0, 0, 0] as [number, number, number], cameraPosition: [0, 2, 8] as [number, number, number] },
+  { id: "about", name: "About", icon: User, position: [15, 0, 0] as [number, number, number], cameraPosition: [15, 2, 8] as [number, number, number] },
+  { id: "skills", name: "Skills", icon: Code, position: [30, 0, 0] as [number, number, number], cameraPosition: [30, 2, 8] as [number, number, number] },
+  { id: "experience", name: "Experience", icon: Briefcase, position: [45, 0, 0] as [number, number, number], cameraPosition: [45, 2, 8] as [number, number, number] },
+  { id: "projects", name: "Projects", icon: FolderOpen, position: [60, 0, 0] as [number, number, number], cameraPosition: [60, 2, 8] as [number, number, number] },
+  { id: "contact", name: "Contact", icon: MessageSquare, position: [75, 0, 0] as [number, number, number], cameraPosition: [75, 2, 8] as [number, number, number] },
 ]
 
 function Room({
@@ -245,7 +245,7 @@ function RealisticFlowerPot({ position }: { position: [number, number, number] }
       {/* Soil surface */}
       <mesh position={[0, 0.22, 0]}>
         <cylinderGeometry args={[0.1, 0.1, 0.04, 16]} />
-        <meshStandardMaterial color="#3d2314" roughness={1} />
+        <meshStandardMaterial color="#4a3728" roughness={0.95} metalness={0.1} />
       </mesh>
 
       {/* Main thick stem */}
@@ -1290,16 +1290,15 @@ function ModernWallDisplay({ position, isDark = true }: { position: [number, num
         </Text>
       )}
 
-      {/* Specializations with colors - professional design with icons */}
+      {/* Specializations with colors - professional design without emojis */}
       <Html transform position={[0, -1.4, 0.2]} scale={0.38} center>
         <div className="flex flex-wrap gap-3 justify-center w-[900px]">
           {personal.specializations.map((spec, i) => {
             const specColors = ["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"]
-            const icons = ["📐", "📊", "🎮", "🤖"]
             return (
               <span
                 key={i}
-                className="px-5 py-2.5 rounded-full text-base font-semibold border-2 shadow-xl flex items-center gap-2 transition-all hover:scale-105"
+                className="px-5 py-2.5 rounded-full text-base font-semibold border-2 shadow-xl transition-all hover:scale-105"
                 style={{
                   backgroundColor: isDark ? `${specColors[i]}35` : `${specColors[i]}20`,
                   borderColor: specColors[i],
@@ -1312,7 +1311,6 @@ function ModernWallDisplay({ position, isDark = true }: { position: [number, num
                     : `0 2px 8px ${specColors[i]}30, 0 1px 3px rgba(0,0,0,0.1)`,
                 }}
               >
-                <span style={{ fontSize: "1.1em" }}>{icons[i]}</span>
                 {spec}
               </span>
             )
@@ -1743,8 +1741,16 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
         </group>
       )}
 
-      {/* Ambient colored lighting - более масштабный и рассеянный */}
-      <pointLight position={[0, -2, -3]} intensity={isDark ? 6 : 4} color="#14b8a6" distance={18} decay={2} />
+      {/* Ambient colored lighting - сплошная полоска света под столом */}
+      <pointLight position={[-2, -1.8, -3]} intensity={isDark ? 5 : 4} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[-1.5, -1.8, -3]} intensity={isDark ? 5 : 4} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[-1, -1.8, -3]} intensity={isDark ? 6 : 5} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[-0.5, -1.8, -3]} intensity={isDark ? 6 : 5} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[0, -1.8, -3]} intensity={isDark ? 7 : 6} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[0.5, -1.8, -3]} intensity={isDark ? 6 : 5} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[1, -1.8, -3]} intensity={isDark ? 6 : 5} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[1.5, -1.8, -3]} intensity={isDark ? 5 : 4} color="#14b8a6" distance={10} decay={1.2} />
+      <pointLight position={[2, -1.8, -3]} intensity={isDark ? 5 : 4} color="#14b8a6" distance={10} decay={1.2} />
       <pointLight position={[0, 6, -3]} intensity={isDark ? 35 : 40} color="#ffffff" distance={10} />
     </ColorfulRoom>
   )
@@ -1780,7 +1786,17 @@ function AboutRoom({ position, isDark = true }: { position: [number, number, num
         ))}
       </group>
 
+      {/* Floating decorative crystals */}
+      <FloatingDecor position={[-5, 3.5, -2]} color="#14b8a6" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[5, 3.5, -2]} color="#06b6d4" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[-4, 1, -1]} color="#3b82f6" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[4, 1, -1]} color="#8b5cf6" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[0, 5, -3]} color="#14b8a6" size={0.35} isDark={isDark} />
+
+      {/* Enhanced lighting */}
       <pointLight position={[0, 5, 0]} intensity={isDark ? 40 : 60} color="#14b8a6" />
+      <pointLight position={[-5, 3, -2]} intensity={isDark ? 15 : 20} color="#14b8a6" distance={6} />
+      <pointLight position={[5, 3, -2]} intensity={isDark ? 15 : 20} color="#06b6d4" distance={6} />
       <ambientLight intensity={isDark ? 0.3 : 0.6} />
     </Room>
   )
@@ -1804,7 +1820,7 @@ function SkillsRoom({ position, isDark = true }: { position: [number, number, nu
               <h3 className="text-teal-400 text-base font-semibold mb-2">{category.title}</h3>
               <div className="flex flex-wrap gap-1">
                 {category.skills.map((skill, j) => (
-                  <span key={j} className="bg-teal-500/20 text-teal-900 px-2 py-0.5 rounded text-xs">
+                  <span key={j} className="bg-teal-500/20 text-white px-2 py-0.5 rounded text-xs font-medium">
                     {skill}
                   </span>
                 ))}
@@ -1814,7 +1830,17 @@ function SkillsRoom({ position, isDark = true }: { position: [number, number, nu
         )
       })}
 
+      {/* Floating decorative crystals */}
+      <FloatingDecor position={[-6, 4, -2]} color="#8b5cf6" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[6, 4, -2]} color="#a855f7" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[-4.5, 1.5, -1.5]} color="#c084fc" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[4.5, 1.5, -1.5]} color="#d946ef" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[0, 5.5, -3]} color="#a78bfa" size={0.35} isDark={isDark} />
+
+      {/* Enhanced lighting */}
       <pointLight position={[0, 5, 0]} intensity={isDark ? 40 : 60} color="#8b5cf6" />
+      <pointLight position={[-6, 4, -2]} intensity={isDark ? 15 : 20} color="#8b5cf6" distance={6} />
+      <pointLight position={[6, 4, -2]} intensity={isDark ? 15 : 20} color="#a855f7" distance={6} />
       <ambientLight intensity={isDark ? 0.3 : 0.6} />
     </Room>
   )
@@ -1849,7 +1875,17 @@ function ExperienceRoom({ position, isDark = true }: { position: [number, number
         </FloatingFrame>
       ))}
 
+      {/* Floating decorative crystals */}
+      <FloatingDecor position={[-5.5, 4, -2]} color="#3b82f6" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[5.5, 4, -2]} color="#60a5fa" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[-4, 0.5, -1.5]} color="#2563eb" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[4, 0.5, -1.5]} color="#1d4ed8" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[0, 5.5, -3]} color="#3b82f6" size={0.35} isDark={isDark} />
+
+      {/* Enhanced lighting */}
       <pointLight position={[0, 5, 0]} intensity={isDark ? 40 : 60} color="#3b82f6" />
+      <pointLight position={[-5, 4, -2]} intensity={isDark ? 15 : 20} color="#3b82f6" distance={6} />
+      <pointLight position={[5, 4, -2]} intensity={isDark ? 15 : 20} color="#60a5fa" distance={6} />
       <ambientLight intensity={isDark ? 0.3 : 0.6} />
     </Room>
   )
@@ -1897,7 +1933,17 @@ function ProjectsRoom({ position, isDark = true }: { position: [number, number, 
         </FloatingFrame>
       ))}
 
+      {/* Floating decorative crystals */}
+      <FloatingDecor position={[-6, 4, -2]} color="#f97316" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[6, 4, -2]} color="#fb923c" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[-4.5, 1.5, -1.5]} color="#fdba74" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[4.5, 1.5, -1.5]} color="#ea580c" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[0, 5.5, -3]} color="#f97316" size={0.35} isDark={isDark} />
+
+      {/* Enhanced lighting */}
       <pointLight position={[0, 5, 0]} intensity={isDark ? 40 : 60} color="#f97316" />
+      <pointLight position={[-6, 4, -2]} intensity={isDark ? 15 : 20} color="#f97316" distance={6} />
+      <pointLight position={[6, 4, -2]} intensity={isDark ? 15 : 20} color="#fb923c" distance={6} />
       <ambientLight intensity={isDark ? 0.3 : 0.6} />
     </Room>
   )
@@ -1942,13 +1988,17 @@ function ContactRoom({ position, isDark = true }: { position: [number, number, n
         </div>
       </FloatingFrame>
 
-      {/* Glowing orbs - reduced for performance */}
-      <mesh position={[0, 5, -3]}>
-        <sphereGeometry args={[0.3, 12, 12]} />
-        <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={2} />
-      </mesh>
+      {/* Floating decorative crystals */}
+      <FloatingDecor position={[-5, 4, -2]} color="#14b8a6" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[5, 4, -2]} color="#06b6d4" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[-3.5, 1.5, -1.5]} color="#22d3ee" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[3.5, 1.5, -1.5]} color="#0891b2" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[0, 5.5, -3]} color="#14b8a6" size={0.35} isDark={isDark} />
 
+      {/* Enhanced lighting */}
       <pointLight position={[0, 5, 0]} intensity={isDark ? 30 : 40} color="#14b8a6" />
+      <pointLight position={[-5, 4, -2]} intensity={isDark ? 15 : 20} color="#14b8a6" distance={6} />
+      <pointLight position={[5, 4, -2]} intensity={isDark ? 15 : 20} color="#06b6d4" distance={6} />
     </Room>
   )
 }
@@ -1968,6 +2018,7 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, 
   setHoveredSkillIndex: (index: number | null) => void;
 }) {
   const cameraRef = useRef<THREE.PerspectiveCamera>(null)
+  const controlsRef = useRef<any>(null)
   
   // Позиция камеры для zoom - центр между двумя мониторами
   const deskCameraPosition: [number, number, number] = [0, 0.3, 0.5]
@@ -2002,17 +2053,34 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, 
         }
         animate()
       } else {
-        // Обычная анимация между комнатами
-        const targetX = rooms[currentRoom].position[0]
+        // Обычная анимация между комнатами - полный сброс позиции камеры
+        const targetPos = rooms[currentRoom].cameraPosition
+        const targetLookAt = normalCameraTarget
         const animate = () => {
-          if (cameraRef.current) {
-            const currentX = cameraRef.current.position.x
-            const diff = targetX - currentX
-            if (Math.abs(diff) > 0.1) {
-              cameraRef.current.position.x += diff * 0.05
+          if (cameraRef.current && controlsRef.current) {
+            const currentPos = cameraRef.current.position
+            const diffX = targetPos[0] - currentPos.x
+            const diffY = targetPos[1] - currentPos.y
+            const diffZ = targetPos[2] - currentPos.z
+            
+            const totalDiff = Math.abs(diffX) + Math.abs(diffY) + Math.abs(diffZ)
+            
+            if (totalDiff > 0.3) {
+              cameraRef.current.position.x += diffX * 0.08
+              cameraRef.current.position.y += diffY * 0.08
+              cameraRef.current.position.z += diffZ * 0.08
+              
+              // Плавно перемещаем target OrbitControls
+              const currentTarget = controlsRef.current.target
+              currentTarget.x += (targetLookAt[0] - currentTarget.x) * 0.08
+              currentTarget.y += (targetLookAt[1] - currentTarget.y) * 0.08
+              currentTarget.z += (targetLookAt[2] - currentTarget.z) * 0.08
+              
               requestAnimationFrame(animate)
             } else {
-              cameraRef.current.position.x = targetX
+              // Точная установка финальной позиции
+              cameraRef.current.position.set(targetPos[0], targetPos[1], targetPos[2])
+              controlsRef.current.target.set(targetLookAt[0], targetLookAt[1], targetLookAt[2])
             }
           }
         }
@@ -2025,6 +2093,7 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, 
     <>
       <PerspectiveCamera ref={cameraRef} makeDefault position={isZoomedToDesk ? deskCameraPosition : [0, 2, 8]} fov={60} />
       <OrbitControls
+        ref={controlsRef}
         enableZoom={true}
         enablePan={false}
         enabled={true}
@@ -2065,11 +2134,15 @@ export function House3D() {
     "Game": [
       { name: "Space Invaders", url: "https://freeinvaders.org/", description: "Classic arcade shooter", color: "#f472b6" },
       { name: "Snake", url: "https://playsnake.org/", description: "Eat and grow longer", color: "#818cf8" },
-      { name: "Tetris", url: "https://tetris.com/play-tetris", description: "Stack the blocks", color: "#2dd4bf" },
+      { name: "Retro Space Game", url: "/space-adventure.html", description: "Space shooter adventure", color: "#2dd4bf", isLocal: true },
       { name: "Pong", url: "https://pong-2.com/", description: "Classic table tennis", color: "#fb923c" },
+      { name: "Bansai Tap Game", url: "/bansai.html", description: "Grow Bansai, find flowers", color: "#10b981", isLocal: true },
     ],
     "Fun": [
       { name: "Mona Lisa", url: "/mona-lisa.html", description: "Interactive Mona Lisa art", color: "#f472b6", isLocal: true },
+      { name: "Poem", url: "/poem.html", description: "Bitcoin 3D poem animation", color: "#818cf8", isLocal: true },
+      { name: "ARTEmoji", url: "/artemoji.html", description: "Convert images to emoji art", color: "#2dd4bf", isLocal: true },
+      { name: "I Am The Music", url: "/music.html", description: "Draw sounds and create music", color: "#a855f7", isLocal: true },
     ]
   }
 
@@ -2130,9 +2203,8 @@ export function House3D() {
         <div className="absolute top-20 left-4 z-10">
           <button
             onClick={zoomOut}
-            className="bg-primary hover:bg-primary/90 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary/50 transition-all hover:scale-105 flex items-center gap-2"
+            className="bg-primary hover:bg-primary/90 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary/50 transition-all hover:scale-105"
           >
-            <ChevronLeft className="w-5 h-5 text-primary-foreground" />
             <span className="text-primary-foreground font-semibold">Back</span>
           </button>
         </div>
@@ -2205,12 +2277,30 @@ export function House3D() {
         >
           {activeCategory && !activeGame ? (
             <div className="relative w-full h-full flex flex-col">
-              {/* Category Header */}
+              {/* Category Header with Navigation */}
               <div className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur-sm">
-                <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
-                  <FolderOpen className="w-8 h-8" />
-                  {activeCategory}
-                </h2>
+                <div className="flex items-center gap-4">
+                  <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
+                    <FolderOpen className="w-8 h-8" />
+                    {activeCategory}
+                  </h2>
+                  {/* Category Navigation Buttons */}
+                  <div className="flex items-center gap-2 ml-4 pl-4 border-l border-border">
+                    {["Game", "Fun", "Resume", "Awards"].map((category) => (
+                      <button
+                        key={category}
+                        onClick={() => setActiveCategory(category)}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                          activeCategory === category
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <button
                   onClick={() => setActiveCategory(null)}
                   className="p-2 rounded-lg hover:bg-destructive/20 transition-colors group"
