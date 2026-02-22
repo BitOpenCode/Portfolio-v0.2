@@ -233,8 +233,13 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
   const innerGroupRef = useRef<THREE.Group>(null)
   const outerPointsRef = useRef<THREE.Points>(null)
   const innerPointsRef = useRef<THREE.Points>(null)
+  const outerMatRef = useRef<THREE.PointsMaterial>(null)
+  const innerMatRef = useRef<THREE.PointsMaterial>(null)
+  const light1Ref = useRef<THREE.PointLight>(null)
+  const light2Ref = useRef<THREE.PointLight>(null)
+  const [hovered, setHovered] = useState(false)
+  const hoverIntensity = useRef(0)
   
-  // Create particle positions for pyramid
   const createPyramidParticles = (height: number, baseSize: number, count: number) => {
     const positions = new Float32Array(count * 3)
     const colors = new Float32Array(count * 3)
@@ -244,7 +249,6 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
       const t = Math.random()
       const u = Math.random()
       
-      // Define pyramid vertices
       const apex = { x: 0, y: height, z: 0 }
       const base = [
         { x: -baseSize, y: 0, z: -baseSize },
@@ -253,12 +257,10 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
         { x: -baseSize, y: 0, z: baseSize }
       ]
       
-      // Random face
       const face = Math.floor(Math.random() * 4)
       const basePoint1 = base[face]
       const basePoint2 = base[(face + 1) % 4]
       
-      // Interpolate position on pyramid surface
       const x = (1 - t) * ((1 - u) * basePoint1.x + u * basePoint2.x) + t * apex.x
       const y = (1 - t) * 0 + t * height
       const z = (1 - t) * ((1 - u) * basePoint1.z + u * basePoint2.z) + t * apex.z
@@ -267,7 +269,6 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
       positions[i * 3 + 1] = y
       positions[i * 3 + 2] = z
       
-      // Color gradient from cyan to purple
       const colorPos = y / height
       const cyan = { r: 0, g: 1, b: 1 }
       const blue = { r: 0.25, g: 0.41, b: 0.88 }
@@ -294,7 +295,6 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
       colors[i * 3 + 1] = color.g
       colors[i * 3 + 2] = color.b
       
-      // Random sizes with some larger "sparkle" particles
       sizes[i] = Math.random() < 0.1 ? 0.015 : 0.008
     }
     
@@ -304,43 +304,74 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
   const outerParticles = createPyramidParticles(0.2, 0.12, 800)
   const innerParticles = createPyramidParticles(0.12, 0.07, 500)
   
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const time = state.clock.elapsedTime
-    
-    // Rotate groups
+
+    const target = hovered ? 1 : 0
+    hoverIntensity.current += (target - hoverIntensity.current) * Math.min(delta * 6, 1)
+    const h = hoverIntensity.current
+
     if (outerGroupRef.current) {
-      outerGroupRef.current.rotation.y = time * 0.3
+      outerGroupRef.current.rotation.y = time * (0.3 + h * 0.4)
     }
     if (innerGroupRef.current) {
-      innerGroupRef.current.rotation.y = -time * 0.5
+      innerGroupRef.current.rotation.y = -time * (0.5 + h * 0.5)
     }
     
-    // Sparkle effect - animate particle sizes
+    const outerBaseSize = 0.008 + h * 0.012
+    const outerPulseAmp = 0.02 + h * 0.03
     if (outerPointsRef.current) {
       const sizes = outerPointsRef.current.geometry.attributes.size.array as Float32Array
       for (let i = 0; i < sizes.length; i++) {
-        if (Math.random() < 0.02) { // 2% chance per frame
+        if (Math.random() < (0.02 + h * 0.08)) {
           const pulse = Math.sin(time * 10 + i) * 0.5 + 0.5
-          sizes[i] = 0.008 + pulse * 0.02
+          sizes[i] = outerBaseSize + pulse * outerPulseAmp
         }
       }
       outerPointsRef.current.geometry.attributes.size.needsUpdate = true
     }
     
+    const innerBaseSize = 0.006 + h * 0.01
+    const innerPulseAmp = 0.015 + h * 0.025
     if (innerPointsRef.current) {
       const sizes = innerPointsRef.current.geometry.attributes.size.array as Float32Array
       for (let i = 0; i < sizes.length; i++) {
-        if (Math.random() < 0.02) {
+        if (Math.random() < (0.02 + h * 0.08)) {
           const pulse = Math.sin(time * 12 + i) * 0.5 + 0.5
-          sizes[i] = 0.006 + pulse * 0.015
+          sizes[i] = innerBaseSize + pulse * innerPulseAmp
         }
       }
       innerPointsRef.current.geometry.attributes.size.needsUpdate = true
+    }
+
+    if (outerMatRef.current) {
+      outerMatRef.current.opacity = 0.9 + h * 0.1
+      outerMatRef.current.size = outerBaseSize
+    }
+    if (innerMatRef.current) {
+      innerMatRef.current.opacity = 0.95 + h * 0.05
+      innerMatRef.current.size = innerBaseSize
+    }
+    if (light1Ref.current) {
+      light1Ref.current.intensity = 1.2 + h * 3
+    }
+    if (light2Ref.current) {
+      light2Ref.current.intensity = 0.8 + h * 2.5
     }
   })
 
   return (
     <group position={position}>
+      {/* Invisible hit area for hover detection */}
+      <mesh
+        position={[0, 0.06, 0]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        <cylinderGeometry args={[0.01, 0.14, 0.25, 8]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
+
       {/* Base platform */}
       <mesh position={[0, -0.04, 0]}>
         <cylinderGeometry args={[0.08, 0.08, 0.02, 16]} />
@@ -371,6 +402,7 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
             />
           </bufferGeometry>
           <pointsMaterial
+            ref={outerMatRef}
             size={0.008}
             vertexColors
             transparent
@@ -406,6 +438,7 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
             />
           </bufferGeometry>
           <pointsMaterial
+            ref={innerMatRef}
             size={0.006}
             vertexColors
             transparent
@@ -418,8 +451,8 @@ function ParticlePyramid({ position }: { position: [number, number, number] }) {
       </group>
 
       {/* Point light for glow effect */}
-      <pointLight position={[0, 0.12, 0]} intensity={1.2} color="#06b6d4" distance={0.4} />
-      <pointLight position={[0, 0.06, 0]} intensity={0.8} color="#9400d3" distance={0.3} />
+      <pointLight ref={light1Ref} position={[0, 0.12, 0]} intensity={1.2} color="#06b6d4" distance={0.4} />
+      <pointLight ref={light2Ref} position={[0, 0.06, 0]} intensity={0.8} color="#9400d3" distance={0.3} />
     </group>
   )
 }
@@ -1023,6 +1056,7 @@ function UltrawideMonitor({
   setActiveCategory,
   showWelcome,
   setShowWelcome,
+  hoveredSkillIndex,
   setHoveredSkillIndex,
 }: {
   position: [number, number, number]
@@ -1036,6 +1070,7 @@ function UltrawideMonitor({
   setActiveCategory?: (category: string | null) => void
   showWelcome?: boolean
   setShowWelcome?: (show: boolean) => void
+  hoveredSkillIndex?: number | null
   setHoveredSkillIndex?: (index: number | null) => void
 }) {
   const { skills } = portfolioData
@@ -1111,13 +1146,17 @@ function UltrawideMonitor({
               MY SKILLS
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              {skills.categories.map((category, i) => (
+              {skills.categories.map((category, i) => {
+                const isHighlighted = hoveredSkillIndex === i
+                return (
                 <div
                   key={i}
-                  className="p-4 rounded-xl border-2"
+                  className="p-4 rounded-xl border-2 transition-all duration-200"
                   style={{
-                    backgroundColor: `${skillColors[i]}10`,
+                    backgroundColor: isHighlighted ? `${skillColors[i]}30` : `${skillColors[i]}10`,
                     borderColor: skillColors[i],
+                    boxShadow: isHighlighted ? `0 0 20px ${skillColors[i]}60, inset 0 0 15px ${skillColors[i]}15` : 'none',
+                    transform: isHighlighted ? 'scale(1.03)' : 'scale(1)',
                   }}
                   onMouseEnter={() => setHoveredSkillIndex?.(i)}
                   onMouseLeave={() => setHoveredSkillIndex?.(null)}
@@ -1142,7 +1181,7 @@ function UltrawideMonitor({
                     ))}
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         ) : (showWelcome ?? true) ? (
@@ -1256,7 +1295,7 @@ function Keyboard({ position }: { position: [number, number, number] }) {
   )
 }
 
-function RGBKeyboard({ position, hoveredSkillIndex }: { position: [number, number, number]; hoveredSkillIndex: number | null }) {
+function RGBKeyboard({ position, hoveredSkillIndex, setHoveredSkillIndex }: { position: [number, number, number]; hoveredSkillIndex: number | null; setHoveredSkillIndex?: (index: number | null) => void }) {
   return (
     <group position={position}>
       <RoundedBox args={[1.2, 0.04, 0.45]} radius={0.01} castShadow>
@@ -1265,7 +1304,12 @@ function RGBKeyboard({ position, hoveredSkillIndex }: { position: [number, numbe
 
       {/* RGB backlight rows */}
       {[-0.15, -0.05, 0.05, 0.15].map((z, i) => (
-        <mesh key={i} position={[0, 0.025, z]}>
+        <mesh
+          key={i}
+          position={[0, 0.025, z]}
+          onPointerOver={(e) => { e.stopPropagation(); setHoveredSkillIndex?.(i) }}
+          onPointerOut={() => setHoveredSkillIndex?.(null)}
+        >
           <boxGeometry args={[1.1, 0.008, 0.06]} />
           <meshStandardMaterial
             color={["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"][i]}
@@ -1755,6 +1799,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
         showSkills={true} 
         isDark={isDark} 
         onClick={onZoomToDesk}
+        hoveredSkillIndex={hoveredSkillIndex}
         setHoveredSkillIndex={setHoveredSkillIndex}
       />
       <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} />
@@ -1763,12 +1808,12 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, activeGame, setAc
       {/* <RealisticFlowerPot position={[-1.7, -1.46, -2.5]} /> */}
       
       {/* Tech-themed decorations on desk */}
-      <ParticlePyramid position={[-1.9, -1.42, -2.5]} />
-      <MiniRocket position={[-1.5, -1.42, -3.4]} isDark={isDark} />
+      <ParticlePyramid position={[-1.6, -1.42, -2.5]} />
+      <MiniRocket position={[-1.5, -1.46, -3.4]} isDark={isDark} />
 
       {/* RGB Keyboard and mouse */}
-      <RGBKeyboard position={[0, -1.42, -2.5]} hoveredSkillIndex={hoveredSkillIndex} />
-      <RGBMouse position={[0.85, -1.42, -2.5]} showWelcome={showWelcome} onClick={() => setShowWelcome(true)} />
+      <RGBKeyboard position={[0, -1.44, -2.5]} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />
+      <RGBMouse position={[0.85, -1.44, -2.5]} showWelcome={showWelcome} onClick={() => setShowWelcome(true)} />
 
       {/* Modern PC Tower */}
       <ModernPCTower position={[2.2, -2.35, -3.2]} />
@@ -2425,7 +2470,7 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, onZoomToDesk, activeGame, 
       {(currentRoom === 3 || currentRoom === 4) && <ProjectsRoom position={rooms[4].position} isDark={isDark} />}
       {(currentRoom === 4 || currentRoom === 5) && <ContactRoom position={rooms[5].position} isDark={isDark} />}
 
-      <Environment preset={isDark ? "night" : "city"} background={false} environmentIntensity={0.5} />
+      <Environment files={isDark ? "/hdri/dikhololo_night_1k.hdr" : "/hdri/potsdamer_platz_1k.hdr"} background={false} environmentIntensity={0.5} />
     </>
   )
 }

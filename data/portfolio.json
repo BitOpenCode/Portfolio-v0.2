@@ -1,8 +1,8 @@
 {
-  "personal": {
+    "personal": {
     "name": "Peter Savelo",
     "title": "Product Architect • GameFi Lead • WEB 3 Strategist",
-    "greeting": "Hello, I'm",
+      "greeting": "Hello, I'm",
     "tagline": "",
     "specializations": ["Product Architecture", "Product Management", "GameFi & Unit-Economics", "AI Integrations"],
     "email": "pitsavello@gmail.com",
@@ -11,37 +11,37 @@
     "location": "Remote / International",
     "availability": "Open to Web3 & Product Leadership",
     "copyright": "© 2025 Peter Savelo. All rights reserved."
-  },
-  "navigation": [
-    { "name": "About", "href": "#about" },
-    { "name": "Skills", "href": "#skills" },
-    { "name": "Experience", "href": "#experience" },
-    { "name": "Projects", "href": "#projects" },
-    { "name": "Contact", "href": "#contact" }
-  ],
-  "about": {
-    "sectionTitle": "About Me",
+    },
+    "navigation": [
+      { "name": "About", "href": "#about" },
+      { "name": "Skills", "href": "#skills" },
+      { "name": "Experience", "href": "#experience" },
+      { "name": "Projects", "href": "#projects" },
+      { "name": "Contact", "href": "#contact" }
+    ],
+    "about": {
+      "sectionTitle": "About Me",
     "heading": "Designing Digital Economies",
-    "paragraphs": [
+      "paragraphs": [
       "Product leader with 8+ years of experience in Web3, GameFi, and digital ecosystems. I design and launch scalable token-based products with a strong focus on monetization, retention mechanics, and long-term economic sustainability.",
       "At ECOS, I lead the architecture and development of Telegram Mini App GameFi products within the TON ecosystem — from product strategy and database design to game mechanics, marketplace and analytics.",
       "My expertise lies at the intersection of product strategy, backend architecture, AI automation, and blockchain-based incentive systems."
-    ],
+      ],
     "highlights": ["product strategy", "backend architecture", "blockchain incentives"],
-    "stats": [
+      "stats": [
       { "value": "8+", "label": "Years Experience" },
       { "value": "15+", "label": "Products Launched" },
       { "value": "30+", "label": "Technologies" },
       { "value": "30K+", "label": "Users Scaled" }
-    ]
-  },
-  "skills": {
-    "sectionTitle": "Skills",
-    "heading": "Technologies I Work With",
-    "categories": [
-      {
+      ]
+    },
+    "skills": {
+      "sectionTitle": "Skills",
+      "heading": "Technologies I Work With",
+      "categories": [
+        {
         "title": "Product & Strategy",
-        "skills": [
+          "skills": [
           "Product Discovery",
           "PMF Validation",
           "Tokenomics Design",
@@ -54,9 +54,9 @@
           "Analytics & KPI Design",
           "User Segmentation",
           "Growth Strategy"
-        ]
-      },
-      {
+          ]
+        },
+        {
         "title": "Web3 & Blockchain",
         "skills": [
           "TON Ecosystem",
@@ -69,8 +69,8 @@
           "On-chain Mechanics",
           "DAO Governance"
         ]
-      },
-      {
+        },
+        {
         "title": "Backend & Infrastructure",
         "skills": [
           "System Architecture",
@@ -83,8 +83,8 @@
           "CI/CD Pipelines",
           "DevOps Fundamentals"
         ]
-      },
-      {
+        },
+        {
         "title": "AI & Automation",
         "skills": [
           "LLM Integrations",
@@ -95,28 +95,28 @@
           "Data Processing",
           "AI-based Analytics"
         ]
-      }
-    ]
-  },
-  "experience": {
-    "sectionTitle": "Experience",
-    "heading": "My Professional Journey",
-    "items": [
-      {
-        "type": "work",
+        }
+      ]
+    },
+    "experience": {
+      "sectionTitle": "Experience",
+      "heading": "My Professional Journey",
+      "items": [
+        {
+          "type": "work",
         "title": "Tech Lead / CPO",
         "company": "ECOS",
         "period": "2025 — Present",
-        "description": [
+          "description": [
           "Led architecture and full-cycle development of ECOS BTC Mining Game (Telegram Mini App)",
           "Designed complete token economy including NFT ASIC, staking and reward systems",
           "Built database architecture and backend logic from scratch",
           "Implemented analytics system for tracking LTV, churn, ARPU and retention",
           "Managed cross-functional teams (backend, frontend, design)",
           "MVP in 3 weeks • 3000+ users in 3 months • 2% monetization • 800+ first day users"
-        ]
-      },
-      {
+          ]
+        },
+        {
         "type": "work",
         "title": "Founder / Product Lead",
         "company": "CDF",
@@ -127,58 +127,59 @@
           "Developed community-driven DAO governance mechanics",
           "Structured incentive systems and growth strategy"
         ]
-      }
-    ]
-  },
-  "projects": {
-    "sectionTitle": "Projects",
-    "heading": "Featured Work",
-    "items": [
-      {
+        }
+      ]
+    },
+    "projects": {
+      "sectionTitle": "Projects",
+      "heading": "Featured Work",
+      "items": [
+        {
         "title": "ECOS BTC Mining Game (TMA)",
         "description": "GameFi mining simulator within Telegram ecosystem featuring NFT-based mining hardware and tokenized rewards. 3000+ active users, 2% monetization rate, launched without paid acquisition.",
         "tags": ["TON", "Telegram Mini Apps", "Web3", "GameFi"],
-        "featured": true,
-        "github": "#",
-        "demo": "#"
-      },
-      {
+          "featured": true,
+          "github": "#",
+          "demo": "#"
+        },
+        {
         "title": "NFT ASIC Collection",
         "description": "Tokenized digital mining hardware integrated into GameFi reward mechanics with smart contract logic and TON blockchain integration.",
         "tags": ["NFT", "TON", "Smart Contracts", "Web3"],
-        "featured": true,
-        "github": "#",
-        "demo": "#"
-      },
-      {
+          "featured": true,
+          "github": "#",
+          "demo": "#"
+        },
+        {
         "title": "AI Analytics & Automation Framework",
         "description": "AI-powered internal system for user segmentation, analytics automation and product insights using LLMs, RAG and automation pipelines.",
         "tags": ["AI", "LLMs", "RAG", "Automation"],
-        "featured": true,
-        "github": "#",
-        "demo": "#"
-      },
-      {
+          "featured": true,
+          "github": "#",
+          "demo": "#"
+        },
+        {
         "title": "Token Economy System",
         "description": "Complete tokenomics architecture including staking mechanisms, reward distribution, and liquidity pool management for Web3 gaming platform.",
         "tags": ["Tokenomics", "Web3", "Game Economy", "Blockchain"],
-        "featured": false,
-        "github": "#",
-        "demo": "#"
-      },
-      {
+          "featured": false,
+          "github": "#",
+          "demo": "#"
+        },
+        {
         "title": "Analytics Dashboard",
         "description": "Real-time product analytics tracking LTV, CAC, ARPU, retention and churn with custom KPI visualization and A/B testing framework.",
         "tags": ["Analytics", "Data Visualization", "A/B Testing", "KPIs"],
-        "featured": false,
-        "github": "#",
-        "demo": "#"
-      }
-    ]
-  },
-  "contact": {
-    "sectionTitle": "Contact",
+          "featured": false,
+          "github": "#",
+          "demo": "#"
+        }
+      ]
+    },
+    "contact": {
+      "sectionTitle": "Contact",
     "heading": "Open to Strategic Web3 & Product Leadership Opportunities",
     "description": "Available for Web3 product leadership roles, early-stage advisory, and strategic partnerships. Let's build something great together!"
+    }
   }
-}
+  
