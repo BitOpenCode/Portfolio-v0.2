@@ -10,7 +10,6 @@ import portfolioData from "@/data/portfolio.json"
 import { SpookyIsland } from "./spooky-island"
 import { SkyCabinIsland } from "./sky-cabin-island"
 import { SingularityCrystal } from "./singularity-crystal"
-import { ContactCyberRoom } from "./contact-cyber-room"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTheme } from "next-themes"
 import {
@@ -2335,8 +2334,52 @@ function ContactRoom({ position, isDark = true }: { position: [number, number, n
   const { contact, personal } = portfolioData
 
   return (
-    <Room position={position} color={isDark ? "#090a14" : "#e2e8f0"} isDark={isDark}>
-      <ContactCyberRoom position={[0, 0, 0]} isDark={isDark} contact={contact} personal={personal} />
+    <Room position={position} color={isDark ? "#0f172a" : "#f1f5f9"} isDark={isDark}>
+      <FloatingFrame position={[0, 3, -5]} size={[8, 5]} isDark={isDark}>
+        <div className="p-6">
+          <h2 className="text-teal-400 text-3xl font-bold mb-3">{contact.heading}</h2>
+          <p className={`${isDark ? "text-gray-300" : "text-gray-700"} text-base mb-6`}>{contact.description}</p>
+
+          <div className="space-y-4">
+            <a
+              href={`mailto:${personal.email}`}
+              className="flex items-center justify-center gap-3 bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 py-3 px-4 rounded-lg transition-colors"
+            >
+              <Mail size={20} />
+              <span>{personal.email}</span>
+            </a>
+
+            <div className="flex justify-center gap-6">
+              <a
+                href={personal.github}
+                className={`${isDark ? "text-white hover:text-teal-400" : "text-slate-700 hover:text-teal-500"} transition-colors`}
+              >
+                <Github size={28} />
+              </a>
+              <a
+                href={personal.linkedin}
+                className={`${isDark ? "text-white hover:text-teal-400" : "text-slate-700 hover:text-teal-500"} transition-colors`}
+              >
+                <Linkedin size={28} />
+              </a>
+            </div>
+          </div>
+
+          <p className={`${isDark ? "text-gray-500" : "text-gray-600"} text-xs mt-6`}>{personal.copyright}</p>
+        </div>
+      </FloatingFrame>
+
+      {/* Floating decorative crystals */}
+      <FloatingDecor position={[-5, 4, -2]} color="#14b8a6" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[5, 4, -2]} color="#06b6d4" size={0.3} isDark={isDark} />
+      <FloatingDecor position={[-3.5, 1.5, -1.5]} color="#22d3ee" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[3.5, 1.5, -1.5]} color="#0891b2" size={0.25} isDark={isDark} />
+      <FloatingDecor position={[0, 5.5, -3]} color="#14b8a6" size={0.35} isDark={isDark} />
+
+      {/* Enhanced lighting */}
+      <pointLight position={[0, 5, 0]} intensity={isDark ? 30 : 40} color="#14b8a6" />
+      <pointLight position={[-5, 4, -2]} intensity={isDark ? 15 : 20} color="#14b8a6" distance={6} />
+      <pointLight position={[5, 4, -2]} intensity={isDark ? 15 : 20} color="#06b6d4" distance={6} />
     </Room>
   )
 }
