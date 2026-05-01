@@ -38,6 +38,8 @@ import {
   Rocket,
   Zap,
   Trophy,
+  Music, 
+  Brain,
 } from "lucide-react"
 
 const themeColors = {
@@ -1066,6 +1068,7 @@ function UltrawideMonitor({
   hoveredSkillIndex,
   setHoveredSkillIndex,
   hideHtmlOverlays = false,
+  gamesData,
 }: {
   position: [number, number, number]
   rotation?: [number, number, number]
@@ -1081,13 +1084,14 @@ function UltrawideMonitor({
   hoveredSkillIndex?: number | null
   setHoveredSkillIndex?: (index: number | null) => void
   hideHtmlOverlays?: boolean
+  gamesData?: any
 }) {
   const { skills } = portfolioData
   const [hovered, setHovered] = useState(false)
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null)
 
   const handleIconClick = (iconName: string) => {
-    if (iconName === "Game" || iconName === "Fun") {
+    if (iconName === "Game" || iconName === "Fun" || iconName === "Resume" || iconName === "Awards"|| iconName === "Music" || iconName === "AI") {
       setActiveCategory?.(iconName)
     } else {
       console.log(`Icon clicked: ${iconName}`)
@@ -1102,6 +1106,94 @@ function UltrawideMonitor({
   }
 
   const skillColors = ["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"]
+  
+  const performSearch = (query: string) => {
+    const resultsContainer = document.getElementById("searchResultsContainer")
+    if (!resultsContainer) return
+
+    if (query === "help") {
+      resultsContainer.innerHTML = `
+        <div class="p-3 rounded-lg border border-teal-500/30 mt-2">
+          <p class="text-teal-400 font-mono text-sm mb-2">Available commands:</p>
+          <ul class="space-y-1 text-gray-400 font-mono text-xs">
+            <li>• <span class="text-pink-400">game</span> - Show game projects</li>
+            <li>• <span class="text-pink-400">fun</span> - Show fun projects</li>
+            <li>• <span class="text-pink-400">resume</span> - Show resume</li>
+            <li>• <span class="text-pink-400">awards</span> - Show awards</li>
+            <li>• <span class="text-pink-400">music</span> - Show music projects</li>
+            <li>• <span class="text-pink-400">ai</span> - Show AI projects</li>
+            <li>• <span class="text-pink-400">skills</span> - Show my skills</li>
+            <li>• <span class="text-pink-400">clear</span> - Clear results</li>
+          </ul>
+        </div>
+      `
+      return
+    }
+
+    if (query === "clear") {
+      resultsContainer.innerHTML = ""
+      return
+    }
+
+    if (query === "skills") {
+      let skillsHtml = '<div class="p-3 rounded-lg border border-teal-500/30 mt-2"><p class="text-teal-400 font-mono text-sm mb-2">📚 MY SKILLS:</p>'
+      skills.categories.forEach(cat => {
+        skillsHtml += `<div class="mb-2"><span class="text-teal-400 font-bold text-xs">${cat.title}:</span> <span class="text-gray-400 text-xs">${cat.skills.slice(0, 6).join(", ")}</span></div>`
+      })
+      skillsHtml += '</div>'
+      resultsContainer.innerHTML = skillsHtml
+      return
+    }
+
+    const categoryMap: Record<string, string> = {
+      "game": "Game", "fun": "Fun", "resume": "Resume",
+      "awards": "Awards", "music": "Music", "ai": "AI"
+    }
+
+    const category = categoryMap[query]
+    if (category && gamesData[category as keyof typeof gamesData]) {
+      const items = gamesData[category as keyof typeof gamesData]
+      let itemsHtml = `<div class="p-3 rounded-lg border border-teal-500/30 mt-2"><p class="text-teal-400 font-mono text-sm mb-3">🎮 Results for "${category}":</p><div class="grid gap-2">`
+
+      items.forEach((item: any) => {
+        itemsHtml += `
+          <button
+            onclick="(function(){ const event = new CustomEvent('selectGame', { detail: { url: '${item.url}' } }); document.dispatchEvent(event); })()"
+            class="text-left p-2 rounded-lg bg-muted/50 hover:bg-primary/20 transition-all cursor-pointer w-full"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: ${item.color}20; border: 1px solid ${item.color}">
+                <span style="color: ${item.color}">▶</span>
+              </div>
+              <div>
+                <p class="font-bold text-sm" style="color: ${item.color}">${item.name}</p>
+                <p class="text-xs text-gray-400">${item.description}</p>
+              </div>
+            </div>
+          </button>
+        `
+      })
+      itemsHtml += '</div></div>'
+      resultsContainer.innerHTML = itemsHtml
+
+      const handleSelectGame = (e: any) => {
+        setActiveGame?.(e.detail.url)
+        setShowWelcome?.(false)
+        document.removeEventListener('selectGame', handleSelectGame)
+      }
+      document.addEventListener('selectGame', handleSelectGame)
+      return
+    }
+
+    if (query) {
+      resultsContainer.innerHTML = `
+        <div class="p-3 rounded-lg border border-yellow-500/30 mt-2">
+          <p class="text-yellow-400 font-mono text-sm">❌ Unknown command: "${query}"</p>
+          <p class="text-gray-500 text-xs mt-1">Type 'help' for available commands</p>
+        </div>
+      `
+    }
+  }
 
   return (
     <group position={position} rotation={rotation as any}>
@@ -1226,19 +1318,162 @@ function UltrawideMonitor({
                 WELCOME
               </span>
             </div>
-            <p className="font-mono text-base" style={{ color: isDark ? "#94a3b8" : "#475569" }}>
-              {">"} Ready to build amazing things...
-            </p>
-            <div className="mt-3 flex gap-2 justify-center mb-6">
-              {["#f472b6", "#818cf8", "#2dd4bf", "#fb923c"].map((color, i) => (
-                <div
-                  key={i}
-                  className="w-3 h-3 rounded-full animate-pulse"
-                  style={{ backgroundColor: color, animationDelay: `${i * 0.2}s` }}
+            {/* COMMAND LINE - клик для активации */}
+            <div className="relative">
+              <p 
+                id="readyText"
+                className="font-mono text-base cursor-text"
+                style={{ color: isDark ? "#94a3b8" : "#475569" }}
+                onClick={() => {
+                  const textEl = document.getElementById("readyText")
+                  const inputContainer = document.getElementById("searchContainer")
+                  const inputEl = document.getElementById("searchInput")
+                  if (textEl && inputContainer && inputEl) {
+                    textEl.style.display = "none"
+                    inputContainer.style.display = "flex"
+                    inputEl.focus()
+                  }
+                }}
+              >
+                {">"} Ready to build amazing things...
+              </p>
+
+              <div 
+                id="searchContainer"
+                className="flex items-center gap-2"
+                style={{ display: "none" }}
+              >
+                <span className="font-mono text-teal-400 font-bold">$</span>
+                <input
+                  id="searchInput"
+                  type="text"
+                  placeholder="type 'help' for commands..."
+                  className="font-mono text-base bg-transparent outline-none flex-1"
+                  style={{ color: isDark ? "#e2e8f0" : "#1f2937" }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const query = e.currentTarget.value.toLowerCase().trim()
+                      const resultsContainer = document.getElementById("searchResultsContainer")
+    
+                      if (!resultsContainer) return
+    
+                      if (query === "help") {
+                        resultsContainer.innerHTML = `
+                          <div class="p-3 rounded-lg border border-teal-500/30 mt-2">
+                            <p class="text-teal-400 font-mono text-sm mb-2">Available commands:</p>
+                            <ul class="space-y-1 text-gray-400 font-mono text-xs">
+                              <li>• <span class="text-pink-400">game</span> - Show game projects</li>
+                              <li>• <span class="text-pink-400">fun</span> - Show fun projects</li>
+                              <li>• <span class="text-pink-400">resume</span> - Show resume</li>
+                              <li>• <span class="text-pink-400">awards</span> - Show awards</li>
+                              <li>• <span class="text-pink-400">music</span> - Show music projects</li>
+                              <li>• <span class="text-pink-400">ai</span> - Show AI projects</li>
+                              <li>• <span class="text-pink-400">skills</span> - Show my skills</li>
+                              <li>• <span class="text-pink-400">clear</span> - Clear results</li>
+                            </ul>
+                          </div>
+                        `
+                        return
+                      }
+    
+                      if (query === "clear") {
+                        resultsContainer.innerHTML = ""
+                        e.currentTarget.value = ""
+                        return
+                      }
+    
+                      if (query === "skills") {
+                        let skillsHtml = '<div class="p-3 rounded-lg border border-teal-500/30 mt-2"><p class="text-teal-400 font-mono text-sm mb-2">📚 MY SKILLS:</p>'
+                        skills.categories.forEach(cat => {
+                          skillsHtml += `<div class="mb-2"><span class="text-teal-400 font-bold text-xs">${cat.title}:</span> <span class="text-gray-400 text-xs">${cat.skills.slice(0, 6).join(", ")}</span></div>`
+                        })
+                        skillsHtml += '</div>'
+                        resultsContainer.innerHTML = skillsHtml
+                        return
+                      }
+    
+                      const categoryMap: Record<string, string> = {
+                        "game": "Game", "fun": "Fun", "resume": "Resume",
+                        "awards": "Awards", "music": "Music", "ai": "AI"
+                      }
+    
+                      const category = categoryMap[query]
+                      if (category && gamesData[category as keyof typeof gamesData]) {
+                        const items = gamesData[category as keyof typeof gamesData]
+                        let itemsHtml = `<div class="p-3 rounded-lg border border-teal-500/30 mt-2"><p class="text-teal-400 font-mono text-sm mb-3">🎮 Results for "${category}":</p><div class="grid gap-2">`
+      
+                        items.forEach((item: any) => {
+                          itemsHtml += `
+                            <button 
+                              onclick="(function(){ const event = new CustomEvent('selectGame', { detail: { url: '${item.url}' } }); document.dispatchEvent(event); })()"
+                              class="text-left p-2 rounded-lg bg-muted/50 hover:bg-primary/20 transition-all cursor-pointer w-full"
+                            >
+                              <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: ${item.color}20; border: 1px solid ${item.color}">
+                                  <span style="color: ${item.color}">▶</span>
+                                </div>
+                              <div>
+                                <p class="font-bold text-sm" style="color: ${item.color}">${item.name}</p>
+                                <p class="text-xs text-gray-400">${item.description}</p>
+                              </div>
+                            </div>
+                          </button>
+                        `
+                      })
+                      itemsHtml += '</div></div>'
+                      resultsContainer.innerHTML = itemsHtml
+      
+                      const handleSelectGame = (e: any) => {
+                        setActiveGame?.(e.detail.url)
+                        setShowWelcome?.(false)
+                        document.removeEventListener('selectGame', handleSelectGame)
+                      }
+                      document.addEventListener('selectGame', handleSelectGame)
+                      return
+                    }
+    
+                    if (query) {
+                      resultsContainer.innerHTML = `
+                        <div class="p-3 rounded-lg border border-yellow-500/30 mt-2">
+                          <p class="text-yellow-400 font-mono text-sm">❌ Unknown command: "${query}"</p>
+                          <p class="text-gray-500 text-xs mt-1">Type 'help' for available commands</p>
+                        </div>
+                      `
+                    }
+                  }
+                }}
+                  onBlur={() => {
+                    const textEl = document.getElementById("readyText")
+                    const inputContainer = document.getElementById("searchContainer")
+                    const inputEl = document.getElementById("searchInput") as HTMLInputElement
+                    const resultsContainer = document.getElementById("searchResultsContainer")
+                    if (textEl && inputContainer && inputEl && !inputEl.value && (!resultsContainer || resultsContainer.innerHTML === "")) {
+                      textEl.style.display = "block"
+                      inputContainer.style.display = "none"
+                    }
+                  }}
                 />
-              ))}
+                <button
+                  onClick={() => {
+                    const input = document.getElementById("searchInput") as HTMLInputElement
+                      if (input) {
+                      performSearch(input.value.toLowerCase().trim())
+                    }
+                  }}
+                  className="p-1 rounded-lg transition-all hover:scale-110"
+                  style={{ color: "#14b8a6" }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                </button>
+              </div>
             </div>
             
+            {/* Search Results Container */}
+            <div id="searchResultsContainer" className="mt-2"></div>
+
             {/* Desktop Icons */}
             <div className="flex justify-center gap-6 mt-4">
               {[
@@ -1246,6 +1481,8 @@ function UltrawideMonitor({
                 { name: "Fun", icon: Zap, color: "#fb923c" },
                 { name: "Resume", icon: FileText, color: "#818cf8" },
                 { name: "Awards", icon: Award, color: "#2dd4bf" },
+                { name: "Music", icon: Music, color: "#ec4899" },
+                { name: "AI", icon: Brain, color: "#06b6d4" },
               ].map((item) => {
                 const Icon = item.icon
                 const isHovered = hoveredIcon === item.name
@@ -1777,7 +2014,7 @@ function CeilingLight({ position }: { position: [number, number, number] }) {
   )
 }
 
-function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, onZoomToBlueIsland, onSingularityCrystalClick, onSingularityCrystalDoubleClick, isSingularityCrystalTransformed = false, onOrangeCrystalClick, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex, hideHtmlOverlays = false }: { 
+function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, onZoomToBlueIsland, onSingularityCrystalClick, onSingularityCrystalDoubleClick, isSingularityCrystalTransformed = false, onOrangeCrystalClick, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex, hideHtmlOverlays = false, gamesData, }: { 
   position: [number, number, number]; 
   isDark?: boolean; 
   onZoomToDesk?: () => void;
@@ -1796,6 +2033,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, o
   hoveredSkillIndex: number | null;
   setHoveredSkillIndex: (index: number | null) => void;
   hideHtmlOverlays?: boolean;
+  gamesData?: any;
 }) {
   const { personal } = portfolioData
   const [showLinkedInModal, setShowLinkedInModal] = useState(false)
@@ -1819,8 +2057,9 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, o
         hoveredSkillIndex={hoveredSkillIndex}
         setHoveredSkillIndex={setHoveredSkillIndex}
         hideHtmlOverlays={hideHtmlOverlays}
+        gamesData={gamesData}
       />
-      <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hideHtmlOverlays={hideHtmlOverlays} />
+      <UltrawideMonitor position={[0.8, -0.2, -3.8]} rotation={[0, -0.15, 0]} showSkills={false} isDark={isDark} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hideHtmlOverlays={hideHtmlOverlays} gamesData={gamesData} />
 
       {/* Flower pot - saved for possible relocation */}
       {/* <RealisticFlowerPot position={[-1.7, -1.46, -2.5]} /> */}
@@ -2384,7 +2623,7 @@ function ContactRoom({ position, isDark = true }: { position: [number, number, n
   )
 }
 
-function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, isZoomedToBlueIsland, isZoomedToSingularityCrystal, isSingularityCrystalTransformed, isZoomedToOrangeCrystal, onZoomToDesk, onZoomToIsland, onZoomToBlueIsland, onSingularityCrystalClick, onSingularityCrystalDoubleClick, onOrangeCrystalClick, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex }: { 
+function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, isZoomedToBlueIsland, isZoomedToSingularityCrystal, isSingularityCrystalTransformed, isZoomedToOrangeCrystal, onZoomToDesk, onZoomToIsland, onZoomToBlueIsland, onSingularityCrystalClick, onSingularityCrystalDoubleClick, onOrangeCrystalClick, activeGame, setActiveGame, activeCategory, setActiveCategory, showWelcome, setShowWelcome, hoveredSkillIndex, setHoveredSkillIndex, gamesData }: { 
   currentRoom: number; 
   isDark: boolean; 
   isZoomedToDesk: boolean; 
@@ -2407,6 +2646,7 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, isZoomed
   setShowWelcome: (show: boolean) => void;
   hoveredSkillIndex: number | null;
   setHoveredSkillIndex: (index: number | null) => void;
+  gamesData?: any;
 }) {
   const cameraRef = useRef<THREE.PerspectiveCamera>(null)
   const controlsRef = useRef<any>(null)
@@ -2502,7 +2742,7 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, isZoomed
       <directionalLight position={[10, 10, 5]} intensity={isDark ? 0.3 : 0.5} castShadow={false} />
 
       {/* Lazy load only nearby rooms for performance */}
-      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} onZoomToDesk={onZoomToDesk} onZoomToIsland={onZoomToIsland} onZoomToBlueIsland={onZoomToBlueIsland} onSingularityCrystalClick={onSingularityCrystalClick} onSingularityCrystalDoubleClick={onSingularityCrystalDoubleClick} isSingularityCrystalTransformed={isSingularityCrystalTransformed} onOrangeCrystalClick={onOrangeCrystalClick} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} hideHtmlOverlays={isZoomedToIsland || isZoomedToBlueIsland || isZoomedToSingularityCrystal || isZoomedToOrangeCrystal} />}
+      {currentRoom === 0 && <EntranceRoom position={rooms[0].position} isDark={isDark} onZoomToDesk={onZoomToDesk} onZoomToIsland={onZoomToIsland} onZoomToBlueIsland={onZoomToBlueIsland} onSingularityCrystalClick={onSingularityCrystalClick} onSingularityCrystalDoubleClick={onSingularityCrystalDoubleClick} isSingularityCrystalTransformed={isSingularityCrystalTransformed} onOrangeCrystalClick={onOrangeCrystalClick} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} hideHtmlOverlays={isZoomedToIsland || isZoomedToBlueIsland || isZoomedToSingularityCrystal || isZoomedToOrangeCrystal} gamesData={gamesData} />}
       {(currentRoom === 0 || currentRoom === 1) && <AboutRoom position={rooms[1].position} isDark={isDark} />}
       {(currentRoom === 1 || currentRoom === 2) && <SkillsRoom position={rooms[2].position} isDark={isDark} />}
       {(currentRoom === 2 || currentRoom === 3) && <ExperienceRoom position={rooms[3].position} isDark={isDark} />}
@@ -2532,17 +2772,31 @@ export function House3D() {
   
   const gamesData = {
     "Game": [
-      { name: "Space Invaders", url: "https://freeinvaders.org/", description: "Classic arcade shooter", color: "#f472b6" },
-      { name: "Snake", url: "https://playsnake.org/", description: "Eat and grow longer", color: "#818cf8" },
       { name: "Retro Space Game", url: "/space-adventure.html", description: "Space shooter adventure", color: "#2dd4bf", isLocal: true },
-      { name: "Pong", url: "https://pong-2.com/", description: "Classic table tennis", color: "#fb923c" },
       { name: "Bansai Tap Game", url: "/bansai.html", description: "Grow Bansai, find flowers", color: "#10b981", isLocal: true },
+      { name: "WEB3 App", url: "https://bitopencode.github.io/V3/", description: "Mini games & trading platform", color: "#f472b6", isLocal: false, isMobile: true },
     ],
     "Fun": [
       { name: "Mona Lisa", url: "/mona-lisa.html", description: "Interactive Mona Lisa art", color: "#f472b6", isLocal: true },
       { name: "Poem", url: "/poem.html", description: "Bitcoin 3D poem animation", color: "#818cf8", isLocal: true },
       { name: "ARTEmoji", url: "/artemoji.html", description: "Convert images to emoji art", color: "#2dd4bf", isLocal: true },
       { name: "I Am The Music", url: "/music.html", description: "Draw sounds and create music", color: "#a855f7", isLocal: true },
+    ],
+    "Resume": [
+      { name: "My Resume", url: "/resume-new.html", description: "Professional experience & skills", color: "#818cf8", isLocal: true },
+      { name: "Download PDF", url: "/resume.pdf", description: "Printable version", color: "#f472b6", isLocal: true },
+    ],
+    "Awards": [
+      { name: "Achievements", url: "/awards.html", description: "Recognition & awards", color: "#fbbf24", isLocal: true },
+      { name: "GameFi Award 2024", url: "/awards.html", description: "Best GameFi Project", color: "#a855f7", isLocal: true },
+    ],
+    "Music": [
+      { name: "Music Player", url: "/music-player.html", description: "Interactive music experience", color: "#ec4899", isLocal: true },
+      { name: "AI DJ", url: "/ai-dj.html", description: "AI-powered music generation", color: "#f43f5e", isLocal: true },
+    ],
+    "AI": [
+      { name: "AI Assistant", url: "/ai-assistant.html", description: "Chat with AI", color: "#06b6d4", isLocal: true },
+      { name: "Image Generator", url: "/image-gen.html", description: "Create with AI", color: "#8b5cf6", isLocal: true },
     ]
   }
 
@@ -2646,7 +2900,7 @@ export function House3D() {
           depth: true
         }}
       >
-        <Scene currentRoom={currentRoom} isDark={isDark} isZoomedToDesk={isZoomedToDesk} isZoomedToIsland={isZoomedToIsland} isZoomedToBlueIsland={isZoomedToBlueIsland} isZoomedToSingularityCrystal={isZoomedToSingularityCrystal} isSingularityCrystalTransformed={isSingularityCrystalTransformed} isZoomedToOrangeCrystal={isZoomedToOrangeCrystal} onZoomToDesk={handleZoomToDesk} onZoomToIsland={handleZoomToIsland} onZoomToBlueIsland={handleZoomToBlueIsland} onSingularityCrystalClick={handleSingularityCrystalClick} onSingularityCrystalDoubleClick={handleSingularityCrystalDoubleClick} onOrangeCrystalClick={handleOrangeCrystalClick} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} />
+        <Scene currentRoom={currentRoom} isDark={isDark} isZoomedToDesk={isZoomedToDesk} isZoomedToIsland={isZoomedToIsland} isZoomedToBlueIsland={isZoomedToBlueIsland} isZoomedToSingularityCrystal={isZoomedToSingularityCrystal} isSingularityCrystalTransformed={isSingularityCrystalTransformed} isZoomedToOrangeCrystal={isZoomedToOrangeCrystal} onZoomToDesk={handleZoomToDesk} onZoomToIsland={handleZoomToIsland} onZoomToBlueIsland={handleZoomToBlueIsland} onSingularityCrystalClick={handleSingularityCrystalClick} onSingularityCrystalDoubleClick={handleSingularityCrystalDoubleClick} onOrangeCrystalClick={handleOrangeCrystalClick} activeGame={activeGame} setActiveGame={setActiveGame} activeCategory={activeCategory} setActiveCategory={setActiveCategory} showWelcome={showWelcome} setShowWelcome={setShowWelcome} hoveredSkillIndex={hoveredSkillIndex} setHoveredSkillIndex={setHoveredSkillIndex} gamesData={gamesData} />
       </Canvas>
       )}
 
@@ -2750,11 +3004,11 @@ export function House3D() {
                   </h2>
                   {/* Category Navigation Buttons */}
                   <div className="flex items-center gap-2 ml-4 pl-4 border-l border-border">
-                    {["Game", "Fun", "Resume", "Awards"].map((category) => (
+                    {["Game", "Fun", "Resume", "Awards", "Music", "AI"].map((category) => (
                       <button
                         key={category}
                         onClick={() => setActiveCategory(category)}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                        className={`w-[85px] px-4 py-2 rounded-lg text-sm font-semibold transition-all text-center ${
                           activeCategory === category
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
@@ -2773,7 +3027,7 @@ export function House3D() {
                 </button>
               </div>
 
-              {/* Games Grid */}
+                            {/* Games Grid */}
               <div className="flex-1 p-8 overflow-auto bg-muted/30">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                   {gamesData[activeCategory as keyof typeof gamesData]?.map((game) => (
@@ -2787,7 +3041,12 @@ export function House3D() {
                           className="w-16 h-16 rounded-xl flex items-center justify-center transition-all group-hover:scale-110"
                           style={{ backgroundColor: `${game.color}20`, border: `2px solid ${game.color}` }}
                         >
-                          <Gamepad2 className="w-8 h-8" style={{ color: game.color }} />
+                          {activeCategory === "Game" && <Gamepad2 className="w-8 h-8" style={{ color: game.color }} />}
+                          {activeCategory === "Fun" && <Zap className="w-8 h-8" style={{ color: game.color }} />}
+                          {activeCategory === "Resume" && <FileText className="w-8 h-8" style={{ color: game.color }} />}
+                          {activeCategory === "Awards" && <Trophy className="w-8 h-8" style={{ color: game.color }} />}
+                          {activeCategory === "Music" && <Music className="w-8 h-8" style={{ color: game.color }} />}
+                          {activeCategory === "AI" && <Brain className="w-8 h-8" style={{ color: game.color }} />}
                         </div>
                         <div>
                           <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
@@ -2796,10 +3055,13 @@ export function House3D() {
                           <p className="text-sm text-muted-foreground">
                             {game.description}
                           </p>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-primary font-semibold">
-                          <span>Play Now</span>
-                          <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                          <div className="flex items-center gap-2 text-sm text-primary font-semibold">
+                            <span>
+                              {activeCategory === "Resume" ? "Check" : 
+                              activeCategory === "Awards" ? "View" : "Play Now"}
+                            </span>
+                            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                          </div>
                         </div>
                       </div>
                     </button>
@@ -2807,7 +3069,7 @@ export function House3D() {
                 </div>
               </div>
             </div>
-          ) : activeGame ? (
+                    ) : activeGame ? (
             <div className="relative w-full h-full flex flex-col bg-black">
               {/* Game Header */}
               <div className="flex items-center justify-between p-3 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -2832,14 +3094,50 @@ export function House3D() {
                 </button>
               </div>
 
-              {/* Game iframe */}
-              <div className="flex-1 relative">
-                <iframe
-                  src={activeGame}
-                  className="w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+              {/* Game iframe with mobile support */}
+              <div className="flex-1 relative flex items-center justify-center bg-gray-900">
+                {(() => {
+                  // Находим текущую игру в gamesData
+                  let currentGame = null;
+                  for (const category in gamesData) {
+                    const found = gamesData[category as keyof typeof gamesData]?.find(g => g.url === activeGame);
+                    if (found) {
+                      currentGame = found;
+                      break;
+                    }
+                  }
+                  const isMobile = currentGame?.isMobile === true;
+                  
+                  if (isMobile) {
+                    return (
+                      <div className="flex items-center justify-center w-full h-full overflow-auto p-4">
+                        <div className="w-[400px] h-[780px] bg-black rounded-[40px] shadow-2xl overflow-hidden border-4 border-gray-700 relative">
+                          <div className="absolute top-0 left-0 right-0 h-12 bg-black rounded-t-[44px] flex justify-center items-center">
+                            <div className="w-32 h-1 bg-gray-600 rounded-full"></div>
+                          </div>
+                          <iframe
+                            src={activeGame}
+                            className="absolute top-12 left-0 w-full h-[calc(100%-96px)] border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals"
+                          />
+                          <div className="absolute bottom-2 left-0 right-0 flex justify-center">
+                            <div className="w-32 h-1 bg-gray-600 rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <iframe
+                        src={activeGame}
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    );
+                  }
+                })()}
               </div>
             </div>
           ) : null}

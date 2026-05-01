@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peter Savelo - Awards & Recognition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            color: #f1f5f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #fbbf24;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px #fbbf24;
+        }
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        .award-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .award-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 20px;
+            padding: 1.8rem;
+            text-align: center;
+            border: 2px solid #fbbf24;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .award-card:hover {
+            transform: translateY(-8px);
+            border-color: #f472b6;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .award-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .award-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+        .award-year {
+            color: #2dd4bf;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+        .award-desc {
+            color: #cbd5e1;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        .cert-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 24px;
+            border: 1px solid #334155;
+        }
+        .cert-section h2 {
+            color: #818cf8;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .cert-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .cert-item {
+            background: rgba(129, 140, 248, 0.15);
+            border: 1px solid #818cf8;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .cert-item:hover {
+            background: rgba(129, 140, 248, 0.3);
+            transform: scale(1.05);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .stat {
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+            padding: 1rem 2rem;
+            border-radius: 16px;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f472b6;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .award-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Awards & Recognition</h1>
+        <div class="subtitle">Признание профессиональных достижений</div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">8+</div>
+                <div class="stat-label">Лет в Web3</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">10+</div>
+                <div class="stat-label">Успешных продуктов</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">300+</div>
+                <div class="stat-label">VIP клиентов</div>
+            </div>
+        </div>
+
+        <div class="award-grid">
+            <!-- Award 1 -->
+            <div class="award-card">
+                <div class="award-icon">🏅</div>
+                <div class="award-title">Образовательный проект года</div>
+                <div class="award-year">2021</div>
+                <div class="award-desc">Премия Investment Leaders Award за вклад в финансовое образование и развитие крипто-индустрии</div>
+            </div>
+
+            <!-- Award 2 -->
+            <div class="award-card">
+                <div class="award-icon">🎮</div>
+                <div class="award-title">Best GameFi Project</div>
+                <div class="award-year">2024</div>
+                <div class="award-desc">Разработка инновационной игровой экономики и механик Play2Earn</div>
+            </div>
+
+            <!-- Award 3 -->
+            <div class="award-card">
+                <div class="award-icon">🚀</div>
+                <div class="award-title">Web3 Innovator Award</div>
+                <div class="award-year">2023</div>
+                <div class="award-desc">За внедрение AI-решений в блокчейн-продукты и автоматизацию бизнес-процессов</div>
+            </div>
+
+            <!-- Award 4 -->
+            <div class="award-card">
+                <div class="award-icon">⭐</div>
+                <div class="award-title">Лауреат Премии лидеров онлайн-образования</div>
+                <div class="award-year">2023</div>
+                <div class="award-desc">FINOMEN - признание лучших практик в онлайн-образовании</div>
+            </div>
+
+            <!-- Award 5 -->
+            <div class="award-card">
+                <div class="award-icon">🎤</div>
+                <div class="award-title">Спикер международных конференций</div>
+                <div class="award-year">2023-2024</div>
+                <div class="award-desc">WikiFinance EXPO Bangkok, Bitkub Summit, Bio-tech EXPO, Agro Cup Thailand</div>
+            </div>
+
+            <!-- Award 6 -->
+            <div class="award-card">
+                <div class="award-icon">🤝</div>
+                <div class="award-title">Партнер TON Foundation</div>
+                <div class="award-year">2025</div>
+                <div class="award-desc">Участие в программах TON Builders, TON Nest, интеграция с Telegram</div>
+            </div>
+        </div>
+
+        <div class="cert-section">
+            <h2>📜 Сертификаты</h2>
+            <div class="cert-list">
+                <span class="cert-item">PAEI (Менеджер P-типа)</span>
+                <span class="cert-item">Блокчейн архитектура</span>
+                <span class="cert-item">AI Product Management</span>
+                <span class="cert-item">Smart Contracts Development</span>
+                <span class="cert-item">DeFi Fundamentals</span>
+                <span class="cert-item">Prompt Engineering</span>
+            </div>
+        </div>
+
+        <div class="stats" style="margin-top: 2rem;">
+            <div class="stat">
+                <div class="stat-number">🏆</div>
+                <div class="stat-label">Образовательный проект года<br>Investment Leaders Award</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">🎯</div>
+                <div class="stat-label">Лауреат премии<br>лидеров онлайн-образования</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
