@@ -2797,6 +2797,7 @@ export function House3D() {
     "AI": [
       { name: "AI Assistant", url: "/ai-assistant.html", description: "Chat with AI", color: "#06b6d4", isLocal: true },
       { name: "Image Generator", url: "/image-gen.html", description: "Create with AI", color: "#8b5cf6", isLocal: true },
+      { name: "PocketVoice AI", url: "https://yuk-dermatological-kiley.ngrok-free.dev/", description: "Voice AI assistant", color: "#06b6d4", isLocal: false },
     ]
   }
 
