@@ -2733,57 +2733,36 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, isZoomed
   const isZoomed = isZoomedToDesk || isZoomedToIsland || isZoomedToBlueIsland || isZoomedToSingularityCrystal || isZoomedToOrangeCrystal
 
   useEffect(() => {
-    if (!cameraRef.current) return
+    if (!cameraRef.current || !controlsRef.current) return;
 
-    const zoomTargetPos = isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : isZoomedToBlueIsland ? blueIslandCameraPosition : isZoomedToSingularityCrystal ? singularityCrystalCameraPosition : isZoomedToOrangeCrystal ? orangeCrystalCameraPosition : null
+    const zoomTargetPos = isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : isZoomedToBlueIsland ? blueIslandCameraPosition : isZoomedToSingularityCrystal ? singularityCrystalCameraPosition : isZoomedToOrangeCrystal ? orangeCrystalCameraPosition : null;
 
     if (zoomTargetPos) {
       const animate = () => {
-        if (!cameraRef.current) return
-        const currentPos = cameraRef.current.position
-        const diffX = zoomTargetPos[0] - currentPos.x
-        const diffY = zoomTargetPos[1] - currentPos.y
-        const diffZ = zoomTargetPos[2] - currentPos.z
+        if (!cameraRef.current) return;
+        const currentPos = cameraRef.current.position;
+        const diffX = zoomTargetPos[0] - currentPos.x;
+        const diffY = zoomTargetPos[1] - currentPos.y;
+        const diffZ = zoomTargetPos[2] - currentPos.z;
 
         if (Math.abs(diffX) > 0.05 || Math.abs(diffY) > 0.05 || Math.abs(diffZ) > 0.05) {
-          cameraRef.current.position.x += diffX * 0.1
-          cameraRef.current.position.y += diffY * 0.1
-          cameraRef.current.position.z += diffZ * 0.1
-          requestAnimationFrame(animate)
+          cameraRef.current.position.x += diffX * 0.1;
+          cameraRef.current.position.y += diffY * 0.1;
+          cameraRef.current.position.z += diffZ * 0.1;
+          requestAnimationFrame(animate);
         } else {
-          cameraRef.current.position.set(...zoomTargetPos)
+          cameraRef.current.position.set(...zoomTargetPos);
         }
-      }
-      animate()
+      };
+      animate();
     } else {
-      const targetPos = rooms[currentRoom].cameraPosition
-      const targetLookAt = normalCameraTarget
-      const animate = () => {
-        if (!cameraRef.current || !controlsRef.current) return
-        const currentPos = cameraRef.current.position
-        const diffX = targetPos[0] - currentPos.x
-        const diffY = targetPos[1] - currentPos.y
-        const diffZ = targetPos[2] - currentPos.z
-        const totalDiff = Math.abs(diffX) + Math.abs(diffY) + Math.abs(diffZ)
-
-        if (totalDiff > 0.3) {
-          cameraRef.current.position.x += diffX * 0.08
-          cameraRef.current.position.y += diffY * 0.08
-          cameraRef.current.position.z += diffZ * 0.08
-          const currentTarget = controlsRef.current.target
-          currentTarget.x += (targetLookAt[0] - currentTarget.x) * 0.08
-          currentTarget.y += (targetLookAt[1] - currentTarget.y) * 0.08
-          currentTarget.z += (targetLookAt[2] - currentTarget.z) * 0.08
-          requestAnimationFrame(animate)
-        } else {
-          cameraRef.current.position.set(targetPos[0], targetPos[1], targetPos[2])
-          controlsRef.current.target.set(targetLookAt[0], targetLookAt[1], targetLookAt[2])
-        }
-      }
-      animate()
+      const targetPos = rooms[currentRoom].cameraPosition;
+      const targetLookAt = [rooms[currentRoom].position[0], 1, 0];
+      cameraRef.current.position.set(targetPos[0], targetPos[1], targetPos[2]);
+      controlsRef.current.target.set(targetLookAt[0], targetLookAt[1], targetLookAt[2]);
+      controlsRef.current.update();
     }
-  }, [currentRoom, isZoomedToDesk, isZoomedToIsland, isZoomedToBlueIsland, isZoomedToSingularityCrystal, isZoomedToOrangeCrystal])
-
+  }, [currentRoom, isZoomedToDesk, isZoomedToIsland, isZoomedToBlueIsland, isZoomedToSingularityCrystal, isZoomedToOrangeCrystal]);
   return (
     <>
       <PerspectiveCamera ref={cameraRef} makeDefault position={isZoomedToDesk ? deskCameraPosition : isZoomedToIsland ? islandCameraPosition : isZoomedToBlueIsland ? blueIslandCameraPosition : isZoomedToSingularityCrystal ? singularityCrystalCameraPosition : isZoomedToOrangeCrystal ? orangeCrystalCameraPosition : [0, 2, 8]} fov={60} />
