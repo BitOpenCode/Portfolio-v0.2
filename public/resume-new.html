@@ -2,964 +2,350 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peter Savelo - Resume</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Petr Savelo — CV / Resume</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Theme Variables */
-        :root {
-            --bg: #f5f5f7;
-            --card-bg: #ffffff;
-            --card-shadow: 15px 15px 30px rgba(0, 0, 0, 0.08), -15px -15px 30px rgba(255, 255, 255, 0.7);
-            --text-primary: #1d1d1f;
-            --text-secondary: #6e6e73;
-            --text-tertiary: #86868b;
-            --accent: #0071e3;
-            --accent-hover: #0077ed;
-            --border: rgba(0, 0, 0, 0.04);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.08);
-            --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.04), 0 0 1px rgba(0, 0, 0, 0.1);
-            --radius-sm: 12px;
-            --radius-md: 18px;
-            --radius-lg: 24px;
-            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-
-        [data-theme="dark"] {
-            --bg: #121212;
-            --card-bg: #1e1e1e;
-            --card-shadow: 15px 15px 30px rgba(0, 0, 0, 0.4), -15px -15px 30px rgba(30, 30, 30, 0.2);
-            --text-primary: #f5f5f7;
-            --text-secondary: #a1a1a6;
-            --text-tertiary: #6e6e73;
-            --accent: #0a84ff;
-            --accent-hover: #409cff;
-            --border: rgba(255, 255, 255, 0.08);
-            --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.2), 0 0 1px rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text-primary);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        .page {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 80px 24px 120px;
-            position: relative;
-        }
-
-        /* Controls - Theme on LEFT, Language on RIGHT */
-        .controls {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            pointer-events: none;
-        }
-
-        .toggle, .theme-switch {
-            pointer-events: auto;
-        }
-
-        /* Language Switcher */
-        .toggle {
-            position: relative;
-            width: 90px;
-            height: 40px;
-            background-color: hsla(0, 0%, 100%, 0.25);
-            backdrop-filter: blur(4px);
-            border-radius: 20px;
-            padding: 5px;
-            cursor: pointer;
-            z-index: 100;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        
-        .toggle:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-        }
-        
-        .toggle img {
-            position: absolute;
-            top: 5px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
-        }
-        
-        .toggle img.en {
-            left: 5px;
-            transform: rotate(0deg);
-        }
-        
-        .toggle img.ru {
-            left: calc(100% - 30px - 5px);
-            transform: rotate(360deg);
-        }
-        
-        .noselect {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        /* Theme Switch - Beautiful toggle as ONE BUTTON */
-        .theme-switch {
-            --toggle-size: 20px;
-            --container-width: 4em;
-            --container-height: 1.8em;
-            --container-radius: 4.5em;
-            --container-light-bg: #3D7EAE;
-            --container-night-bg: #1D1F2C;
-            --circle-container-diameter: 2.4em;
-            --sun-moon-diameter: 1.5em;
-            --sun-bg: #ECCA2F;
-            --moon-bg: #C4C9D1;
-            --spot-color: #959DB1;
-            --circle-container-offset: calc((var(--circle-container-diameter) - var(--container-height)) / 2 * -1);
-            --stars-color: #fff;
-            --clouds-color: #F3FDFF;
-            --back-clouds-color: #AACADF;
-            --transition: .5s cubic-bezier(0, -0.02, 0.4, 1.25);
-            --circle-transition: .3s cubic-bezier(0, -0.02, 0.35, 1.17);
-            display: inline-block;
-        }
-
-        .theme-switch, .theme-switch *, .theme-switch *::before, .theme-switch *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-size: var(--toggle-size);
-        }
-
-        .theme-switch__container {
-            width: var(--container-width);
-            height: var(--container-height);
-            background-color: var(--container-light-bg);
-            border-radius: var(--container-radius);
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: 0em -0.062em 0.062em rgba(0, 0, 0, 0.25), 0em 0.062em 0.125em rgba(255, 255, 255, 0.94);
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .theme-switch__container::before {
-            content: "";
-            position: absolute;
-            z-index: 1;
-            inset: 0;
-            box-shadow: 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset, 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset;
-            border-radius: var(--container-radius);
-            pointer-events: none;
-        }
-
-        .theme-switch__checkbox {
-            display: none;
-        }
-
-        .theme-switch__circle-container {
-            width: var(--circle-container-diameter);
-            height: var(--circle-container-diameter);
-            background-color: rgba(255, 255, 255, 0.1);
-            position: absolute;
-            left: var(--circle-container-offset);
-            top: var(--circle-container-offset);
-            border-radius: var(--container-radius);
-            box-shadow: inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), 0 0 0 0.625em rgba(255, 255, 255, 0.1), 0 0 0 1.25em rgba(255, 255, 255, 0.1);
-            display: flex;
-            transition: var(--circle-transition);
-            pointer-events: none;
-        }
-
-        .theme-switch__sun-moon-container {
-            pointer-events: auto;
-            position: relative;
-            z-index: 2;
-            width: var(--sun-moon-diameter);
-            height: var(--sun-moon-diameter);
-            margin: auto;
-            border-radius: var(--container-radius);
-            background-color: var(--sun-bg);
-            box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #a1872a inset;
-            filter: drop-shadow(0.062em 0.125em 0.125em rgba(0, 0, 0, 0.25)) drop-shadow(0em 0.062em 0.125em rgba(0, 0, 0, 0.25));
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .theme-switch__moon {
-            transform: translateX(100%);
-            width: 100%;
-            height: 100%;
-            background-color: var(--moon-bg);
-            border-radius: inherit;
-            box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #969696 inset;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .theme-switch__spot {
-            position: absolute;
-            top: 0.75em;
-            left: 0.312em;
-            width: 0.75em;
-            height: 0.75em;
-            border-radius: var(--container-radius);
-            background-color: var(--spot-color);
-            box-shadow: 0em 0.0312em 0.062em rgba(0, 0, 0, 0.25) inset;
-        }
-
-        .theme-switch__spot:nth-of-type(2) {
-            width: 0.375em;
-            height: 0.375em;
-            top: 0.937em;
-            left: 1.375em;
-        }
-
-        .theme-switch__spot:nth-last-of-type(3) {
-            width: 0.25em;
-            height: 0.25em;
-            top: 0.312em;
-            left: 0.812em;
-        }
-
-        .theme-switch__clouds {
-            width: 1.25em;
-            height: 1.25em;
-            background-color: var(--clouds-color);
-            border-radius: var(--container-radius);
-            position: absolute;
-            bottom: -0.625em;
-            left: 0.312em;
-            box-shadow: 0.937em 0.312em var(--clouds-color), -0.312em -0.312em var(--back-clouds-color), 1.437em 0.375em var(--clouds-color), 0.5em -0.125em var(--back-clouds-color), 2.187em 0 var(--clouds-color), 1.25em -0.062em var(--back-clouds-color), 2.937em 0.312em var(--clouds-color), 2em -0.312em var(--back-clouds-color), 3.625em -0.062em var(--clouds-color), 2.625em 0em var(--back-clouds-color), 4.5em -0.312em var(--clouds-color), 3.375em -0.437em var(--back-clouds-color), 4.625em -1.75em 0 0.437em var(--clouds-color), 4em -0.625em var(--back-clouds-color), 4.125em -2.125em 0 0.437em var(--back-clouds-color);
-            transition: 0.5s cubic-bezier(0, -0.02, 0.4, 1.25);
-        }
-
-        .theme-switch__stars-container {
-            position: absolute;
-            color: var(--stars-color);
-            top: -100%;
-            left: 0.312em;
-            width: 2.75em;
-            height: auto;
-            transition: var(--transition);
-        }
-
-        .theme-switch__checkbox:checked + .theme-switch__container {
-            background-color: var(--container-night-bg);
-        }
-
-        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__circle-container {
-            left: calc(100% - var(--circle-container-offset) - var(--circle-container-diameter));
-        }
-
-        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__moon {
-            transform: translate(0);
-        }
-
-        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__clouds {
-            bottom: -4.062em;
-        }
-
-        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__stars-container {
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        /* Hero */
-        .hero {
-            text-align: center;
-            padding: 40px 0 64px;
-        }
-        .hero-avatar {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent) 0%, #3a3a3c 100%);
-            margin: 0 auto 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: 600;
-            color: white;
-            box-shadow: var(--shadow-lg);
-            transition: transform var(--transition);
-        }
-        .hero-avatar:hover {
-            transform: scale(1.05);
-        }
-        .hero h1 {
-            font-size: 48px;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            margin-bottom: 8px;
-        }
-        .hero-subtitle {
-            font-size: 21px;
-            font-weight: 400;
-            color: var(--text-secondary);
-            letter-spacing: -0.01em;
-        }
-        .hero-badges {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            background: var(--card-bg);
-            border-radius: 100px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            box-shadow: var(--shadow-card);
-            transition: all var(--transition);
-        }
-        .badge:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-        .badge-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #34c759;
-        }
-
-        /* Section */
-        .section {
-            margin-bottom: 56px;
-        }
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .section-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--accent) 0%, #3a3a3c 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            flex-shrink: 0;
-        }
-        .section-title {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-
-        /* About Card */
-        .about-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 36px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border);
-            transition: all var(--transition);
-        }
-        .about-text {
-            font-size: 17px;
-            line-height: 1.65;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        /* Experience Cards */
-        .timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .timeline-item {
-            width: 100%;
-        }
-        .timeline-card {
-            background: var(--card-bg);
-            border-radius: 30px;
-            padding: 24px 28px;
-            box-shadow: var(--card-shadow);
-            transition: all var(--transition);
-            border: 1px solid var(--border);
-        }
-        .timeline-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.1), -20px -20px 40px rgba(255, 255, 255, 0.5);
-        }
-        [data-theme="dark"] .timeline-card:hover {
-            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.5), -20px -20px 40px rgba(30, 30, 30, 0.3);
-        }
-        .timeline-role {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: -0.01em;
-        }
-        .timeline-company {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 2px 0;
-        }
-        .timeline-period {
-            font-size: 13px;
-            color: var(--text-tertiary);
-            margin-bottom: 12px;
-        }
-        .timeline-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .timeline-list li {
-            font-size: 13.5px;
-            color: var(--text-secondary);
-            line-height: 1.45;
-            padding-left: 18px;
-            position: relative;
-        }
-        .timeline-list li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 7px;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-
-        /* Skills */
-        .skills-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .skill {
-            padding: 10px 20px;
-            background: var(--card-bg);
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            box-shadow: var(--shadow-card);
-            transition: all var(--transition);
-            border: 1px solid var(--border);
-            cursor: default;
-        }
-        .skill:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Contact */
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            background: var(--card-bg);
-            border-radius: var(--radius-sm);
-            box-shadow: var(--shadow-card);
-            transition: all var(--transition);
-            border: 1px solid var(--border);
-            text-decoration: none;
-            color: var(--text-primary);
-        }
-        .contact-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        .contact-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--accent) 0%, #3a3a3c 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: white;
-            flex-shrink: 0;
-        }
-        .contact-label {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            font-weight: 500;
-        }
-        .contact-value {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .contact-value a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        .contact-value a:hover {
-            text-decoration: underline;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding-top: 48px;
-            font-size: 13px;
-            color: var(--text-tertiary);
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-in {
-            animation: fadeInUp 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-        }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .page {
-                padding: 70px 16px 80px;
-            }
-            .controls {
-                padding: 0 12px;
-                top: 12px;
-            }
-            .toggle {
-                transform: scale(0.9);
-            }
-            .hero h1 {
-                font-size: 36px;
-            }
-            .hero-subtitle {
-                font-size: 18px;
-            }
-            .section-title {
-                font-size: 24px;
-            }
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-            .timeline-card {
-                padding: 18px 20px;
-            }
-            .theme-switch {
-                --toggle-size: 14px;
-            }
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg: #f0efe9; --card-bg: #ffffff; --text-primary: #18181a; --text-secondary: #5a5a62; --text-muted: #9090a0; --accent: #1a1a2e; --accent2: #e63946; --border: rgba(0,0,0,0.08); --shadow: 0 2px 12px rgba(0,0,0,0.07); --radius: 24px; }
+        [data-theme="dark"] { --bg: #111113; --card-bg: #1e1e24; --text-primary: #f0eff9; --text-secondary: #a0a0b0; --text-muted: #5a5a6a; --accent: #f0eff9; --accent2: #ff4757; --border: rgba(255,255,255,0.07); --shadow: 0 2px 12px rgba(0,0,0,0.4); }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); -webkit-font-smoothing: antialiased; }
+        .controls { position: fixed; top: 16px; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; pointer-events: none; }
+        .controls > * { pointer-events: auto; }
+        .theme-switch { --toggle-size: 18px; --container-width: 5.625em; --container-height: 2.5em; --container-radius: 6.25em; --container-light-bg: #3D7EAE; --container-night-bg: #1D1F2C; --circle-container-diameter: 3.375em; --sun-moon-diameter: 2.125em; --sun-bg: #ECCA2F; --moon-bg: #C4C9D1; --spot-color: #959DB1; --circle-container-offset: calc((var(--circle-container-diameter) - var(--container-height)) / 2 * -1); --stars-color: #fff; --clouds-color: #F3FDFF; --back-clouds-color: #AACADF; --transition: .5s cubic-bezier(0,-0.02,0.4,1.25); --circle-transition: .3s cubic-bezier(0,-0.02,0.35,1.17); display: inline-block; }
+        .theme-switch, .theme-switch *, .theme-switch *::before, .theme-switch *::after { box-sizing: border-box; margin: 0; padding: 0; font-size: var(--toggle-size); }
+        .theme-switch__container { width: var(--container-width); height: var(--container-height); background-color: var(--container-light-bg); border-radius: var(--container-radius); overflow: hidden; cursor: pointer; box-shadow: 0em -0.062em 0.062em rgba(0,0,0,0.25), 0em 0.062em 0.125em rgba(255,255,255,0.94); transition: var(--transition); position: relative; }
+        .theme-switch__container::before { content: ""; position: absolute; z-index: 1; inset: 0; box-shadow: 0em 0.05em 0.187em rgba(0,0,0,0.25) inset, 0em 0.05em 0.187em rgba(0,0,0,0.25) inset; border-radius: var(--container-radius); pointer-events: none; }
+        .theme-switch__checkbox { display: none; }
+        .theme-switch__circle-container { width: var(--circle-container-diameter); height: var(--circle-container-diameter); background-color: rgba(255,255,255,0.1); position: absolute; left: var(--circle-container-offset); top: var(--circle-container-offset); border-radius: var(--container-radius); box-shadow: inset 0 0 0 3.375em rgba(255,255,255,0.1), inset 0 0 0 3.375em rgba(255,255,255,0.1), 0 0 0 0.625em rgba(255,255,255,0.1), 0 0 0 1.25em rgba(255,255,255,0.1); display: flex; transition: var(--circle-transition); pointer-events: none; }
+        .theme-switch__sun-moon-container { pointer-events: auto; position: relative; z-index: 2; width: var(--sun-moon-diameter); height: var(--sun-moon-diameter); margin: auto; border-radius: var(--container-radius); background-color: var(--sun-bg); box-shadow: 0.062em 0.062em 0.062em 0em rgba(254,255,239,0.61) inset, 0em -0.062em 0.062em 0em #a1872a inset; filter: drop-shadow(0.062em 0.125em 0.125em rgba(0,0,0,0.25)) drop-shadow(0em 0.062em 0.125em rgba(0,0,0,0.25)); overflow: hidden; transition: var(--transition); }
+        .theme-switch__moon { transform: translateX(100%); width: 100%; height: 100%; background-color: var(--moon-bg); border-radius: inherit; box-shadow: 0.062em 0.062em 0.062em 0em rgba(254,255,239,0.61) inset, 0em -0.062em 0.062em 0em #969696 inset; transition: var(--transition); position: relative; }
+        .theme-switch__spot { position: absolute; top: 0.75em; left: 0.312em; width: 0.75em; height: 0.75em; border-radius: var(--container-radius); background-color: var(--spot-color); box-shadow: 0em 0.0312em 0.062em rgba(0,0,0,0.25) inset; }
+        .theme-switch__spot:nth-of-type(2) { width: 0.375em; height: 0.375em; top: 0.937em; left: 1.375em; }
+        .theme-switch__spot:nth-last-of-type(3) { width: 0.25em; height: 0.25em; top: 0.312em; left: 0.812em; }
+        .theme-switch__clouds { width: 1.25em; height: 1.25em; background-color: var(--clouds-color); border-radius: var(--container-radius); position: absolute; bottom: -0.625em; left: 0.312em; box-shadow: 0.937em 0.312em var(--clouds-color), -0.312em -0.312em var(--back-clouds-color), 1.437em 0.375em var(--clouds-color), 0.5em -0.125em var(--back-clouds-color), 2.187em 0 var(--clouds-color), 1.25em -0.062em var(--back-clouds-color), 2.937em 0.312em var(--clouds-color), 2em -0.312em var(--back-clouds-color), 3.625em -0.062em var(--clouds-color), 2.625em 0em var(--back-clouds-color), 4.5em -0.312em var(--clouds-color), 3.375em -0.437em var(--back-clouds-color), 4.625em -1.75em 0 0.437em var(--clouds-color), 4em -0.625em var(--back-clouds-color), 4.125em -2.125em 0 0.437em var(--back-clouds-color); transition: 0.5s cubic-bezier(0,-0.02,0.4,1.25); }
+        .theme-switch__stars-container { position: absolute; color: var(--stars-color); top: -100%; left: 0.312em; width: 2.75em; height: auto; transition: var(--transition); }
+        .theme-switch__checkbox:checked + .theme-switch__container { background-color: var(--container-night-bg); }
+        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__circle-container { left: calc(100% - var(--circle-container-offset) - var(--circle-container-diameter)); }
+        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__moon { transform: translate(0); }
+        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__clouds { bottom: -4.062em; }
+        .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__stars-container { top: 50%; transform: translateY(-50%); }
+        .lang-toggle { position: relative; width: 5.625em; height: 2.5em; font-size: 18px; background-color: hsla(0,0%,100%,0.2); backdrop-filter: blur(8px); border-radius: 6.25em; padding: 4px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        .lang-toggle:hover { transform: scale(1.02); background-color: hsla(0,0%,100%,0.3); }
+        .lang-toggle img { position: absolute; top: 50%; transform: translateY(-50%); width: 2.125em; height: 2.125em; border-radius: 50%; object-fit: cover; transition: left 0.2s cubic-bezier(0.2,0.9,0.4,1.1), opacity 0.1s; }
+        .lang-toggle img.en { left: 4px; }
+        .lang-toggle img.ru { left: calc(100% - 2.125em - 4px); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 100px 24px 60px; }
+        .resume-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+        .resume-header { background: linear-gradient(135deg, #1a1a2e 0%, #2a2a3e 100%); padding: 48px 40px; text-align: center; color: white; }
+        .resume-header h1 { font-size: 48px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+        .resume-header .title { font-size: 18px; opacity: 0.9; font-family: 'Space Mono', monospace; max-width: 800px; margin: 0 auto; }
+        .resume-body { padding: 40px; }
+        .section { margin-bottom: 40px; }
+        .section-title { font-size: 22px; font-weight: 600; color: var(--accent2); margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: inline-block; }
+        .job { margin-bottom: 32px; }
+        .job-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 8px; }
+        .job-title { font-weight: 700; font-size: 18px; }
+        .job-company { color: var(--accent2); font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+        .job-date { color: var(--text-muted); font-size: 13px; }
+        .job-description { color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-top: 12px; padding-left: 16px; border-left: 2px solid var(--accent2); }
+        .job-description ul { margin-top: 8px; padding-left: 20px; }
+        .job-description li { margin-bottom: 6px; }
+        .achievements { background: var(--bg); padding: 16px 20px; border-radius: 12px; margin-top: 16px; }
+        .achievements-title { font-weight: 600; margin-bottom: 8px; font-size: 13px; color: var(--accent2); }
+        .skills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .skill-tag { background: var(--bg); padding: 6px 14px; border-radius: 20px; font-size: 13px; color: var(--text-secondary); border: 1px solid var(--border); }
+        .contact-links { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; }
+        .contact-links a { color: var(--accent2); text-decoration: none; font-size: 14px; }
+        .contact-links a:hover { text-decoration: underline; }
+        .footer { text-align: center; padding: 32px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 12px; }
+        @media (max-width: 700px) { .container { padding: 80px 16px 40px; } .resume-header { padding: 32px 24px; } .resume-header h1 { font-size: 32px; } .resume-body { padding: 24px; } .job-header { flex-direction: column; gap: 4px; } .section-title { font-size: 18px; } }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <label class="theme-switch">
-            <input type="checkbox" class="theme-switch__checkbox" id="theme-toggle">
-            <div class="theme-switch__container">
-                <div class="theme-switch__clouds"></div>
-                <div class="theme-switch__stars-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z" fill="currentColor"></path>
-                    </svg>
-                </div>
-                <div class="theme-switch__circle-container">
-                    <div class="theme-switch__sun-moon-container">
-                        <div class="theme-switch__moon">
-                            <div class="theme-switch__spot"></div>
-                            <div class="theme-switch__spot"></div>
-                            <div class="theme-switch__spot"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </label>
-        <div id="toggle" class="toggle noselect">
-            <img id="flag" src="https://flagicons.lipis.dev/flags/4x3/gb.svg" alt="flag" class="en">
+<div class="controls">
+    <label class="theme-switch">
+        <input type="checkbox" class="theme-switch__checkbox" id="theme-toggle">
+        <div class="theme-switch__container"><div class="theme-switch__clouds"></div><div class="theme-switch__stars-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z" fill="currentColor"></path></svg></div><div class="theme-switch__circle-container"><div class="theme-switch__sun-moon-container"><div class="theme-switch__moon"><div class="theme-switch__spot"></div><div class="theme-switch__spot"></div><div class="theme-switch__spot"></div></div></div></div></div>
+    </label>
+    <div id="lang-toggle" class="lang-toggle"><img id="flag" src="https://flagicons.lipis.dev/flags/4x3/gb.svg" alt="flag" class="en"></div>
+</div>
+
+<div class="container">
+    <div class="resume-card">
+        <div class="resume-header"><h1 id="name">Petr Savelo</h1><div class="title" id="title">Product Manager — Tech Lead — GameFi Lead — AI Architect</div></div>
+        <div class="resume-body">
+            <div class="section"><div class="section-title" id="section-ecos">ECOS</div>
+                <div class="job"><div class="job-header"><span class="job-title" id="ecos-title">Tech Lead | CPO | GameFi Lead</span><span class="job-date" id="ecos-date">Mar 2025 — Feb 2026 (1 year)</span></div>
+                    <div class="job-description"><ul id="ecos-list"><li>Проектирование архитектуры продуктов с CEO компании</li><li>Управление командами разработки, дизайна, контента</li><li>Управление полным циклом разработки цифрового продукта TMA ECOS BTC Mining Game</li><li>Участие в разработке продукта TMA ECOS BTC Mining</li><li>Построение и визуализация маркетинговых и продуктовых воронок</li><li>Проектирование архитектуры базы данных и логики пользовательских процессов</li><li>Разработка юнит-экономики продукта (экономика игры, майнинга, LTV, ARPU, churn)</li><li>Подготовка продуктовых макетов экранов для отдела дизайна</li><li>Подготовка полной продуктовой документации</li><li>Управление бэклогом, декомпозицией и релизами в Jira</li><li>Ведение переговоров с TON Foundation, Telegram и TON Builders</li><li>Создание аналитического дашборда с мониторингом KPI, дохода в TON и USDT</li><li>Интеграция AI для аналитики и персонализации</li></ul>
+                        <div class="achievements"><div class="achievements-title" id="ecos-results-title">📊 Ключевые результаты:</div><ul id="ecos-results-list"><li>Приложения в топ категорий финансов, кошельков, play2earn</li><li>~200 регистраций/сутки в ECOS приложении</li><li>+800 пользователей в игре за первые сутки</li><li>3000 активных пользователей за 3 месяца без затрат на маркетинг</li><li>2% CR (оплаты в игре)</li><li>Запуск MVP за 3 недели, отладка за 2 недели</li></ul>
+                        <div class="achievements-title" style="margin-top:12px" id="ecos-links-title">🔗 Проекты:</div><ul id="ecos-links-list"><li>TMA ECOS BTC Mining Game: @ECOSMiningGamebot</li><li>TMA ECOS BTC Mining: @ECOS_BTC_Mining_bot</li></ul></div></div></div>
+                <div class="job"><div class="job-header"><span class="job-title" id="bots-title">🤖 AI боты автоматизации</span></div>
+                    <div class="job-description"><ul id="bots-list"><li>AI бот для Avito: ответы по продуктам, контроль диалогов, создание лидов Bitrix, перехват диалога человеком</li><li>AI бот для TMA компании: чат бот для ознакомления с продуктами, расчет доходности, предложение продуктов под бюджет, система топиков с возможностью модерации</li><li>AI бот для отдела продаж: назначение встреч и создание лидов</li><li>Бот для статистики в игре и основном TMA приложении</li><li>Бот для проверки подписок на канал</li><li>Бот для ведения диалога с пользователями в комментариях</li><li>Дополнительные Workflow: оплаты в телеграм-звездах, генерация изображений, рерайт постов</li></ul></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-cdf">Coin Digital Farms Co., LTD [CDF]</div>
+                <div class="job"><div class="job-header"><span class="job-title" id="cdf-title">Founder / CEO</span><span class="job-date" id="cdf-date">Feb 2023 — Nov 2024 (1 year 10 months)</span></div>
+                    <div class="job-description"><ul id="cdf-list"><li>Создание и регистрация компании в Бангкоке</li><li>Утверждение состава акционеров</li><li>Ведение переговоров с госорганами Таиланда</li><li>Получение лицензий, открытие счетов</li><li>Найм сотрудников из граждан Таиланда</li><li>Проектирование CEA-предприятия</li><li>Закупки, сотрудничество с DryGair, Athena, Advanced Nutrients, Upuer, Grodan</li><li>Полная автоматизация через PonyLab + AI</li><li>Создание сайта, TMA игр (Play2Earn, Grow2Earn, iGaming)</li><li>Токеномика на TON и SepoliaETH, AirDrop</li><li>Сжигание 95% токенов команды</li><li>Участие в конференциях (WikiFinance EXPO Bangkok 2023, Bitkub Summit 2024, Bio-tech EXPO 2023)</li><li>Поиск инвесторов, продажа доли NihonAgri inc</li></ul></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-coub">COUB</div>
+                <div class="job"><div class="job-header"><span class="job-title" id="coub-title">Product Manager (Marketing)</span><span class="job-date" id="coub-date">May 2022 — Dec 2022 (8 months)</span></div>
+                    <div class="job-description"><ul id="coub-list"><li>Создание roadmap с фокусом на геймификацию</li><li>Разработка механики Season Pass</li><li>Создание CJM и стратегий повышения вовлечения</li><li>Внедрение A/B тестирования в Discord</li><li>Создание партнерских проектов и коллабораций</li><li>Ответственность за рост, подписчиков, Daily ER</li><li>Управление unit-экономикой и токеномикой</li><li>Разработка реферальной системы и системы ачивок</li></ul><div class="achievements"><div class="achievements-title" id="coub-website">🔗 Сайт:</div><a href="https://coub.com/" target="_blank" style="color:var(--accent2)">https://coub.com/</a></div></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-tiger">Tiger.Trade</div>
+                <div class="job"><div class="job-header"><span class="job-title" id="tiger-title">Product Manager / GameFi Lead</span><span class="job-date" id="tiger-date">Jul 2022 — Nov 2022 (5 months)</span></div>
+                    <div class="job-description"><ul id="tiger-list"><li>Ведение продуктов auto-trading, copy-trading</li><li>Внедрение кластерного анализа и профиля объема</li><li>Разработка геймификации Discord</li><li>Создание системы лояльности</li></ul>
+                    <div class="achievements"><div class="achievements-title">🔗 Ссылки:</div><ul><li><span id="tiger-app">App:</span> <a href="https://apps.apple.com/ru/app/tiger-trade-copytrading/id1604212247" target="_blank" style="color:var(--accent2)">App Store</a></li><li><span id="tiger-website">Сайт:</span> <a href="https://www.tiger.com/" target="_blank" style="color:var(--accent2)">tiger.com</a></li><li><span id="tiger-partnership">Партнерство:</span> <a href="https://forklog.com/en/ufc-champion-conor-mcgregor-becomes-tiger-trade-ambassador/" target="_blank" style="color:var(--accent2)">Conor McGregor амбассадор</a></li></ul></div></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-finomen">FINOMEN (Академия инвестиций)</div>
+                <div class="job"><div class="job-header"><span class="job-title" id="finomen-title">Глава отдела аналитики, спикер</span><span class="job-date" id="finomen-date">May 2021 — Aug 2022 (1 year 4 months)</span></div>
+                    <div class="job-description"><ul id="finomen-list"><li>Построение и управление командой аналитики</li><li>Разработка курса по NFT, съемки лекций</li><li>Проведение вебинаров по криптовалютам</li><li>Консультирование VIP-клиентов</li><li>Запуск NFT коллекции Finomen x OpenSea</li></ul>
+                    <div class="achievements"><div class="achievements-title" id="finomen-awards-title">🏆 Награды:</div><ul><li id="finomen-award1">«Образовательный проект года» по версии Investment Leaders Award 2021</li><li id="finomen-award2">Лауреат Премии лидеров онлайн-образования 2023</li></ul><div class="achievements-title" id="finomen-website">🔗 Сайт:</div><a href="https://finomen.academy" target="_blank" style="color:var(--accent2)">finomen.academy</a></div></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-hawex">Hawex</div>
+                <div class="job"><div class="job-header"><span class="job-title">CMO / CPO</span><span class="job-date">Mar 2022 — Jun 2022 (4 months)</span></div>
+                    <div class="job-description"><ul id="hawex-list"><li>Разработка DAO, Roadmap и Whitepaper</li><li>Разработка механик комьюнити</li><li>Разработка концепции NFT Pass</li></ul><div class="achievements"><a href="https://medium.com/@hawex_dao/nft-pass-from-hawex-dao-heres-all-you-need-to-know-32ec11ff5632" target="_blank" style="color:var(--accent2)">Medium: NFT Pass от Hawex DAO</a></div></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-starly">STARLY</div>
+                <div class="job"><div class="job-header"><span class="job-title">CMO / CPO</span><span class="job-date">Mar 2022 — Jun 2022 (4 months)</span></div>
+                    <div class="job-description"><ul id="starly-list"><li>Проработка CJ покупки NFT</li><li>Подготовка roadmap</li><li>Разработка механик геймификации, рангов, score system</li><li>Разработка NFT Staking</li></ul><div class="achievements"><a href="https://medium.com/@StarlyNFT/nft-staking-ultimate-collect-to-earn-experience-328ed4adc30f" target="_blank" style="color:var(--accent2)">NFT Staking</a> · <a href="https://starly.io/" target="_blank" style="color:var(--accent2)">starly.io</a></div></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-chatex">Chatex</div>
+                <div class="job"><div class="job-header"><span class="job-title">Product Manager / MM</span><span class="job-date">Apr 2021 — Nov 2021 (8 months)</span></div>
+                    <div class="job-description"><ul id="chatex-list"><li>Управление командой</li><li>Геймифицированная модель вовлечения в P2P</li><li>Запуск NFT коллекции 99 Robots</li><li>Запуск YouTube-подкаста (10 выпусков)</li></ul><div class="achievements"><a href="https://og.rarible.com/chatexrobots/secondary" target="_blank" style="color:var(--accent2)">99 Robots NFT Collection</a></div></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-bitxmi">Bitxmi.com</div>
+                <div class="job"><div class="job-header"><span class="job-title">Marketing / Product Management</span><span class="job-date">Sep 2019 — Mar 2021</span></div>
+                    <div class="job-description"><ul id="bitxmi-list"><li>Стратегия и roadmap продукта</li><li>Конкурентный анализ, CustDev</li><li>Организация ICO, раздача токенов</li><li>OTC сделки, поиск ликвидности</li></ul></div></div></div>
+
+            <div class="section"><div class="section-title" id="section-wcse">WCSE R&A CHANNEL</div>
+                <div class="job"><div class="job-header"><span class="job-title">Admin / Analyst</span><span class="job-date">Jul 2017 — Mar 2021</span></div>
+                    <div class="job-description"><ul id="wcse-list"><li>Администратор TG-канала</li><li>Фундаментальный и технический анализ</li><li>Разработка реферальной системы</li><li>Торговля через API, 3commas.io</li></ul></div></div></div>
+
+            <div class="section"><div class="section-title" id="skills-title">Skills</div><div class="skills"><span class="skill-tag">Product Management</span><span class="skill-tag">GameFi</span><span class="skill-tag">Tech Lead</span><span class="skill-tag">AI Integration</span><span class="skill-tag">Unit Economics</span><span class="skill-tag">Business Analytics</span><span class="skill-tag">Team Management</span><span class="skill-tag">Analytics</span><span class="skill-tag">Gamification</span><span class="skill-tag">Marketing Communications</span><span class="skill-tag">Game Design</span><span class="skill-tag">Game Mechanics Development</span><span class="skill-tag">Jira / Trello</span><span class="skill-tag">Figma</span><span class="skill-tag">SQL / DB Design</span><span class="skill-tag">Database Design</span><span class="skill-tag">PostgreSQL</span><span class="skill-tag">API</span><span class="skill-tag">Integration Development</span><span class="skill-tag">Webhooks</span><span class="skill-tag">TON Blockchain</span><span class="skill-tag">Web3</span><span class="skill-tag">Telegram API</span><span class="skill-tag">Bot Development</span><span class="skill-tag">Automation Architecture</span><span class="skill-tag">Event-driven Architecture</span><span class="skill-tag">Vector Databases</span><span class="skill-tag">React / TypeScript</span><span class="skill-tag">Node.js</span><span class="skill-tag">Python</span><span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span><span class="skill-tag">Git</span><span class="skill-tag">GitHub</span><span class="skill-tag">Cursor</span><span class="skill-tag">n8n</span><span class="skill-tag">TradingView</span><span class="skill-tag">Machine Learning</span><span class="skill-tag">Artificial Intelligence</span><span class="skill-tag">LLM</span><span class="skill-tag">LLM Studio</span><span class="skill-tag">AnythingLLM</span><span class="skill-tag">Ollama</span><span class="skill-tag">ComfyUI</span><span class="skill-tag">DeepMind AlphaFold</span><span class="skill-tag">Prompt Engineering</span><span class="skill-tag">RAG</span><span class="skill-tag">Development Management</span><span class="skill-tag">Functional Testing</span><span class="skill-tag">Regression Testing</span><span class="skill-tag">Algorithms & Data Structures</span><span class="skill-tag">Mathematical Statistics</span><span class="skill-tag">Scrum</span><span class="skill-tag">OKR</span><span class="skill-tag">Agile Project Management</span><span class="skill-tag">OOP</span><span class="skill-tag">Copywriting</span><span class="skill-tag">English</span><span class="skill-tag">English C1</span><span class="skill-tag">Intermediate</span><span class="skill-tag">React</span></div></div>
+
+            <div class="section"><div class="section-title" id="contacts-title">Контакты</div><div class="contact-links"><a href="mailto:pitsavello@gmail.com" id="email-link">Email</a><a href="https://github.com/LilCannaVert" target="_blank">GitHub (v1)</a><a href="https://github.com/BitOpenCode" target="_blank">GitHub (BitOpenCode)</a><a href="https://t.me/sapelon" target="_blank">Telegram</a></div></div>
         </div>
+        <div class="footer" id="footer-text">Open to opportunities · 2026</div>
     </div>
-    <div class="page">
+</div>
 
-        <!-- Hero -->
-        <div class="hero animate-in">
-            <div class="hero-avatar">PS</div>
-            <h1>Peter Savelo</h1>
-            <p class="hero-subtitle" data-en="Product Architect · GameFi Lead · WEB3 Strategist" data-ru="Product Architect · GameFi Lead · WEB3 Стратег">Product Architect · GameFi Lead · WEB3 Strategist</p>
-            <div class="hero-badges">
-                <div class="badge"><span class="badge-dot"></span> <span data-en="Open to work" data-ru="Открыт к работе">Open to work</span></div>
-                <div class="badge"><span data-en="8+ years experience" data-ru="8+ лет опыта">8+ years experience</span></div>
-                <div class="badge"><span data-en="Web3 / FinTech" data-ru="Web3 / ФинТех">Web3 / FinTech</span></div>
-            </div>
-        </div>
+<script>
+const translations = {
+    en: {
+        name: "Petr Savelo",
+        title: "Product Manager — Tech Lead — GameFi Lead — AI Architect",
+        section_ecos: "ECOS",
+        ecos_title: "Tech Lead | CPO | GameFi Lead",
+        ecos_date: "Mar 2025 — Feb 2026 (1 year)",
+        ecos_results_title: "📊 Key Results:",
+        ecos_links_title: "🔗 Projects:",
+        bots_title: "🤖 AI Automation Bots",
+        section_cdf: "Coin Digital Farms Co., LTD [CDF]",
+        cdf_title: "Founder / CEO",
+        cdf_date: "Feb 2023 — Nov 2024 (1 year 10 months)",
+        section_coub: "COUB",
+        coub_title: "Product Manager (Marketing)",
+        coub_date: "May 2022 — Dec 2022 (8 months)",
+        section_tiger: "Tiger.Trade",
+        tiger_title: "Product Manager / GameFi Lead",
+        tiger_date: "Jul 2022 — Nov 2022 (5 months)",
+        section_finomen: "FINOMEN (Investment Academy)",
+        finomen_title: "Head of Analytics Department, Speaker",
+        finomen_date: "May 2021 — Aug 2022 (1 year 4 months)",
+        section_hawex: "Hawex",
+        section_starly: "STARLY",
+        section_chatex: "Chatex",
+        section_bitxmi: "Bitxmi.com",
+        section_wcse: "WCSE R&A CHANNEL",
+        skills_title: "Skills",
+        contacts_title: "Contacts",
+        footer: "Open to opportunities · 2026",
+        email_link: "Email",
+        coub_website: "🔗 Website:",
+        tiger_app: "App:",
+        tiger_website: "Website:",
+        tiger_partnership: "Partnership:",
+        finomen_awards_title: "🏆 Awards:",
+        finomen_award1: "Educational Project of the Year by Investment Leaders Award 2021",
+        finomen_award2: "Laureate of Online Education Leaders Award 2023",
+        finomen_website: "🔗 Website:",
+    },
+    ru: {
+        name: "Петр Савело",
+        title: "Product Manager — Tech Lead — GameFi Lead — AI Architect",
+        section_ecos: "ECOS",
+        ecos_title: "Tech Lead | CPO | GameFi Lead",
+        ecos_date: "Март 2025 — Февраль 2026 (1 год)",
+        ecos_results_title: "📊 Ключевые результаты:",
+        ecos_links_title: "🔗 Проекты:",
+        bots_title: "🤖 AI боты автоматизации",
+        section_cdf: "Coin Digital Farms Co., LTD [CDF]",
+        cdf_title: "Founder / CEO",
+        cdf_date: "Февраль 2023 — Ноябрь 2024 (1 год 10 месяцев)",
+        section_coub: "COUB",
+        coub_title: "Product Manager (Marketing)",
+        coub_date: "Май 2022 — Декабрь 2022 (8 месяцев)",
+        section_tiger: "Tiger.Trade",
+        tiger_title: "Product Manager / GameFi Lead",
+        tiger_date: "Июль 2022 — Ноябрь 2022 (5 месяцев)",
+        section_finomen: "FINOMEN (Академия инвестиций)",
+        finomen_title: "Глава отдела аналитики, спикер",
+        finomen_date: "Май 2021 — Август 2022 (1 год 4 месяца)",
+        section_hawex: "Hawex",
+        section_starly: "STARLY",
+        section_chatex: "Chatex",
+        section_bitxmi: "Bitxmi.com",
+        section_wcse: "WCSE R&A CHANNEL",
+        skills_title: "Навыки",
+        contacts_title: "Контакты",
+        footer: "Открыт к предложениям · 2026",
+        email_link: "Почта",
+        coub_website: "🔗 Сайт:",
+        tiger_app: "App:",
+        tiger_website: "Сайт:",
+        tiger_partnership: "Партнерство:",
+        finomen_awards_title: "🏆 Награды:",
+        finomen_award1: "«Образовательный проект года» по версии Investment Leaders Award 2021",
+        finomen_award2: "Лауреат Премии лидеров онлайн-образования 2023",
+        finomen_website: "🔗 Сайт:",
+    }
+};
 
-        <!-- About -->
-        <div class="section animate-in delay-1">
-            <div class="section-header">
-                <div class="section-icon">A</div>
-                <h2 class="section-title"><span data-en="About" data-ru="Обо мне">About</span></h2>
-            </div>
-            <div class="about-card">
-                <p class="about-text" data-en="Product Owner and FinTech professional with extensive experience in blockchain, crypto mining, and Web3 applications. Full product lifecycle management, user acquisition and retention, analytics, and monetization strategies. Technical skills in WebApp/MiniApp development and workflow automation." data-ru="Product Owner и профессионал в сфере FinTech и игровых продуктов с обширным опытом в блокчейне, крипто-майнинге и Web3-приложениях. Опыт в полном цикле управления продуктом, привлечении и удержании пользователей, аналитике и стратегиях монетизации. Обладаю техническими навыками в разработке WebApp/MiniApp и автоматизации рабочих процессов.">Product Owner and FinTech professional with extensive experience in blockchain, crypto mining, and Web3 applications. Full product lifecycle management, user acquisition and retention, analytics, and monetization strategies.</p>
-            </div>
-        </div>
+const listsContent = {
+    en: {
+        ecos: ["Product architecture design with CEO","Managing development, design, and content teams","Full-cycle development of TMA ECOS BTC Mining Game digital product","Participation in TMA ECOS BTC Mining product development","Building and visualizing marketing and product funnels","Database architecture and user process logic design (visualization for backend task descriptions via db.diagram, Figma, spreadsheets)","Product unit economics development (game economy, mining and accrual economics, exchange economics, LTV, ARPU, churn, subscriptions, goods)","Preparing preliminary product screen layouts for the design department","Complete product documentation describing all screens, functions, stack, frontend and backend tasks","Backlog management, decomposition, and releases in Jira, task assignment and execution control","Developing the \"continuous deployment\" and updates concept together with the CEO/Founder","Negotiations with TON Foundation, Telegram team, and TON Builders for integrations, product promotion, and app releases in Telegram App Center","Preparing documents for the company's legal department for Terms of Service and Privacy Policy documentation","Analytics and dashboards: creating an analytics dashboard using KPI monitoring, statistics, actions, activity, revenue in TON and USDT","Technologies used: React, TypeScript, Vite, Tailwind CSS, Radix UI, Framer Motion, Chart.js, React-Chartjs-2, TON SDK, Postgres / API integrations","AI and automation integration for analytics, scanning, and personalization of user interaction (user category visualization on graphs, full transaction and action monitoring + push notification system)","Concept development: Marketplace; RWA/NFT ASIC; liquidity pools and terrahash token concept with the TON team; NFT Avatar and NFT Staking / conversion mechanics (economics + profitability formula)","Conducted candidate search and interviews for key positions"],
+        ecos_results: ["Applications are in the top categories for finance, wallets, and play2earn","Link: <a href='https://t.me/tapps_bot/center?startapp=app_ecosbitcoinminingcompany' target='_blank' style='color:var(--accent2)'>t.me/tapps_bot/center?startapp=app_ecosbitcoinminingcompany</a>","Link: <a href='https://t.me/tapps_bot/center?startapp=app_gameecos' target='_blank' style='color:var(--accent2)'>t.me/tapps_bot/center?startapp=app_gameecos</a>","Increase in ECOS app registrations (~200 registrations/day)","Increase in game registrations: +800 users in the first 24 hours","3000 active users in the first 3 months with zero marketing spend","2% CR (in-game payments)","MVP launch in 3 weeks, debugging completed in 2 weeks","10,000 players/users in February"],
+        ecos_links: ["TMA ECOS BTC Mining Game: <a href='https://t.me/ECOSMiningGamebot' target='_blank' style='color:var(--accent2)'>@ECOSMiningGamebot</a> (ref. link)","TMA ECOS BTC Mining: <a href='https://t.me/ECOS_BTC_Mining_bot' target='_blank' style='color:var(--accent2)'>@ECOS_BTC_Mining_bot</a>"],
+        bots: ["AI agent for Avito: responding to company products on the marketplace, dialog control, Bitrix lead creation, implementing functionality for human dialog takeover","AI bot for the TMA company: chatbot for product introduction, profitability calculation, product suggestions based on budget, implementing a topic system and control group with the ability to intervene in the dialog and moderate context","AI bot for the sales department: scheduling meetings and creating leads","Bot for statistics in the game and main TMA application","Bot for checking channel subscriptions","Bot for managing user dialogues in comments","Additional workflows: Telegram Stars payments, image generation, post rewriting"],
+        cdf: ["Company creation and registration in Bangkok","Shareholder structure approval","Negotiations and coordination of company activities with key government authorities (Ministry of Labor, Ministry of Agriculture, Ministry of Tourism, Immigration Bureau)","License acquisition","Banking (account opening and registration of employee bank accounts and company account)","Hiring employees from Thai citizens","Design of agricultural enterprise architecture and functions using Controlled Environment Agriculture (CEA) methods","Procurement (materials, special equipment, construction workers — 40-50 people)","Direct partnerships with brands: DryGair, Athena, Advanced Nutrients, Upuer, Grodan","Full automation via PonyLab + AI (robotization, AI analytics, remote control of all growing and production processes)","Website creation (Blog, Store)","Creation of TMA games and TMA Store (mini App - Play2Earn, Grow2Earn, iGaming)","Tokenomics (Bitkub x NihonAgri inc x DTCgroup pitch, token creation on TON and SepoliaETH blockchain, AirDrop -> USDT, TON, TGstars)","Conducting \"burn\" procedure of 95% of tokens on team wallets","Product presentation and conference participation (WikiFinance EXPO Bangkok 2023, Bitkub Summit 2024, Bio-tech EXPO 2023, The 1st Agro Cup Thailand)","Investor search","Sale of CDF company shares to NihonAgri inc in December 2025"],
+        coub: ["Roadmap creation focused on gamification and user engagement","Development and implementation of Season Pass concept and mechanics","Creation of different social network segment portraits and user journey description (CJM)","Strategy development for increasing each user segment level and hypothesis testing","Implementation of A/B testing practice in Discord","Creation of partnership special projects and collaborations","Responsibility for growth, number of followers and Daily ER; formation of events to increase these metrics","Preparation of events for specific user segments","Creation, responsibility and control of unit-economics and tokenomics","Management and control of moderation and community management","Responsibility and creation of achievements system","Development of user reward system and loyalty system (referral program)","Main Discord audience retention tool"],
+        tiger: ["Product management for auto-trading (bot), copy-trading, analytics","Implementation of trading tools - volume profile, cluster analysis","Creation of Discord development roadmap focused on gamification and user engagement","Creation of different Discord segment portraits and user journey description (CJM)","Development and implementation of Season Pass concept and mechanics","Strategy development for increasing each user segment level and hypothesis testing","Implementation of A/B testing practice in Discord","Creation of partnership special projects and collaborations in Discord","Responsibility for growth, number of followers and Daily ER; formation of events to increase these metrics","Management and control of moderation and community management in Discord","Development of user reward system and loyalty system (referral program)"],
+        finomen: ["Building and managing the analytics department team","Preparation, compilation and launch of NFT educational guide","NFT course program development, materials preparation, lessons, participation in lecture filming as a speaker","Creation and development of gamification mechanics for the academy's Discord server","Conducting regular educational webinars as part of the \"Crypto-start\", \"NFT Investor\" and \"Crypto-breakthrough\" courses at FINOMEN academy (founder Nikita Kutsenko)","Monitoring and analysis of financial markets and instruments, preparation of fundamental and technical analysis of cryptocurrencies","Analysis and preparation of trading signals and strategies","Advanced use of TradingView (chart setup and work with indicators), Volfix, ClusterBTC (for cluster analysis), Thomas DeMark Trading Strategy, Coinmarketcap, Glassnode and others","Consulting over 300 VIP clients, providing trading ideas and analytics, assistance in investment portfolio formation","Compilation of educational manuals, guides, instructions for students","Preparation of monthly report on provided trading strategies and signals","NFT collection launch (Finomen x OpenSea)","Launch of Finomen NFT Discord community"],
+        hawex: ["DAO, Roadmap and Whitepaper development","Community building and interaction mechanics development","NFT Pass concept and mechanics development"],
+        starly: ["NFT purchase CJ development","Project roadmap preparation","Technical specifications preparation for Starly and Blocto","Development of blog mechanics on the website for user education","Development of project gamification mechanics, ranking system and score system","Development and implementation of user relationship mechanics","NFT Staking development"],
+        slavi: ["NFT Pass concept development","Roadmap preparation, game mechanics in the project's metaverse","Launch of Rich Teddy TapApp (TMA) game","NFT profile mechanics and score system development","Collaboration mechanics with NFT development"],
+        chatex: ["Team management","Development and implementation of gamified user engagement model in fintech service (P2P)","Product concept formation and description (roadmap, user flow, mind-map, MVP logic)","Sales funnel building and USP development","Participation in digital NFT product launch as audience attraction tool (99 Robots NFT Collection)","Participation in NFT Moscow Meetup 2021 organization","QR payment development and implementation at events for digital wallet users (drinks payment/donations)","Task assignment and execution control (Jira, Trello, Notion)","Coordination of P2P academy development","Content strategy development for international audience","Hypothesis formation and testing for engagement growth","AMA session organization (RU/EN) Telegram/Twitter","YouTube video podcast launch (Season 1, 10 episodes) - direct participation as speaker","Educational project \"Trading Academy\" launch (English segment)"],
+        bitxmi: ["Building strategy, plan and product development roadmap","Competitor analysis, marketing event planning, CustDev preparation","Advertising and organization of contests, ICO, token distribution to contest winners","OTC deals and liquidity search for the exchange","Investor and client search, negotiations and presentations, community creation and social media activities","Exchange testing, communication with development team and CEO for platform improvement, report preparation","Product preparation and launch for ICO"],
+        wcse: ["WCSE TG channel administrator","Fundamental and technical analysis, day trading","User reward system and loyalty system development (referral system)","Trading strategies development, hedging and asset diversification schemes","Financial market and instrument monitoring and analysis","Investment portfolio formation","MyEtherWallet.com usage skills, simple/complex bot creation, API trading via 3commas.io","Activities, advertising, giveaways in channel, VIP channel client search","Russian-speaking channel user chat support"]
+    },
+    ru: {
+        ecos: ["Проектирование архитектуры продуктов с CEO компании","Управление командами разработки, дизайна, контента","Управление полным циклом разработки цифрового продукта TMA ECOS BTC Mining Game","Участие в разработке продукта TMA ECOS BTC Mining","Построение и визуализация маркетинговых и продуктовых воронок","Проектирование архитектуры базы данных и логики пользовательских процессов (визуализация для описания задачи бэкэнда через db.diagram, figma, spreadsheets)","Разработка юнит-экономики продукта (экономика игры, экономика майнинга и начислений, экономика обменов, LTV, ARPU, churn, подписки, товары)","Подготовка предварительных продуктовых макетов экранов приложений для отдела дизайна","Подготовка полной продуктовой документации с описанием всех экранов, функций, стэка, задач на фронт и бэк","Управление бэклогом, декомпозицией и релизами в Jira, постановка задач и контроль выполнения","Проработка концепции \"непрерывного деплоя\" и обновлений вместе с CEO/Founder компании","Ведение переговоров с TON Foundation, командой Telegram и TON Builders для интеграций, продвижения продукта и релиза приложений в Telegram App Center","Подготовка документов для юридического отдела компании для создания Terms of Services и Privacy Policy документации","Аналитика и дашборды: создание аналитического дашборда с использованием мониторинг KPI, статистика, действия, активности, доход в TON и USDT","Используемые технологии: React, TypeScript, Vite, Tailwind CSS, Radix UI, Framer Motion, Chart.js, React-Chartjs-2, TON SDK, Postgres / API интеграции","Интеграция AI и автоматизации для аналитики, сканирования и персонализации взаимодействия с пользователями (визуализация категорий пользователей на графике, полный мониторинг транзакций и действий + система пушей)","Разработка концептов: Маркетплейс; RWA/NFT ASIC; концепт пулов ликвидности и тэррахэш токена с командой TON; механика NFT Avatar и NFT Staking /конвертация (экономика + формула доходности)","Проводил поиск и собеседования кандидатов на ключевые позиции"],
+        ecos_results: ["Приложения находятся в топ по категориям финансов, кошельков, play2earn","Link: https://t.me/tapps_bot/center?startapp=app_ecosbitcoinminingcompany","Link: https://t.me/tapps_bot/center?startapp=app_gameecos","Увеличение количества регистраций в ECOS приложении (~200 регистраций/сутки)","Увеличение количества регистраций в игре: +800 пользователей за первые сутки","3000 активных пользователей в игре за первые 3 месяца без затрат на маркетинг","2% CR (оплаты в игре)","Запуск MVP за 3 недели и завершение отладки за 2 недели","10000 пользователей в игре в Феврале 2026"],
+        ecos_links: ["TMA ECOS BTC Mining Game: https://t.me/ECOSMiningGamebot?startapp=RA [@ECOSMiningGamebot] (ref. link)","TMA ECOS BTC Mining: @ECOS_BTC_Mining_bot"],
+        bots: ["AI агент для Avito: ответы по продуктам компании на маркетплейс, контроль диалогов, создание лидов Bitrix, внедрение функционала для перехвата диалога человеком","AI bot для TMA компании: чат бот для ознакомления с продуктами, расчет доходности, предложение продуктов под бюджет, внедрение системы топиков и группы контроля с возможностью вмешаться в диалог и модерировать контекст","AI bot для отдела продаж: назначение встреч и создание лидов","Бот для статистики в игре и основном TMA приложении","Бот для проверки подписок на канал","Бот для ведения диалога с пользователями в комментариях","Дополнительные Workflow: оплаты в телеграм-звездах, генерация изображений, рерайт постов"],
+        cdf: ["Создание и регистрация компании в Бангкоке","Утверждение состава акционеров","Ведение переговоров и согласование деятельности компании с ключевыми государственными органами (Министерство труда, Министерство сельского хозяйства, Министерство туризма, Иммиграционное бюро)","Получение лицензий","Банкинг (открытие счета и регистрация банковских аккаунтов сотрудников и аккаунта компании)","Найм сотрудников из представителей граждан Таиланда","Проектирование архитектуры и функций агро-предприятия по методам Controlled Environment Agriculture (CEA)","Закупки (материалы, спец-техника, строители — 40-50 человек)","Прямое сотрудничество с брендами DryGair, Athena, Advanced Nutrients, Upuer, Grodan","Полная автоматизация через PonyLab + AI (\"роботизация\", ИИ-аналитика, удалённый контроль за всеми процессами выращивания и производства)","Создание сайта (Blog, Store)","Создание игр TMA и TMA Store (mini App - Play2Earn, Grow2Earn, iGaming)","Токеномика (питч Bitkub x NihonAgri inc x DTCgroup, создание токена на блокчейне TON и SepoliaETH, проведение AirDrop -> USDT, TON, TGstars)","Проведение процедуры \"сжигания\" 95% токенов на кошельках команды","Презентация продукта и участие в конференциях (WikiFinance EXPO Bangkok 2023, Bitkub Summit 2024, Bio-tech EXPO 2023, The 1st Agro Cup Thailand)","Поиск инвесторов","Продажа доли CDF акций компании NihonAgri inc"],
+        coub: ["Создание roadmap с фокусом на геймификацию и вовлечение пользователей","Разработка и внедрение концепции и механики Season Pass","Создание портретов разных сегментов соц. сетей и описание пути пользователя (CJM)","Создание стратегии по повышению уровней каждого сегмента пользователей и тестирование гипотез","Внедрение практики А/В тестирования в Discord","Создание партнерских спец. проектов и коллабораций","Ответственность за рост, количество подписчиков и Daily ER; формирование мероприятий по повышению этих метрик","Подготовка ивентов для отдельных сегментов пользователей","Создание, ответственность и контроль unit-экономики и токеномики","Управление и контроль модерации и коммьюнити менеджмента","Ответственность и создание системы ачивок","Разработка системы вознаграждения пользователей и системы лояльности (реферальная система)","Основной инструмент удержания аудитории Discord"],
+        tiger: ["Ведение продукта по auto-trading (bot), copy-trading, аналитика","Внедрение торгового инструмента - профиль объема, кластерный анализ","Создание roadmap развития Discord с фокусом на геймификацию и вовлечение пользователей","Создание портретов разных сегментов Discord и описание пути пользователя (CJM)","Разработка и внедрение концепции и механики Season Pass","Создание стратегии по повышению уровней каждого сегмента пользователей и тестирование гипотез","Внедрение практики А/В тестирования в Discord","Создание партнерских спец. проектов и коллабораций в Discord","Ответственность за рост, количество подписчиков и Daily ER; формирование мероприятий по повышению этих метрик","Управление и контроль модерации и коммьюнити менеджмента в Discord","Разработка системы вознаграждения пользователей и системы лояльности (реферальная система)"],
+        finomen: ["Построение и управление командой отдела аналитики","Подготовка, составление и запуск образовательного пособия по NFT","Разработка программы курса NFT, подготовка материалов, уроков, участие в съемках лекций в роли спикера","Создание и разработка механик геймификации Discord-сервера академии","Проведение регулярных образовательных вебинаров в рамках курса \"Крипто-старт\", \"NFT Инвестор\" и \"Крипто-прорыв\" академии FINOMEN (основатель Никита Куценко)","Мониторинг и анализ финансовых рынков и инструментов, подготовка фундаментального и технического анализа криптовалют","Анализ и подготовка торговых сигналов и стратегий","Продвинутое пользование сервисом TradingView (настройка и работа с графиками и индикаторами), Volfix, ClusterBTC (для кластерного анализа), Торговая Стратегия Томаса ДеМарко, Coinmarketcap, Glassnode и др.","Консультирование более 300 VIP-клиентов, предоставление торговых идей и аналитики, помощь в формировании инвестиционного портфеля","Составление обучающих пособий, гайдов, инструкций для студентов","Подготовка ежемесячного отчета по предоставляемым торговым стратегиям и сигналам","Запуск NFT коллекции (Finomen x OpenSea)","Запуск NFT сообщества Finomen Discord"],
+        hawex: ["Разработка DAO, Roadmap и Whitepaper проекта","Разработка механики построения и взаимодействия community","Разработка концепции и механики NFT Pass"],
+        starly: ["Проработка CJ покупки NFT","Подготовка roadmap проекта","Подготовка технических заданий для Starly и Blocto","Разработка механики блога на сайте с целью обучения пользователей","Разработка механики геймификации проекта, системы рангов и score system","Разработка и внедрение механики отношений пользователей","Разработка NFT Staking"],
+        slavi: ["Разработка концепции NFT Pass","Подготовка roadmap, механики игры в метавселенной проекта","Запуск игры Rich Teddy TapApp (TMA)","Разработка механики NFT-профиля и score system","Проработка механик коллабораций с NFT"],
+        chatex: ["Управление командой","Разработка и внедрение геймифицированной модели вовлечения пользователей в финтех-сервисе (P2P)","Формирование и описание концепции продукта (roadmap, user flow, mind-map, MVP-логика)","Построение воронки продаж и проработка USP","Участие в запуске цифрового NFT-продукта как инструмента привлечения аудитории (Коллекция 99 Robots NFT)","Участие в организации NFT Moscow Meetup 2021","Разработка и внедрение QR-оплаты на мероприятиях для пользователей с цифровыми кошельками (оплата напитков/донаты)","Постановка задач и контроль исполнения (Jira, Trello, Notion)","Координация работы разработки академии P2P","Разработка контент-стратегии для международной аудитории","Формирование и тестирование гипотез по росту вовлеченности","Организация и проведение AMA-сессий (RU / EN) Telegram/Twitter","Запуск YouTube-видеоподкаста (1 сезон, 10 выпусков) - прямое участие в роли спикера","Запуск образовательного проекта «Академия трейдинга» (англоязычный сегмент)"],
+        bitxmi: ["Построение стратегии, плана и дорожной карты развития продукта","Конкурентный анализ, планирование маркетинговых мероприятий, подготовка CustDev","Реклама и организация конкурсов, ICO, организация раздачи токенов победителям конкурсов","Проведение OTC-сделок и поиск ликвидности для биржи","Поиск инвесторов и клиентов, ведение переговоров и презентаций, создание сообществ и проведение интерактивов в социальных сетях","Тестирование биржи, связь с командой разработчиков и CEO биржи для улучшения качества площадки, подготовка отчетов","Подготовка и запуск продукта на ICO"],
+        wcse: ["Администратор TG-канала WCSE","Проведение фундаментального и технического анализа, дейтрейдинга","Разработка системы вознаграждения пользователей и системы лояльности (реферальная система)","Разработка торговых стратегий, схем хеджирования и диверсификации активов","Мониторинг и анализ финансовых рынков и инструментов","Формирование инвестиционного портфеля","Навыки использования MyEtherWallet.com, составления простых/составных ботов, торговля через API или сервис 3commas.io","Проведение активностей, рекламы, розыгрышей в канале, поиск клиентов для VIP канала","Поддержка в чате русскоговорящих пользователей канала"]
+    }
+};
 
-        <!-- Experience -->
-        <div class="section animate-in delay-2">
-            <div class="section-header">
-                <div class="section-icon">E</div>
-                <h2 class="section-title"><span data-en="Experience" data-ru="Опыт работы">Experience</span></h2>
-            </div>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="Tech Lead · CPO · GameFi Lead" data-ru="Tech Lead · CPO · GameFi Lead">Tech Lead · CPO · GameFi Lead</div>
-                        <div class="timeline-company">ECOS</div>
-                        <div class="timeline-period">Mar 2025 — Feb 2026</div>
-                        <ul class="timeline-list">
-                            <li data-en="Product architecture design with CEO" data-ru="Проектирование архитектуры продуктов с CEO компании">Product architecture design with CEO</li>
-                            <li data-en="Managing dev, design, and content teams" data-ru="Управление командами разработки, дизайна, контента">Managing dev, design, and content teams</li>
-                            <li data-en="Unit economics: game economy, mining, LTV, ARPU" data-ru="Разработка юнит-экономики (экономика игры, майнинга, LTV, ARPU)">Unit economics: game economy, mining, LTV, ARPU</li>
-                            <li data-en="Negotiations with TON Foundation and Telegram" data-ru="Ведение переговоров с TON Foundation и Telegram">Negotiations with TON Foundation and Telegram</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="Founder / CEO" data-ru="Основатель / CEO">Founder / CEO</div>
-                        <div class="timeline-company">Coin Digital Farms [CDF]</div>
-                        <div class="timeline-period">Feb 2023 — Nov 2024</div>
-                        <ul class="timeline-list">
-                            <li data-en="Founded the company, obtained licenses, opened bank accounts" data-ru="Основал компанию, получил лицензии, открыл банковские счета">Founded the company, obtained licenses, opened bank accounts</li>
-                            <li data-en="Designed fully automated CEA production" data-ru="Проектировал полностью автоматизированное CEA-производство">Designed fully automated CEA production</li>
-                            <li data-en="Developed tokenomics and issued loyalty token" data-ru="Разработал токеномику и выпустил токен для системы лояльности">Developed tokenomics and issued loyalty token</li>
-                            <li data-en="Product presentation at WikiFinance EXPO Bangkok 2023" data-ru="Презентация продукта на WikiFinance EXPO Bangkok 2023">Product presentation at WikiFinance EXPO Bangkok 2023</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="Product Manager (Marketing)" data-ru="Product Manager (Marketing)">Product Manager (Marketing)</div>
-                        <div class="timeline-company">COUB</div>
-                        <div class="timeline-period">May 2022 — Dec 2022</div>
-                        <ul class="timeline-list">
-                            <li data-en="Created roadmap focused on gamification" data-ru="Создавал roadmap с фокусом на геймификацию">Created roadmap focused on gamification</li>
-                            <li data-en="Developed Season Pass and TMA concept" data-ru="Разрабатывал концепцию Season Pass и TMA">Developed Season Pass and TMA concept</li>
-                            <li data-en="Responsible for audience growth and Daily ER" data-ru="Отвечал за рост аудитории и Daily ER">Responsible for audience growth and Daily ER</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="Product Manager / Consultant" data-ru="Product Manager / Консультант">Product Manager / Consultant</div>
-                        <div class="timeline-company">Tiger.Trade</div>
-                        <div class="timeline-period">Jul 2022 — Nov 2022</div>
-                        <ul class="timeline-list">
-                            <li data-en="Led auto-trading and copy-trading product" data-ru="Вёл продукт по авто-трейдингу и copy-trading">Led auto-trading and copy-trading product</li>
-                            <li data-en="Implemented volume profile and cluster analysis" data-ru="Внедрил профиль объема и кластерный анализ">Implemented volume profile and cluster analysis</li>
-                            <li data-en="Participated in bringing Conor McGregor as ambassador" data-ru="Участвовал в привлечении Конора МакГрегора как амбассадора">Participated in bringing Conor McGregor as ambassador</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="CMO / CPO" data-ru="CMO / CPO">CMO / CPO</div>
-                        <div class="timeline-company">Hawex</div>
-                        <div class="timeline-period">Mar 2022 — Jun 2022</div>
-                        <ul class="timeline-list">
-                            <li data-en="Developed DAO, Roadmap, and Whitepaper" data-ru="Разработал DAO, Roadmap и Whitepaper проекта">Developed DAO, Roadmap, and Whitepaper</li>
-                            <li data-en="Designed community building mechanics" data-ru="Разработал механику построения community">Designed community building mechanics</li>
-                            <li data-en="Created NFT Pass concept and mechanics" data-ru="Создал концепцию и механику NFT Pass">Created NFT Pass concept and mechanics</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="CMO" data-ru="CMO">CMO</div>
-                        <div class="timeline-company">STARLY</div>
-                        <div class="timeline-period">Mar 2022 — Jun 2022</div>
-                        <ul class="timeline-list">
-                            <li data-en="Developed NFT Staking economy" data-ru="Разработал экономику NFT Staking">Developed NFT Staking economy</li>
-                            <li data-en="Designed NFT purchase CJM" data-ru="Проработал CJM покупки NFT">Designed NFT purchase CJM</li>
-                            <li data-en="Created gamification mechanics and rank system" data-ru="Создал механику геймификации и систему рангов">Created gamification mechanics and rank system</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="CVO" data-ru="CVO">CVO</div>
-                        <div class="timeline-company">RTC / SLAVI</div>
-                        <div class="timeline-period">Feb 2022 — Jun 2022</div>
-                        <ul class="timeline-list">
-                            <li data-en="Developed NFT Pass concept and roadmap" data-ru="Разработал концепцию NFT Pass и roadmap">Developed NFT Pass concept and roadmap</li>
-                            <li data-en="Launched Rich Teddy TapApp (TMA)" data-ru="Запустил игру Rich Teddy TapApp (TMA)">Launched Rich Teddy TapApp (TMA)</li>
-                            <li data-en="Designed NFT profile and score system mechanics" data-ru="Разработал механику NFT-профиля и score system">Designed NFT profile and score system mechanics</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="Course Author & Speaker — 'Crypto Breakthrough'" data-ru="Автор и спикер курса 'Крипто-прорыв'">Course Author & Speaker — 'Crypto Breakthrough'</div>
-                        <div class="timeline-company">FINOMEN</div>
-                        <div class="timeline-period">May 2021 — Aug 2022</div>
-                        <ul class="timeline-list">
-                            <li data-en="Built and managed analytics department team" data-ru="Построил и управлял командой отдела аналитики">Built and managed analytics department team</li>
-                            <li data-en="Developed NFT course program and materials" data-ru="Разработал программу курса NFT и материалы">Developed NFT course program and materials</li>
-                            <li data-en="Conducted webinars, consulted 300+ VIP clients" data-ru="Провел вебинары и консультировал 300+ VIP-клиентов">Conducted webinars, consulted 300+ VIP clients</li>
-                            <li data-en="'Educational Project of the Year' 2021 award" data-ru="Премия 'Образовательный проект года' 2021">'Educational Project of the Year' 2021 award</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="Product Manager / Content Manager / MM" data-ru="Product Manager / Content Manager / MM">Product Manager / Content Manager / MM</div>
-                        <div class="timeline-company">Chatex</div>
-                        <div class="timeline-period">Apr 2021 — Nov 2021</div>
-                        <ul class="timeline-list">
-                            <li data-en="Developed gamified P2P engagement model" data-ru="Разработал геймифицированную модель вовлечения в P2P">Developed gamified P2P engagement model</li>
-                            <li data-en="Launched 99 Robots NFT collection" data-ru="Запустил NFT коллекцию 99 Robots NFT">Launched 99 Robots NFT collection</li>
-                            <li data-en="Organized NFT Moscow Meetup 2021" data-ru="Организовал NFT Moscow Meetup 2021">Organized NFT Moscow Meetup 2021</li>
-                            <li data-en="Launched YouTube videocast (10 episodes)" data-ru="Запустил YouTube-видеоподкаст (10 выпусков)">Launched YouTube videocast (10 episodes)</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-card">
-                        <div class="timeline-role" data-en="Marketing / Product Management" data-ru="Marketing / Product Management">Marketing / Product Management</div>
-                        <div class="timeline-company">Bitxmi.com</div>
-                        <div class="timeline-period">Sep 2019 — Mar 2021</div>
-                        <ul class="timeline-list">
-                            <li data-en="Built product strategy and development roadmap" data-ru="Построил стратегию и roadmap развития продукта">Built product strategy and development roadmap</li>
-                            <li data-en="Conducted competitive analysis and CustDev" data-ru="Провел конкурентный анализ и CustDev">Conducted competitive analysis and CustDev</li>
-                            <li data-en="Organized ICO and token distributions" data-ru="Организовал ICO и раздачи токенов">Organized ICO and token distributions</li>
-                            <li data-en="Managed OTC deals and liquidity sourcing" data-ru="Провел OTC-сделки и поиск ликвидности">Managed OTC deals and liquidity sourcing</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+let currentLang = localStorage.getItem('cv-lang') || 'en';
 
-        <!-- Skills -->
-        <div class="section animate-in delay-3">
-            <div class="section-header">
-                <div class="section-icon">S</div>
-                <h2 class="section-title"><span data-en="Skills" data-ru="Навыки">Skills</span></h2>
-            </div>
-            <div class="skills-grid">
-                <div class="skill">Product Strategy</div>
-                <div class="skill">GameFi Economics</div>
-                <div class="skill">WEB3 Architecture</div>
-                <div class="skill">AI Integrations</div>
-                <div class="skill">Unit Economics</div>
-                <div class="skill">PostgreSQL</div>
-                <div class="skill">API Integration</div>
-                <div class="skill">LLM / Prompt Engineering</div>
-                <div class="skill">n8n Automation</div>
-                <div class="skill">TypeScript</div>
-                <div class="skill">React</div>
-                <div class="skill">Cursor / AI Tools</div>
-            </div>
-        </div>
+function updateLists(lang) {
+    const content = listsContent[lang];
+    document.getElementById('ecos-list').innerHTML = content.ecos.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('ecos-results-list').innerHTML = content.ecos_results.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('ecos-links-list').innerHTML = content.ecos_links.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('bots-list').innerHTML = content.bots.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('cdf-list').innerHTML = content.cdf.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('coub-list').innerHTML = content.coub.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('tiger-list').innerHTML = content.tiger.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('finomen-list').innerHTML = content.finomen.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('hawex-list').innerHTML = content.hawex.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('starly-list').innerHTML = content.starly.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('chatex-list').innerHTML = content.chatex.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('bitxmi-list').innerHTML = content.bitxmi.map(li => `<li>${li}</li>`).join('');
+    document.getElementById('wcse-list').innerHTML = content.wcse.map(li => `<li>${li}</li>`).join('');
+}
 
-        <!-- Contact -->
-        <div class="section animate-in delay-4">
-            <div class="section-header">
-                <div class="section-icon">C</div>
-                <h2 class="section-title"><span data-en="Contact" data-ru="Контакты">Contact</span></h2>
-            </div>
-            <div class="contact-grid">
-                <div class="contact-item">
-                    <div class="contact-icon">@</div>
-                    <div>
-                        <div class="contact-label" data-en="Email" data-ru="Почта">Email</div>
-                        <div class="contact-value">pitsavello@gmail.com</div>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">T</div>
-                    <div>
-                        <div class="contact-label">Telegram</div>
-                        <div class="contact-value"><a href="https://t.me/cortexai" target="_blank">@cortexai</a></div>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">in</div>
-                    <div>
-                        <div class="contact-label">LinkedIn</div>
-                        <div class="contact-value"><a href="https://th.linkedin.com/in/peter-savelo-2a23b4257" target="_blank">Peter Savelo</a></div>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">&lt;/&gt;</div>
-                    <div>
-                        <div class="contact-label">GitHub</div>
-                        <div class="contact-value"><a href="https://github.com/petahashed" target="_blank">petahashed</a></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+function applyLang(lang) {
+    const t = translations[lang];
+    document.getElementById('name').innerText = t.name;
+    document.getElementById('title').innerText = t.title;
+    document.getElementById('section-ecos').innerText = t.section_ecos;
+    document.getElementById('ecos-title').innerText = t.ecos_title;
+    document.getElementById('ecos-date').innerText = t.ecos_date;
+    document.getElementById('ecos-results-title').innerText = t.ecos_results_title;
+    document.getElementById('ecos-links-title').innerText = t.ecos_links_title;
+    document.getElementById('bots-title').innerText = t.bots_title;
+    document.getElementById('section-cdf').innerText = t.section_cdf;
+    document.getElementById('cdf-title').innerText = t.cdf_title;
+    document.getElementById('cdf-date').innerText = t.cdf_date;
+    document.getElementById('section-coub').innerText = t.section_coub;
+    document.getElementById('coub-title').innerText = t.coub_title;
+    document.getElementById('coub-date').innerText = t.coub_date;
+    document.getElementById('section-tiger').innerText = t.section_tiger;
+    document.getElementById('tiger-title').innerText = t.tiger_title;
+    document.getElementById('tiger-date').innerText = t.tiger_date;
+    document.getElementById('section-finomen').innerText = t.section_finomen;
+    document.getElementById('finomen-title').innerText = t.finomen_title;
+    document.getElementById('finomen-date').innerText = t.finomen_date;
+    document.getElementById('section-hawex').innerText = t.section_hawex;
+    document.getElementById('section-starly').innerText = t.section_starly;
+    document.getElementById('section-chatex').innerText = t.section_chatex;
+    document.getElementById('section-bitxmi').innerText = t.section_bitxmi;
+    document.getElementById('section-wcse').innerText = t.section_wcse;
+    document.getElementById('skills-title').innerText = t.skills_title;
+    document.getElementById('contacts-title').innerText = t.contacts_title;
+    document.getElementById('footer-text').innerText = t.footer;
+    document.getElementById('email-link').innerText = t.email_link;
+    document.getElementById('coub-website').innerText = t.coub_website;
+    document.getElementById('tiger-app').innerText = t.tiger_app;
+    document.getElementById('tiger-website').innerText = t.tiger_website;
+    document.getElementById('tiger-partnership').innerText = t.tiger_partnership;
+    document.getElementById('finomen-awards-title').innerText = t.finomen_awards_title;
+    document.getElementById('finomen-award1').innerText = t.finomen_award1;
+    document.getElementById('finomen-award2').innerText = t.finomen_award2;
+    document.getElementById('finomen-website').innerText = t.finomen_website;
+    
+    updateLists(lang);
+    localStorage.setItem('cv-lang', lang);
+    currentLang = lang;
+}
 
-        <div class="footer animate-in delay-5">Peter Savelo · 2026</div>
-    </div>
+// Theme toggle
+const themeToggle = document.getElementById('theme-toggle');
+if (localStorage.getItem('cv-theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.checked = true;
+}
+themeToggle.onchange = () => {
+    const dark = themeToggle.checked;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    localStorage.setItem('cv-theme', dark ? 'dark' : 'light');
+};
 
-    <script>
-        // Language switching - YOUR original toggle WITH ANIMATION
-        var toggle = document.getElementById("toggle");
-        var flag = document.getElementById("flag");
-        var elementsWithLang = document.querySelectorAll('[data-en][data-ru]');
+// Language toggle
+const flagImg = document.getElementById('flag');
+const langToggle = document.getElementById('lang-toggle');
+langToggle.onclick = () => {
+    const newLang = currentLang === 'en' ? 'ru' : 'en';
+    flagImg.style.opacity = '0';
+    setTimeout(() => {
+        flagImg.className = newLang;
+        flagImg.src = newLang === 'ru' ? 'https://flagicons.lipis.dev/flags/4x3/ru.svg' : 'https://flagicons.lipis.dev/flags/4x3/gb.svg';
+        flagImg.style.opacity = '1';
+    }, 120);
+    applyLang(newLang);
+};
 
-        function switchLang() {
-            // en to ru
-            if (flag.classList.contains('en')) {
-                flag.style.transform = 'rotate(180deg)';
-                setTimeout(() => {
-                    flag.classList.remove('en');
-                    flag.classList.add('ru');
-                    flag.src = "https://flagicons.lipis.dev/flags/4x3/ru.svg";
-                    flag.style.transform = 'rotate(0deg)';
-                    
-                    // Update text to Russian
-                    elementsWithLang.forEach(el => {
-                        var text = el.getAttribute('data-ru');
-                        if (text) {
-                            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                                el.value = text;
-                            } else {
-                                el.innerText = text;
-                            }
-                        }
-                    });
-                    localStorage.setItem('resume-lang', 'ru');
-                }, 125);
-            }
-            // ru to en
-            else {
-                flag.style.transform = 'rotate(-180deg)';
-                setTimeout(() => {
-                    flag.classList.remove('ru');
-                    flag.classList.add('en');
-                    flag.src = "https://flagicons.lipis.dev/flags/4x3/gb.svg";
-                    flag.style.transform = 'rotate(0deg)';
-                    
-                    // Update text to English
-                    elementsWithLang.forEach(el => {
-                        var text = el.getAttribute('data-en');
-                        if (text) {
-                            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                                el.value = text;
-                            } else {
-                                el.innerText = text;
-                            }
-                        }
-                    });
-                    localStorage.setItem('resume-lang', 'en');
-                }, 125);
-            }
-        }
-
-        toggle.onclick = switchLang;
-
-        // Set initial language from localStorage
-        var savedLang = localStorage.getItem('resume-lang');
-        if (savedLang === 'ru') {
-            flag.classList.remove('en');
-            flag.classList.add('ru');
-            flag.src = "https://flagicons.lipis.dev/flags/4x3/ru.svg";
-            elementsWithLang.forEach(el => {
-                var text = el.getAttribute('data-ru');
-                if (text) {
-                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                        el.value = text;
-                    } else {
-                        el.innerText = text;
-                    }
-                }
-            });
-        }
-
-        // Theme switching
-        var themeToggle = document.getElementById('theme-toggle');
-        
-        if (themeToggle) {
-            var savedTheme = localStorage.getItem('resume-theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                themeToggle.checked = true;
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                themeToggle.checked = false;
-            }
-            
-            themeToggle.addEventListener('change', function() {
-                if (this.checked) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('resume-theme', 'dark');
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    localStorage.setItem('resume-theme', 'light');
-                }
-            });
-        }
-    </script>
+// Initial language
+if (currentLang === 'ru') {
+    flagImg.className = 'ru';
+    flagImg.src = 'https://flagicons.lipis.dev/flags/4x3/ru.svg';
+    applyLang('ru');
+} else {
+    applyLang('en');
+}
+</script>
 </body>
 </html>

@@ -6,8 +6,8 @@
     "tagline": "",
     "specializations": ["Product Architecture", "Product Management", "GameFi & Unit-Economics", "AI Integrations"],
     "email": "pitsavello@gmail.com",
-    "github": "https://github.com/",
-    "linkedin": "https://linkedin.com/",
+    "github": "https://github.com/BitOpenCode",
+    "linkedin": "https://www.linkedin.com/in/petr-savelo-2a23b4257/",
     "location": "Remote / International",
     "availability": "Open to Web3 & Product Leadership",
     "copyright": "© 2025 Peter Savelo. All rights reserved."
@@ -24,15 +24,15 @@
     "heading": "Designing Digital Economies",
       "paragraphs": [
       "Product leader with 8+ years of experience in Web3, GameFi, and digital ecosystems. I design and launch scalable token-based products with a strong focus on monetization, retention mechanics, and long-term economic sustainability.",
-      "At ECOS, I lead the architecture and development of Telegram Mini App GameFi products within the TON ecosystem — from product strategy and database design to game mechanics, marketplace and analytics.",
-      "My expertise lies at the intersection of product strategy, backend architecture, AI automation, and blockchain-based incentive systems."
+      "My expertise lies at the intersection of product strategy, backend architecture, AI automation, and blockchain-based incentive systems. I work with LLMs, RAG, prompt engineering, automation pipelines, and local models (LM Studio, AnythingLLM, Ollama).",
+      "Hobbies: Unity, Godot, Unreal Engine. AI stack: Cursor, DeepSeek, Perplexity, Claude, Flux, Suno, Midjourney, Qwen3 TTS, RVC, Rodin AI, TADA, Kokoro, Whisper, NanoBanana2, Dream Shaper, Kling, Comfy UI."
       ],
     "highlights": ["product strategy", "backend architecture", "blockchain incentives"],
       "stats": [
       { "value": "8+", "label": "Years Experience" },
-      { "value": "15+", "label": "Products Launched" },
+      { "value": "6", "label": "Products Launched" },
       { "value": "30+", "label": "Technologies" },
-      { "value": "30K+", "label": "Users Scaled" }
+      { "value": "1M", "label": "Users Scaled" }
       ]
     },
     "skills": {
@@ -100,32 +100,33 @@
     },
     "experience": {
       "sectionTitle": "Experience",
-      "heading": "My Professional Journey",
+      "heading": "My Professional Journey from 2023-2026",
       "items": [
         {
           "type": "work",
         "title": "Tech Lead / CPO",
         "company": "ECOS",
-        "period": "2025 — Present",
+        "period": "2025 — 2026",
           "description": [
           "Led architecture and full-cycle development of ECOS BTC Mining Game (Telegram Mini App)",
           "Designed complete token economy including NFT ASIC, staking and reward systems",
           "Built database architecture and backend logic from scratch",
           "Implemented analytics system for tracking LTV, churn, ARPU and retention",
           "Managed cross-functional teams (backend, frontend, design)",
-          "MVP in 3 weeks • 3000+ users in 3 months • 2% monetization • 800+ first day users"
+          "MVP in 3 weeks • 3000+ users in 3 months • 2% monetization • 800+ first day users",
+          "10,000 players/users in February ECOS Bitcoin Mining Game"
           ]
         },
         {
         "type": "work",
         "title": "Founder / Product Lead",
         "company": "CDF",
-        "period": "2022 — 2024",
+        "period": "2023 — 2024",
         "description": [
           "Built blockchain ecosystem initiative with tokenomics framework",
           "Worked with regulatory bodies and strategic partners",
-          "Developed community-driven DAO governance mechanics",
-          "Structured incentive systems and growth strategy"
+          "Structured incentive systems and growth strategy",
+          "Built CEA method agritech/biotech farm"
         ]
         }
       ]
@@ -178,8 +179,8 @@
     },
     "contact": {
       "sectionTitle": "Contact",
-    "heading": "Open to Strategic Web3 & Product Leadership Opportunities",
-    "description": "Available for Web3 product leadership roles, early-stage advisory, and strategic partnerships. Let's build something great together!"
+    "heading": "Open to Strategic & Product Leadership Opportunities",
+    "description": "Available for product roles, early-stage advisory, and strategic partnerships. Let's build something great together!"
     }
   }
   

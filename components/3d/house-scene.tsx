@@ -41,6 +41,7 @@ import {
   Music, 
   Brain,
 } from "lucide-react"
+import { getGamesByCategory, getColorByTags } from "@/data/games";
 
 const themeColors = {
   dark: {
@@ -68,7 +69,6 @@ const rooms = [
   { id: "about", name: "About", icon: User, position: [15, 0, 0] as [number, number, number], cameraPosition: [15, 2, 8] as [number, number, number] },
   { id: "skills", name: "Skills", icon: Code, position: [30, 0, 0] as [number, number, number], cameraPosition: [30, 2, 8] as [number, number, number] },
   { id: "experience", name: "Experience", icon: Briefcase, position: [45, 0, 0] as [number, number, number], cameraPosition: [45, 2, 8] as [number, number, number] },
-  { id: "projects", name: "Projects", icon: FolderOpen, position: [60, 0, 0] as [number, number, number], cameraPosition: [60, 2, 8] as [number, number, number] },
   { id: "contact", name: "Contact", icon: MessageSquare, position: [75, 0, 0] as [number, number, number], cameraPosition: [75, 2, 8] as [number, number, number] },
 ]
 
@@ -1122,7 +1122,6 @@ function UltrawideMonitor({
             <li>• <span class="text-pink-400">awards</span> - Show awards</li>
             <li>• <span class="text-pink-400">music</span> - Show music projects</li>
             <li>• <span class="text-pink-400">ai</span> - Show AI projects</li>
-            <li>• <span class="text-pink-400">skills</span> - Show my skills</li>
             <li>• <span class="text-pink-400">clear</span> - Clear results</li>
           </ul>
         </div>
@@ -1368,7 +1367,6 @@ function UltrawideMonitor({
                               <li>• <span class="text-pink-400">awards</span> - Show awards</li>
                               <li>• <span class="text-pink-400">music</span> - Show music projects</li>
                               <li>• <span class="text-pink-400">ai</span> - Show AI projects</li>
-                              <li>• <span class="text-pink-400">skills</span> - Show my skills</li>
                               <li>• <span class="text-pink-400">clear</span> - Clear results</li>
                             </ul>
                           </div>
@@ -2038,6 +2036,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, o
   const { personal } = portfolioData
   const [showLinkedInModal, setShowLinkedInModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
+  const [showGithubModal, setShowGithubModal] = useState(false)
 
   return (
     <ColorfulRoom position={position} isDark={isDark}>
@@ -2135,9 +2134,12 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, o
                 CONNECT WITH ME
               </p>
               <div className="flex gap-6 justify-center">
-                <a
-                  href={personal.github}
-                  className="transition-all p-4 rounded-xl hover:scale-110"
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setShowGithubModal(true)
+                  }}
+                  className="transition-all p-4 rounded-xl hover:scale-110 cursor-pointer"
                   style={{
                     color: isDark ? "#fff" : "#374151",
                     backgroundColor: isDark ? "rgba(244, 114, 182, 0.25)" : "rgba(244, 114, 182, 0.15)",
@@ -2145,7 +2147,7 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, o
                   }}
                 >
                   <Github size={36} />
-                </a>
+                </button>
                 <button
                   onClick={(e) => {
                     e.preventDefault()
@@ -2361,6 +2363,107 @@ function EntranceRoom({ position, isDark = true, onZoomToDesk, onZoomToIsland, o
         </group>
       )}
 
+      {/* GitHub Modal */}
+      {!hideHtmlOverlays && showGithubModal && (
+        <group position={[6.2, -0.5, -1]} rotation={[0, -Math.PI / 2, 0]}>
+          <Float speed={1.5} rotationIntensity={0.02} floatIntensity={0.1}>
+            <RoundedBox args={[3.5, 2.8, 0.15]} radius={0.12}>
+              <meshStandardMaterial color={isDark ? "#0a0a0f" : "#f1f5f9"} roughness={0.7} />
+            </RoundedBox>
+            <mesh position={[0, 1.35, 0.08]}>
+              <boxGeometry args={[3.3, 0.08, 0.02]} />
+              <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={3} />
+            </mesh>
+            <mesh position={[0, -1.35, 0.08]}>
+              <boxGeometry args={[3.3, 0.08, 0.02]} />
+              <meshStandardMaterial color="#f472b6" emissive="#f472b6" emissiveIntensity={3} />
+            </mesh>
+            
+            <Html transform position={[0, 0, 0.18]} scale={0.32} center>
+              <div
+                className="p-8 text-center w-[400px] rounded-2xl"
+                style={{
+                  backgroundColor: isDark ? "rgba(10, 10, 15, 0.98)" : "rgba(255, 255, 255, 0.98)",
+                  border: `3px solid #f472b6`,
+                }}
+              >
+                <div className="mb-6">
+                  <Github size={56} style={{ color: "#f472b6", margin: "0 auto" }} />
+                </div>
+                
+                <p
+                  className="text-2xl mb-6 font-bold tracking-wide"
+                  style={{ color: "#f472b6", textShadow: isDark ? "0 0 15px #f472b6" : "none" }}
+                >
+                  GitHub Repositories
+                </p>
+                
+                <p
+                  className="text-lg mb-8 leading-relaxed"
+                  style={{ color: isDark ? "#e2e8f0" : "#334155" }}
+                >
+                  Choose which GitHub profile to visit:
+                </p>
+                
+                <div className="flex gap-6 justify-center">
+                  <a
+                    href="https://github.com/LilCannaVert"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-8 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105"
+                    style={{
+                      backgroundColor: "#f472b6",
+                      color: "#fff",
+                      border: "2px solid #f472b6",
+                      boxShadow: isDark ? "0 0 20px rgba(244, 114, 182, 0.5)" : "0 4px 12px rgba(244, 114, 182, 0.3)",
+                    }}
+                  >
+                    Old Git
+                  </a>
+                  <a
+                    href="https://github.com/BitOpenCode"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-8 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105"
+                    style={{
+                      backgroundColor: "#f472b6",
+                      color: "#fff",
+                      border: "2px solid #f472b6",
+                      boxShadow: isDark ? "0 0 20px rgba(244, 114, 182, 0.5)" : "0 4px 12px rgba(244, 114, 182, 0.3)",
+                    }}
+                  >
+                    New Git
+                  </a>
+                </div>
+                
+                <button
+                  onClick={() => setShowGithubModal(false)}
+                  className="mt-6 px-6 py-2 rounded-lg text-sm transition-all hover:scale-105"
+                  style={{
+                    backgroundColor: isDark ? "rgba(148, 163, 184, 0.2)" : "rgba(148, 163, 184, 0.15)",
+                    color: isDark ? "#94a3b8" : "#64748b",
+                    border: `2px solid ${isDark ? "#475569" : "#94a3b8"}`,
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </Html>
+          </Float>
+        </group>
+      )}
+
+      {/* Floating tooltip near mouse */}
+      {!hideHtmlOverlays && !showWelcome && (
+        <Float speed={1.5} rotationIntensity={0} floatIntensity={0.2}>
+          <Html transform position={[0.85, -1.2, -2.5]} scale={0.25} center>
+            <div className="bg-primary/90 text-primary-foreground px-2 py-1 rounded-lg shadow-md whitespace-nowrap text-xs font-medium animate-pulse">
+              🖱️ Click here to return welcome screen
+            </div>
+          </Html>
+        </Float>
+      )}
+
       {/* Ambient colored lighting - сплошная полоска света под столом */}
       <pointLight position={[-2, -1.8, -3]} intensity={isDark ? 5 : 4} color="#14b8a6" distance={10} decay={1.2} />
       <pointLight position={[-1.5, -1.8, -3]} intensity={isDark ? 5 : 4} color="#14b8a6" distance={10} decay={1.2} />
@@ -2507,67 +2610,25 @@ function ExperienceRoom({ position, isDark = true }: { position: [number, number
       <pointLight position={[-5, 4, -2]} intensity={isDark ? 15 : 20} color="#3b82f6" distance={6} />
       <pointLight position={[5, 4, -2]} intensity={isDark ? 15 : 20} color="#60a5fa" distance={6} />
       <ambientLight intensity={isDark ? 0.3 : 0.6} />
+
+            {/* Floating button to open Resume */}
+      <Float speed={2} rotationIntensity={0.2} floatIntensity={0.3} position={[0, -1.5, -3]}>
+        <Html transform center>
+          <button
+            onClick={() => {
+              const event = new CustomEvent("openResume", {});
+              document.dispatchEvent(event);
+            }}
+            className="px-2 py-1 bg-primary text-primary-foreground rounded-full font-medium text-xs shadow-sm hover:scale-105 transition-all cursor-pointer"
+          >
+            📄 Check experience →
+          </button>
+        </Html>
+      </Float>
     </Room>
   )
 }
 
-function ProjectsRoom({ position, isDark = true }: { position: [number, number, number]; isDark?: boolean }) {
-  const { projects } = portfolioData
-  const featuredProjects = projects.items.filter((p) => p.featured)
-
-  return (
-    <Room position={position} color={isDark ? "#1c1917" : "#fef3c7"} isDark={isDark}>
-      <FloatingFrame position={[0, 4.5, -5]} size={[6, 1.5]} isDark={isDark}>
-        <h2 className="text-teal-400 text-2xl font-bold">{projects.heading}</h2>
-      </FloatingFrame>
-
-      {featuredProjects.map((project, i) => (
-        <FloatingFrame key={i} position={[(i - 1) * 4.5, 1, -4]} size={[4, 3.5]} isDark={isDark}>
-          <div className="p-3 text-left">
-            <h3 className={`${isDark ? "text-white" : "text-slate-800"} text-base font-semibold mb-2`}>
-              {project.title}
-            </h3>
-            <p className={`${isDark ? "text-gray-400" : "text-gray-600"} text-xs mb-2`}>{project.description}</p>
-            <div className="flex flex-wrap gap-1 mb-2">
-              {project.tags.map((tag, j) => (
-                <span key={j} className="bg-teal-500/20 text-teal-300 px-1.5 py-0.5 rounded text-xs">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <a
-                href={project.github}
-                className={`${isDark ? "text-gray-400 hover:text-teal-400" : "text-gray-600 hover:text-teal-500"} text-xs flex items-center gap-1`}
-              >
-                <Github size={12} /> Code
-              </a>
-              <a
-                href={project.demo}
-                className={`${isDark ? "text-gray-400 hover:text-teal-400" : "text-gray-600 hover:text-teal-500"} text-xs flex items-center gap-1`}
-              >
-                <ExternalLink size={12} /> Demo
-              </a>
-            </div>
-          </div>
-        </FloatingFrame>
-      ))}
-
-      {/* Floating decorative crystals */}
-      <FloatingDecor position={[-6, 4, -2]} color="#f97316" size={0.3} isDark={isDark} />
-      <FloatingDecor position={[6, 4, -2]} color="#fb923c" size={0.3} isDark={isDark} />
-      <FloatingDecor position={[-4.5, 1.5, -1.5]} color="#fdba74" size={0.25} isDark={isDark} />
-      <FloatingDecor position={[4.5, 1.5, -1.5]} color="#ea580c" size={0.25} isDark={isDark} />
-      <FloatingDecor position={[0, 5.5, -3]} color="#f97316" size={0.35} isDark={isDark} />
-
-      {/* Enhanced lighting */}
-      <pointLight position={[0, 5, 0]} intensity={isDark ? 40 : 60} color="#f97316" />
-      <pointLight position={[-6, 4, -2]} intensity={isDark ? 15 : 20} color="#f97316" distance={6} />
-      <pointLight position={[6, 4, -2]} intensity={isDark ? 15 : 20} color="#fb923c" distance={6} />
-      <ambientLight intensity={isDark ? 0.3 : 0.6} />
-    </Room>
-  )
-}
 
 function ContactRoom({ position, isDark = true }: { position: [number, number, number]; isDark?: boolean }) {
   const { contact, personal } = portfolioData
@@ -2746,8 +2807,7 @@ function Scene({ currentRoom, isDark, isZoomedToDesk, isZoomedToIsland, isZoomed
       {(currentRoom === 0 || currentRoom === 1) && <AboutRoom position={rooms[1].position} isDark={isDark} />}
       {(currentRoom === 1 || currentRoom === 2) && <SkillsRoom position={rooms[2].position} isDark={isDark} />}
       {(currentRoom === 2 || currentRoom === 3) && <ExperienceRoom position={rooms[3].position} isDark={isDark} />}
-      {(currentRoom === 3 || currentRoom === 4) && <ProjectsRoom position={rooms[4].position} isDark={isDark} />}
-      {(currentRoom === 4 || currentRoom === 5) && <ContactRoom position={rooms[5].position} isDark={isDark} />}
+      {(currentRoom === 3 || currentRoom === 4) && <ContactRoom position={rooms[4].position} isDark={isDark} />}
 
       <Environment files={isDark ? "/hdri/dikhololo_night_1k.hdr" : "/hdri/potsdamer_platz_1k.hdr"} background={false} environmentIntensity={0.5} />
     </>
@@ -2769,37 +2829,79 @@ export function House3D() {
   const [showWelcome, setShowWelcome] = useState(true)
   const [hoveredSkillIndex, setHoveredSkillIndex] = useState<number | null>(null)
   const lastSingularityClickRef = useRef(0)
-  
+    useEffect(() => {
+    const handleOpenResume = () => {
+      setActiveCategory("Resume");
+    };
+    document.addEventListener("openResume", handleOpenResume);
+    return () => document.removeEventListener("openResume", handleOpenResume);
+  }, []);
   const gamesData = {
-    "Game": [
-      { name: "Retro Space Game", url: "/space-adventure.html", description: "Space shooter adventure", color: "#2dd4bf", isLocal: true },
-      { name: "Bansai Tap Game", url: "/bansai.html", description: "Grow Bansai, find flowers", color: "#10b981", isLocal: true },
-      { name: "WEB3 App", url: "https://bitopencode.github.io/V3/", description: "Mini games & trading platform", color: "#f472b6", isLocal: false, isMobile: true },
-    ],
-    "Fun": [
-      { name: "Mona Lisa", url: "/mona-lisa.html", description: "Interactive Mona Lisa art", color: "#f472b6", isLocal: true },
-      { name: "Poem", url: "/poem.html", description: "Bitcoin 3D poem animation", color: "#818cf8", isLocal: true },
-      { name: "ARTEmoji", url: "/artemoji.html", description: "Convert images to emoji art", color: "#2dd4bf", isLocal: true },
-      { name: "I Am The Music", url: "/music.html", description: "Draw sounds and create music", color: "#a855f7", isLocal: true },
-    ],
-    "Resume": [
-      { name: "My Resume", url: "/resume-new.html", description: "Professional experience & skills", color: "#818cf8", isLocal: true },
-      { name: "Download PDF", url: "/resume.pdf", description: "Printable version", color: "#f472b6", isLocal: true },
-    ],
-    "Awards": [
-      { name: "Achievements", url: "/awards.html", description: "Recognition & awards", color: "#fbbf24", isLocal: true },
-      { name: "GameFi Award 2024", url: "/awards.html", description: "Best GameFi Project", color: "#a855f7", isLocal: true },
-    ],
+    "Game": getGamesByCategory("Game").map(game => ({
+      name: game.en,
+      url: game.url,
+      description: game.descEn || (game.tags.includes("game") ? "Interactive game" : (game.tags.includes("visual") ? "Visual experience" : "Creative project")),
+      color: getColorByTags(game.tags),
+      isLocal: !game.url.startsWith("http"),
+      github: game.github,
+      isStatic: game.isStatic,
+      staticEmoji: game.staticEmoji,
+      staticLabel: game.staticLabel,
+      tech: game.tech,
+      isMobile: game.isMobile || game.tags.includes("mobile") || game.url.includes("mobile"),
+    })),
+    "Fun": getGamesByCategory("Fun").map(game => ({
+      name: game.en,
+      url: game.url,
+      description: game.descEn || (game.tags.includes("music") ? "Music experience" : "Fun interactive project"),
+      color: getColorByTags(game.tags),
+      isLocal: !game.url.startsWith("http"),
+      github: game.github,
+    })),
+    "Awards": getGamesByCategory("Awards").map(game => ({
+      name: game.en,
+      url: game.url,
+      description: game.descEn || "Award-winning project",
+      color: getColorByTags(game.tags),
+      isLocal: !game.url.startsWith("http"),
+      github: game.github,
+    })),
     "Music": [
-      { name: "Music Player", url: "/music-player.html", description: "Interactive music experience", color: "#ec4899", isLocal: true },
-      { name: "AI DJ", url: "/ai-dj.html", description: "AI-powered music generation", color: "#f43f5e", isLocal: true },
+    ...getGamesByCategory("Music").map(game => ({
+      name: game.en,
+      url: game.url,
+      description: game.descEn || "Music creation tool",
+      color: getColorByTags(game.tags),
+      isLocal: !game.url.startsWith("http"),
+      github: game.github,
+      isStatic: game.isStatic,
+      staticEmoji: game.staticEmoji,
+      staticLabel: game.staticLabel,
+      isMobile: game.isMobile,
+      redditLinks: game.redditLinks,
+    })),
     ],
-    "AI": [
-      { name: "AI Assistant", url: "/ai-assistant.html", description: "Chat with AI", color: "#06b6d4", isLocal: true },
-      { name: "Image Generator", url: "/image-gen.html", description: "Create with AI", color: "#8b5cf6", isLocal: true },
-      { name: "PocketVoice AI", url: "https://yuk-dermatological-kiley.ngrok-free.dev/", description: "Voice AI assistant", color: "#06b6d4", isLocal: false },
-    ]
-  }
+    "Resume": getGamesByCategory("Resume").map(game => ({
+      name: game.en,
+      url: game.url,
+      description: game.descEn || "Professional experience & skills",
+      color: getColorByTags(game.tags),
+      isLocal: !game.url.startsWith("http"),
+      github: game.github,
+      isStatic: game.isStatic,
+      isMobile: game.isMobile,
+    })),
+    "AI": getGamesByCategory("AI").map(game => ({
+      name: game.en,
+      url: game.url,
+      description: game.descEn || "AI-powered project",
+      color: getColorByTags(game.tags),
+      isLocal: !game.url.startsWith("http"),
+      github: game.github,
+      isMobile: game.isMobile,
+      redditLinks: game.redditLinks,
+    })),
+  };
 
   useEffect(() => {
     setMounted(true)
@@ -2974,9 +3076,12 @@ export function House3D() {
 
       {/* Instructions */}
       {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && !isZoomedToBlueIsland && !isZoomedToSingularityCrystal && !isZoomedToOrangeCrystal && (
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10">
+      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex flex-col gap-2">
         <p className="text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full">
           Drag to look around • Scroll to zoom • Click rooms to navigate
+        </p>
+        <p className="text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full">
+          Click on the monitor with MY SKILLS — camera will zoom in
         </p>
       </div>
       )}
@@ -3035,9 +3140,9 @@ export function House3D() {
                     <button
                       key={game.name}
                       onClick={() => setActiveGame(game.url)}
-                      className="group relative p-6 rounded-xl border-2 border-border bg-card hover:border-primary transition-all hover:scale-105 hover:shadow-xl text-left"
+                      className="group relative p-6 rounded-xl border-2 border-border bg-card hover:border-primary transition-all hover:scale-105 hover:shadow-xl text-left min-h-[260px] flex flex-col"
                     >
-                      <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-4 flex-1">
                         <div 
                           className="w-16 h-16 rounded-xl flex items-center justify-center transition-all group-hover:scale-110"
                           style={{ backgroundColor: `${game.color}20`, border: `2px solid ${game.color}` }}
@@ -3059,7 +3164,7 @@ export function House3D() {
                           <div className="flex items-center gap-2 text-sm text-primary font-semibold">
                             <span>
                               {activeCategory === "Resume" ? "Check" : 
-                              activeCategory === "Awards" ? "View" : "Play Now"}
+                              activeCategory === "Awards" ? "View" : "Look up"}
                             </span>
                             <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                           </div>
@@ -3095,7 +3200,7 @@ export function House3D() {
                 </button>
               </div>
 
-              {/* Game iframe with mobile support */}
+              {/* Content: either static info modal or iframe */}
               <div className="flex-1 relative flex items-center justify-center bg-gray-900">
                 {(() => {
                   // Находим текущую игру в gamesData
@@ -3107,8 +3212,88 @@ export function House3D() {
                       break;
                     }
                   }
+                  const isStatic = currentGame?.isStatic === true || currentGame?.url === "https://t.me/PocketSoundbot";
                   const isMobile = currentGame?.isMobile === true;
+                                    // Special window for Voice Cloner
+                  if (currentGame?.name === "Voice Cloner") {
+                    return (
+                      <div className="max-w-2xl mx-auto p-8 bg-card rounded-2xl border border-primary/30 shadow-2xl">
+                        <div className="text-center">
+                          <span className="text-7xl mb-4 block">🎙️</span>
+                          <h2 className="text-3xl font-bold mb-4 text-foreground">Voice Cloner</h2>
+                          <p className="text-lg mb-6 text-muted-foreground">
+                            Contact me on Telegram: <a href="https://t.me/sapelon" target="_blank" className="text-primary hover:underline">@sapelon</a> or <a href="https://t.me/cortexai" target="_blank" className="text-primary hover:underline">@cortexai</a><br/>
+                            I will create a tunnel for you.
+                          </p>
+                          <div className="flex gap-4 justify-center">
+                            <a
+                              href={currentGame?.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all"
+                            >
+                              Go
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  if (isStatic) {
+                  console.log("PocketSound DEBUG:", { name: currentGame?.name, redditLinks: currentGame?.redditLinks });
+                    return (
+                      <div className="max-w-2xl mx-auto p-8 bg-card rounded-2xl border border-primary/30 shadow-2xl">
+                        <div className="text-center">
+                          <span className="text-7xl mb-4 block">{currentGame?.staticEmoji || "🔗"}</span>
+                          <h2 className="text-3xl font-bold mb-4 text-foreground">{currentGame?.name}</h2>
+                          <p className="text-lg mb-6 text-muted-foreground">{currentGame?.description}</p>
+                          <div className="flex gap-4 justify-center flex-wrap">
+                            <a 
+                              href={currentGame?.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all"
+                            >
+                              {currentGame?.staticLabel || "Open"}
+                            </a>
+                            {currentGame?.github && (
+                              <a 
+                                href={currentGame.github} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all"
+                              >
+                                GitHub
+                              </a>
+                            )}
+                          </div>
+                          <div className="mt-6 pt-4 border-t border-border">
+                            <p className="text-sm text-muted-foreground mb-2">Discussion on Reddit:</p>
+                            <div className="flex gap-3 justify-center flex-wrap">
+                              <a href="https://www.reddit.com/r/n8n/comments/1ta2mt7/" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+                              Version 1
+                              </a>
+                              <a href="https://www.reddit.com/r/n8n/comments/1tgl4m9/" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+                              Version 2
+                              </a>
+                            </div>
+                          </div>
+                          
+                          {currentGame?.tech && currentGame.tech.length > 0 && (
+                            <div className="mt-4 flex gap-2 justify-center flex-wrap">
+                              {currentGame.tech.map((tech: string, idx: number) => (
+                                <span key={idx} className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
                   
+                  // Обычный iframe для динамических проектов
                   if (isMobile) {
                     return (
                       <div className="flex items-center justify-center w-full h-full overflow-auto p-4">
