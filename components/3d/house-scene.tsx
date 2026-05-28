@@ -3246,6 +3246,7 @@ export function House3D() {
                               </a>
                             )}
                           </div>
+                                                    {currentGame?.name === "PocketSound" && (
                           <div className="mt-6 pt-4 border-t border-border">
                             <p className="text-sm text-muted-foreground mb-2">Discussion on Reddit:</p>
                             <div className="flex gap-3 justify-center flex-wrap">
@@ -3257,6 +3258,7 @@ export function House3D() {
                               </a>
                             </div>
                           </div>
+                          )}
                           
                           {currentGame?.tech && currentGame.tech.length > 0 && (
                             <div className="mt-4 flex gap-2 justify-center flex-wrap">
