@@ -123,3 +123,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Mobile category buttons scroll */
+@media (max-width: 768px) {
+  .category-buttons-container {
+    overflow-x: auto;
+    max-width: calc(100vw - 100px);
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .category-button {
+    width: auto !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .category-buttons-wrapper {
+    display: flex;
+    gap: 8px;
+  }
+}

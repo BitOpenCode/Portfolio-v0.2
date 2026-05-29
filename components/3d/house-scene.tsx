@@ -3056,11 +3056,17 @@ export function House3D() {
       {/* Instructions */}
       {!isModalOpen && !isZoomedToDesk && !isZoomedToIsland && !isZoomedToBlueIsland && !isZoomedToSingularityCrystal && !isZoomedToOrangeCrystal && (
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full">
+        <p className="hidden md:block text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full whitespace-nowrap">
           Drag to look around • Scroll to zoom • Click rooms to navigate
         </p>
-        <p className="text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full">
+        <p className="md:hidden text-muted-foreground text-xs bg-background/60 backdrop-blur-sm px-2 py-1 rounded-full whitespace-nowrap">
+        Drag • Scroll • Click rooms
+        </p>
+        <p className="hidden md:block text-muted-foreground text-sm bg-background/60 backdrop-blur-sm px-3 py-1 rounded-full whitespace-nowrap">
           Click on the monitor with MY SKILLS — camera will zoom in
+        </p>
+        <p className="md:hidden text-muted-foreground text-xs bg-background/60 backdrop-blur-sm px-2 py-1 rounded-full whitespace-nowrap">
+        Click MY SKILLS to zoom
         </p>
       </div>
       )}
@@ -3078,30 +3084,32 @@ export function House3D() {
             zIndex: 9999,
           }}
         >
-          {activeCategory && !activeGame ? (
+                    {activeCategory && !activeGame ? (
             <div className="relative w-full h-full flex flex-col">
               {/* Category Header with Navigation */}
               <div className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur-sm">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-2xl font-bold text-primary flex items-center gap-3">
+                  <h2 className="hidden md:flex text-2xl font-bold text-primary items-center gap-3">
                     <FolderOpen className="w-8 h-8" />
                     {activeCategory}
                   </h2>
-                  {/* Category Navigation Buttons */}
-                  <div className="flex items-center gap-2 ml-4 pl-4 border-l border-border">
-                    {["Game", "Fun", "Resume", "Awards", "Music", "AI"].map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => setActiveCategory(category)}
-                        className={`w-[85px] px-4 py-2 rounded-lg text-sm font-semibold transition-all text-center ${
-                          activeCategory === category
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                        }`}
-                      >
-                        {category}
-                      </button>
-                    ))}
+                  {/* Category Navigation Buttons - адаптивные */}
+                  <div className="flex items-center gap-2 ml-2 md:ml-4 pl-2 md:pl-4 border-l border-border overflow-x-auto max-w-[calc(100vw-100px)] md:max-w-none pb-1">
+                    <div className="flex gap-2">
+                      {["Game", "Fun", "Resume", "Awards", "Music", "AI"].map((category) => (
+                        <button
+                          key={category}
+                          onClick={() => setActiveCategory(category)}
+                          className={`px-3 md:w-[85px] md:px-4 py-2 rounded-lg text-sm font-semibold transition-all text-center whitespace-nowrap ${
+                            activeCategory === category
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                          }`}
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 <button
@@ -3112,7 +3120,7 @@ export function House3D() {
                 </button>
               </div>
 
-                            {/* Games Grid */}
+              {/* Games Grid */}
               <div className="flex-1 p-8 overflow-auto bg-muted/30">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                   {gamesData[activeCategory as keyof typeof gamesData]?.map((game) => (
@@ -3193,7 +3201,7 @@ export function House3D() {
                   }
                   const isStatic = currentGame?.isStatic === true || currentGame?.url === "https://t.me/PocketSoundbot";
                   const isMobile = currentGame?.isMobile === true;
-                                    // Special window for Voice Cloner
+                  // Special window for Voice Cloner
                   if (currentGame?.name === "Voice Cloner") {
                     return (
                       <div className="max-w-2xl mx-auto p-8 bg-card rounded-2xl border border-primary/30 shadow-2xl">
