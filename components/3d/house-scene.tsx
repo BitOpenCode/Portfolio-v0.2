@@ -3123,7 +3123,7 @@ export function House3D() {
 
               {/* Подсказка только для мобильных - ПОСЛЕ всего заголовка */}
               <p className="md:hidden text-xs text-muted-foreground text-center mt-1 mb-2">
-              Scroll to the right
+              Scroll buttons above to the right
               </p>
               {/* Games Grid */}
               <div className="flex-1 p-8 overflow-auto bg-muted/30">
@@ -3205,7 +3205,7 @@ export function House3D() {
                     }
                   }
                   const isStatic = currentGame?.isStatic === true || currentGame?.url === "https://t.me/PocketSoundbot";
-                  const isMobile = currentGame?.isMobile === true;
+                  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                   // Special window for Voice Cloner
                   if (currentGame?.name === "Voice Cloner") {
                     return (
@@ -3259,7 +3259,7 @@ export function House3D() {
                               </a>
                             )}
                           </div>
-                                                    {currentGame?.name === "PocketSound" && (
+                          {currentGame?.name === "PocketSound" && (
                           <div className="mt-6 pt-4 border-t border-border">
                             <p className="text-sm text-muted-foreground mb-2">Discussion on Reddit:</p>
                             <div className="flex gap-3 justify-center flex-wrap">
@@ -3290,6 +3290,17 @@ export function House3D() {
                   // Обычный iframe для динамических проектов
                   if (isMobile) {
                     return (
+                      <div className="w-full h-full overflow-y-auto">
+                        <iframe
+                          src={activeGame}
+                          className="w-full h-full border-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals"
+                        />
+                      </div>
+                    );
+                  } else {
+                    return (
                       <div className="flex items-center justify-center w-full h-full overflow-auto p-4">
                         <div className="w-[400px] h-[780px] bg-black rounded-[40px] shadow-2xl overflow-hidden border-4 border-gray-700 relative">
                           <div className="absolute top-0 left-0 right-0 h-12 bg-black rounded-t-[44px] flex justify-center items-center">
@@ -3306,15 +3317,6 @@ export function House3D() {
                           </div>
                         </div>
                       </div>
-                    );
-                  } else {
-                    return (
-                      <iframe
-                        src={activeGame}
-                        className="w-full h-full border-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
                     );
                   }
                 })()}
